@@ -27,6 +27,8 @@ get_neighbors <- function(train,test,k,dist.metric = 'cosine'){
 }
 
 
+
+
 #' weighted_knn
 #'
 #' @param neighbors
@@ -101,6 +103,34 @@ weighted_knn <- function(neighbors,train.labels,type = NULL){
 
 
 
+#' get_final_seed_barcodes
+#'
+#' @param cell.meta
+#' @param candidate.seed.barcodes
+#' @param query.nmf.embedding
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_final_seed_barcodes <- function(cell.meta,candidate.seed.barcodes,query.nmf.embedding){
+  seed_meta <- cell.meta[candidate.seed.barcodes,]
+  seed_neighbors <- get_neighbors(query.nmf.embedding[candidate.seed.barcodes,],
+                                  query.nmf.embedding[candidate.seed.barcodes,],k = 10)
+  pred2 <- weighted_knn(seed_neighbors,seed_meta$kendall_pred)
+  seed_meta$pred_score <- pred2$score
+  final_seed_meta_tmp <- seed_meta[which((seed_meta$kendall_pred == pred2$pred)),]
+  final_seed_meta_li <- split(final_seed_meta_tmp,final_seed_meta_tmp$kendall_pred)
+  final_seed_barcodes <- lapply(final_seed_meta_li,function(final_seed_meta_i){
+    if(nrow(final_seed_meta_i) > 200){
+      keep_barcode <- rownames(final_seed_meta_i)[which(final_seed_meta_i$pred_score > .9)]
+    } else{
+      keep_barcode <- rownames(final_seed_meta_i)
+    }
+    return(keep_barcode)
+  }) %>% unlist(use.names = F)
+  return(final_seed_barcodes)
+}
 
 
 

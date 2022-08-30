@@ -36,10 +36,10 @@ get_cell_subtype <- function(pb.ref,
     data <- as.data.frame(as.table(COR[ord,ord]))
     data$label <- round((data$Freq*100),0)
     data$label[which(data$label < (min.cor*100))] <- ' '
-    p <- ggplot2::ggplot(data, aesaes(Var1, Var2, fill = Freq)) +
+    p <- ggplot2::ggplot(data, ggplot2::aes(Var1, Var2, fill = Freq)) +
       ggplot2::geom_tile() +
       ggplot2::scale_fill_gradient2(name = "cor",low = "blue", mid = 'yellow', high = "red")  +
-      ggplot2::theme_nothing() +
+      ggplot2::theme_void() +
       ggplot2::labs(x = " ", y = " ") +
       ggplot2::theme(axis.text.y  = ggplot2::element_text(angle = 0, vjust = 0.5, hjust = 1,size = 10),
             axis.ticks.y = ggplot2::element_blank(),
@@ -355,15 +355,15 @@ test_markers <- function(query.mtx,
 
 
 
-#' get_seed_barcode
+#' get_candidate_seed_barcodes
 #'
 #' @param cell_meta a cell metadata
 #' @param threads number of threads
 #'
-#' @return the seed barcodes
+#' @return the candidate seed barcodes
 #' @export
 #'
-get_seed_barcode <- function(cell_meta,threads = 10){
+get_candidate_seed_barcodes <- function(cell_meta,threads = 10){
 
   cell_meta_li <- split(cell_meta,cell_meta$kendall_pred)
   names(cell_meta_li)
@@ -390,10 +390,11 @@ get_seed_barcode <- function(cell_meta,threads = 10){
     if(nrow(cell_meta_i_mini) < 3){
       seed_cell_barcode <- NULL
     } else{
+      mclustBIC <- mclust::mclustBIC
       if(nrow(cell_meta_i_mini) < 10000){
-        mclust_out1 <- Mclust(cell_meta_i_mini$NMSS,G = 2,verbose = F)
+        mclust_out1 <- mclust::Mclust(cell_meta_i_mini$NMSS,G = 2,verbose = F)
       } else{
-        mclust_out1 <- Mclust(cell_meta_i_mini$NMSS,G = 10,verbose = F)
+        mclust_out1 <- mclust::Mclust(cell_meta_i_mini$NMSS,G = 10,verbose = F)
       }
       NMSS_cutoffs <- sort(mclust_out1$parameters$mean,decreasing = T)
       NMSS_cutoffs
@@ -413,10 +414,12 @@ get_seed_barcode <- function(cell_meta,threads = 10){
       }
       final_NMSS_cutoff
       cell_meta_i_mini$NMSS_classification <- as.character(mclust_out1$classification)
-      ggplot(cell_meta_i_mini, aes(x = NMSS, color = NMSS_classification)) +
-        geom_density(aes(y = after_stat(count), fill = NMSS_classification,alpha = 0.2)) +
-        scale_y_continuous(expand = c(0,0)) +
-        geom_vline(xintercept=final_NMSS_cutoff, linetype="dotted")
+
+      # ggplot2::ggplot(cell_meta_i_mini, ggplot2::aes(x = NMSS, color = NMSS_classification)) +
+      #   ggplot2::geom_density(ggplot2::aes(y = ggplot2::after_stat(count), fill = NMSS_classification,alpha = 0.2)) +
+      #   ggplot2::scale_y_continuous(expand = c(0,0)) +
+      #   ggplot2::geom_vline(xintercept = final_NMSS_cutoff, linetype="dotted")
+
       # (ggplot(cell_meta_i_mini) +
       #     geom_point(aes(x = GMSS,y = NMSS,color = kendall_pred_booltrue)) +
       #     geom_vline(xintercept=2, linetype="dotted") +

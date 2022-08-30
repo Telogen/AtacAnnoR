@@ -5,8 +5,6 @@ Authors@R:
     person("Lejin", "Tian", , "letian20@fudan.edu.cn", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: AtacAnnoR is a novel method designed for scATAC-seq cell type annotation using well-labeled scRNA-seq data as reference. 
-AtacAnnoR can accurately annotate the cell types of scATAC-seq under every situation. 
-The key to the robustness of it is the use of the two-rounds annotation successfully avoids the batch effects. 
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8

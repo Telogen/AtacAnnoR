@@ -2,9 +2,9 @@
 
 ## Overview
 
-AtacAnnoR is a method to annotate scATAC-seq cell type from well-annotated scRNA-seq data.
+AtacAnnoR is an accurate and robust cross-modality cell type annotation method for scATAC-seq data.
 
-<img src="https://github.com/Telogen/AtacAnnoR/blob/main/figures/pipeline.png" width="600">
+<img src="https://github.com/Telogen/AtacAnnoR/blob/main/figures/pipeline.png" width="700">
 
 ## Installation
 
