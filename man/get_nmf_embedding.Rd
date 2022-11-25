@@ -5,17 +5,17 @@
 \title{Get dimension reduced cell embedding by NMF}
 \usage{
 get_nmf_embedding(
-  peak.counts,
+  peak_counts,
   binarize = T,
   tfidf = T,
   normalize = T,
-  nmf.seed = NULL,
-  n.factors = 50L,
+  nmf_seed = NULL,
+  n_factors = 50L,
   verbose = T
 )
 }
 \arguments{
-\item{peak.counts}{a query scATAC-seq peak counts whose rows are peaks and columns are cells}
+\item{peak_counts}{a query scATAC-seq peak counts whose rows are peaks and columns are cells}
 
 \item{binarize}{whether to binarize the peak counts matrix, default is TRUE (recommended)}
 
@@ -23,9 +23,9 @@ get_nmf_embedding(
 
 \item{normalize}{whether to do normalization, default is TRUE (recommended)}
 
-\item{nmf.seed}{the seed set for \code{RcppML::nmf}, default is NULL}
+\item{nmf_seed}{the seed set for \code{RcppML::nmf}, default is NULL}
 
-\item{n.factors}{the number of factors (meta-programs) to get, default is 50}
+\item{n_factors}{the number of factors (meta-programs) to get, default is 50}
 
 \item{verbose}{whether to display messages, default is TRUE}
 }
@@ -35,4 +35,7 @@ factors (meta-programs).
 }
 \description{
 Get dimension reduced cell embedding by NMF from scATAC-seq peak counts
+}
+\examples{
+query_nmf_embedding <- get_nmf_embedding(PEAK_COUNTS, n_factors = 50)
 }

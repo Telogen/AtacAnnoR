@@ -5,20 +5,25 @@
 \title{Test markers of first round annotation}
 \usage{
 test_markers(
-  query.mtx,
-  cell.meta,
-  which.label = "kendall_pred",
-  all.markers,
+  query_mtx,
+  cell_meta,
+  global_markers,
+  neighbor_markers,
+  which_label = "kendall_pred",
   threads = 10,
   verbose = T
 )
 }
 \arguments{
-\item{query.mtx}{query gene activity matrix whose rows are genes and columns are cells}
+\item{query_mtx}{query gene activity matrix whose rows are genes and columns are cells}
 
-\item{cell.meta}{a cell metadata}
+\item{cell_meta}{a cell metadata}
 
-\item{all.markers}{all markers get from \code{get_all_markers()}}
+\item{global_markers}{global_markers}
+
+\item{neighbor_markers}{neighbor_markers}
+
+\item{which_label}{which_label}
 
 \item{threads}{the number of threads, default is 10}
 

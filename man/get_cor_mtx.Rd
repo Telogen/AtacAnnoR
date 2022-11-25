@@ -2,19 +2,23 @@
 % Please edit documentation in R/Round1Anno.R
 \name{get_cor_mtx}
 \alias{get_cor_mtx}
-\title{Get first round annotation correlation matrix}
+\title{Get feature selected pseudo bulk reference}
 \usage{
 get_cor_mtx(
-  feature.selected.pb.ref,
-  feature.selected.query.mtx,
+  ref_metacell_Seurat,
+  query_mtx,
+  global_markers,
+  query_nmf_embedding,
   threads = 10,
   verbose = T
 )
 }
 \arguments{
-\item{feature.selected.pb.ref}{the feature selected pseudo bulk reference}
+\item{ref_metacell_Seurat}{ref_metacell_Seurat}
 
-\item{feature.selected.query.mtx}{the feature selected query matrix}
+\item{query_mtx}{query_mtx}
+
+\item{global_markers}{global_markers}
 
 \item{threads}{the number of threads, default is 10}
 
@@ -25,6 +29,12 @@ Returns a correlation matrix whose rows are query cells and columns are
 reference cell types.
 }
 \description{
+Get first round annotation correlation matrix
+}
+\details{
 Get first round annotation correlation matrix of each query cell to each reference cell type using
 Kendall correlation coefficient
+}
+\examples{
+cor_mtx <- get_cor_mtx(feature_selected_pb_ref, feature_selected_query_mtx)
 }

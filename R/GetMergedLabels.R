@@ -10,7 +10,7 @@
 
 
 
-get_merged_labels_dataset3 <- function(df){
+get_merged_labels_dataset_SHAREseq <- function(df){
   if(class(df) != 'data.frame'){
     df_new <- data.frame(df = df)
   } else{

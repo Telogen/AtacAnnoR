@@ -6,17 +6,17 @@
 #
 #' get_neighbors
 #'
-#' @param train
-#' @param test
-#' @param k
-#' @param metric
+#' @param train todo
+#' @param test todo
+#' @param k todo
+#' @param metric todo
 #'
-#' @return
+#' @return todo
 #' @export
 #'
 get_neighbors <- function(train,test,k,dist.metric = 'cosine'){
-  Seurat_NNHelper <- utils::getFromNamespace("NNHelper", "Seurat")
-  KNN <- Seurat_NNHelper(data = as.matrix(train), query = as.matrix(test),k = (k + 1), method = "annoy",metric = dist.metric)
+  KNN <- Seurat::FindNeighbors(object = as.matrix(train),query = as.matrix(test),k.param = (k+1),
+                               return.neighbor = T,annoy.metric = dist.metric,verbose = F)
   nn.idx <- KNN@nn.idx
   nn.dist = KNN@nn.dist
   rownames(nn.idx) <- rownames(test)
@@ -31,11 +31,11 @@ get_neighbors <- function(train,test,k,dist.metric = 'cosine'){
 
 #' weighted_knn
 #'
-#' @param neighbors
-#' @param train.labels
+#' @param neighbors todo
+#' @param train.labels todo
 #' @param type NULL or 'prob'
 #'
-#' @return
+#' @return todo
 #' @export
 #'
 weighted_knn <- function(neighbors,train.labels,type = NULL){
@@ -105,15 +105,15 @@ weighted_knn <- function(neighbors,train.labels,type = NULL){
 
 #' get_final_seed_barcodes
 #'
-#' @param cell.meta
-#' @param candidate.seed.barcodes
-#' @param query.nmf.embedding
+#' @param cell.meta todo
+#' @param candidate.seed.barcodes todo
+#' @param query.nmf.embedding todo
 #'
-#' @return
+#' @return todo
 #' @export
 #'
-#' @examples
-get_final_seed_barcodes <- function(cell.meta,candidate.seed.barcodes,query.nmf.embedding){
+#' @examples todo
+get_final_seed_barcodes <- function(cell.meta,candidate.seed.barcodes,query.nmf.embedding, k = 10){
   seed_meta <- cell.meta[candidate.seed.barcodes,]
   seed_neighbors <- get_neighbors(query.nmf.embedding[candidate.seed.barcodes,],
                                   query.nmf.embedding[candidate.seed.barcodes,],k = 10)

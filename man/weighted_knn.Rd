@@ -7,7 +7,14 @@
 weighted_knn(neighbors, train.labels, type = NULL)
 }
 \arguments{
+\item{neighbors}{todo}
+
+\item{train.labels}{todo}
+
 \item{type}{NULL or 'prob'}
+}
+\value{
+todo
 }
 \description{
 weighted_knn

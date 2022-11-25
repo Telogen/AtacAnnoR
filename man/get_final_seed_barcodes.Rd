@@ -7,12 +7,23 @@
 get_final_seed_barcodes(
   cell.meta,
   candidate.seed.barcodes,
-  query.nmf.embedding
+  query.nmf.embedding,
+  k = 10
 )
 }
 \arguments{
-\item{query.nmf.embedding}{}
+\item{cell.meta}{todo}
+
+\item{candidate.seed.barcodes}{todo}
+
+\item{query.nmf.embedding}{todo}
+}
+\value{
+todo
 }
 \description{
 get_final_seed_barcodes
+}
+\examples{
+todo
 }

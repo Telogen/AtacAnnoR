@@ -1,9 +1,9 @@
 ########### Round1Anno ###########
-# get_cell_subtype
-# get_all_markers
+# get_pseudo_bulk_mtx
+# get_global_markers_pb
+# get_neighbor_celltypes
+# get_neighbor_markers_pb
 
-# get_feature_selected_pb_ref
-# get_feature_selected_query_mtx
 # get_cor_mtx
 # get_kendall_pred
 # get_cell_meta_with_true
@@ -12,9 +12,112 @@
 # get_seed_barcode
 
 
-#' Get cell subtypes from a pseudo bulk matrix
+
+#' Get the pseudo bulk matrix
 #'
-#' Get cell subtypes from a pseudo bulk matrix
+#' Get the pseudo bulk matrix from a single cell matrix
+#'
+#' @param sc_mtx a single cell matrix whose rows are features and columns are cells
+#' @param labels a vector of cell types whose orders are same as the columns of sc_mtx
+#' @param mode the method to aggragate cells, default is \code{'mean'}
+#'  \itemize{
+#'   \item{'mean': }{get the mean of each cell type}
+#'   \item{'sum': }{get the sum of each cell type}
+#'   \item{'median': }{get the median of each cell type}
+#' }
+#'
+#' @return Returns a pseudo bulk matrix whose rows are features and columns are cell types.
+#' @export
+#'
+#' @examples
+#' pb_ref <- get_pseudo_bulk_mtx(sc_mtx = ref_mtx, labels = REF_CELLTYPE)
+get_pseudo_bulk_mtx <- function(sc_mtx, labels, mode = "mean") {
+  Seurat_obj = SeuratObject::CreateSeuratObject(sc_mtx,meta.data = data.frame(group = labels,row.names = colnames(sc_mtx)))
+  if (mode == "mean") {
+    out_mtx <- Seurat::AverageExpression(Seurat_obj,group.by = 'group',slot = 'counts')[[1]]
+  } else{
+    out_mtx <- Seurat::AggregateExpression(Seurat_obj,group.by = 'group',slot = 'counts')[[1]]
+  }
+  return(out_mtx)
+}
+
+
+
+
+#' get_metacell_exp
+#'
+#' @param count_mtx todo
+#' @param labels todo
+#' @param meta_cell_num todo
+#' @param mode todo
+#' @param return_Seurat todo
+#'
+#' @return todo
+#' @export
+#'
+#' @examples todo
+get_metacell_exp <- function(count_mtx,labels,meta_cell_num = 10,mode = 'sum',return_Seurat = T){
+  barcodes_list <- split(colnames(count_mtx),labels)
+  meta_cell_exp <- lapply(names(barcodes_list),function(ct){
+    ct_barcodes <- barcodes_list[[ct]]
+    count_mtx_ct <- count_mtx[,ct_barcodes]
+    meta_cell_labels <- rep(1:meta_cell_num,length.out = length(ct_barcodes)) %>%
+      paste0(ct,'=',.) %>% sample()
+    ct_meta_cell_exp <- get_pseudo_bulk_mtx(sc_mtx = count_mtx_ct,labels = meta_cell_labels,mode = mode)
+    return(ct_meta_cell_exp)
+  }) %>% do.call(what = 'cbind')
+  if(return_Seurat){
+    Seurat_obj <- CreateSeuratObject(meta_cell_exp,names.delim = '=')
+    Seurat_obj <- NormalizeData(Seurat_obj,verbose = F)
+    return(Seurat_obj)
+  } else{
+    return(meta_cell_exp)
+  }
+}
+
+
+
+
+#' get_global_markers_pb
+#'
+#' @param metacell_Seurat todo
+#' @param threads todo
+#'
+#' @return todo
+#' @export
+#'
+#' @examples todo
+get_global_markers_pb <- function(metacell_Seurat,threads = 10){
+  pb_counts <- get_pseudo_bulk_mtx(metacell_Seurat@assays$RNA@counts,metacell_Seurat$orig.ident,mode = 'sum')
+  all_cts <- levels(metacell_Seurat$orig.ident)
+  Idents(metacell_Seurat) <- 'orig.ident'
+
+  global_markers <- pbmcapply::pbmclapply(all_cts,function(ct){
+    # ct <- 'CD4_TE'
+    ct_HEG <- pb_counts[,ct] %>% sort(T) %>% names() %>% head(.,ceiling(length(.)*0.8))
+    ct_global_mak_df <- FindMarkers(metacell_Seurat,features = ct_HEG,ident.1 = ct,only.pos = T,verbose = F,
+                                    logfc.threshold = 0.5,min.cells.group = 1)
+    ct_global_mak_df$fdr <- stats::p.adjust(ct_global_mak_df$p_val,method = 'fdr')
+    if(length(which(ct_global_mak_df$fdr < 0.01)) > 10){
+      ct_global_mak_df <- dplyr::filter(ct_global_mak_df,fdr < 0.01)
+    }
+    ct_global_markers <- rownames(ct_global_mak_df)
+    ct_global_bg_genes <- sample(rownames(pb_counts),1000)
+
+    ct_markers <- list(global_markers = ct_global_markers,
+                       global_bg_genes = ct_global_bg_genes)
+    return(ct_markers)
+  },mc.cores = threads)
+  names(global_markers) <- all_cts
+
+  return(global_markers)
+}
+
+
+
+#' Get cell neighbors from a pseudo bulk matrix
+#'
+#' Get cell neighbors from a pseudo bulk matrix
 #'
 #' @param pb.ref a pseudo bulk matrix whose rows are features and columns are cell types
 #' @param min.cor the minimum cutoff of cell type correlation
@@ -24,11 +127,12 @@
 #' @export
 #'
 #' @importFrom pcaPP cor.fk
-get_cell_subtype <- function(pb.ref,
-                             min.cor = 0.6,
-                             verbose = T) {
-  COR <- pcaPP::cor.fk(pb.ref)
-  cell_subtype_list <- apply(COR,1,function(row){
+get_neighbor_celltypes <- function(metacell_Seurat,global_markers,min.cor = 0.6,verbose = T) {
+  pb_counts <- get_pseudo_bulk_mtx(metacell_Seurat@assays$RNA@counts,metacell_Seurat$orig.ident,mode = 'sum')
+  all_global_markers <- unlist(lapply(global_markers,function(x){x$global_markers}),use.names = F) %>% unique()
+  pb_data_selected <- pb_counts[all_global_markers,]
+  COR <- pcaPP::cor.fk(pb_data_selected)
+  neighbor_celltypes_list <- apply(COR,1,function(row){
     names(which(sort(row, decreasing = T) > min.cor))
   })
   if (verbose == T) {
@@ -36,165 +140,85 @@ get_cell_subtype <- function(pb.ref,
     data <- as.data.frame(as.table(COR[ord,ord]))
     data$label <- round((data$Freq*100),0)
     data$label[which(data$label < (min.cor*100))] <- ' '
-    p <- ggplot2::ggplot(data, ggplot2::aes(Var1, Var2, fill = Freq)) +
-      ggplot2::geom_tile() +
-      ggplot2::scale_fill_gradient2(name = "cor",low = "blue", mid = 'yellow', high = "red")  +
-      ggplot2::theme_void() +
-      ggplot2::labs(x = " ", y = " ") +
-      ggplot2::theme(axis.text.y  = ggplot2::element_text(angle = 0, vjust = 0.5, hjust = 1,size = 10),
-            axis.ticks.y = ggplot2::element_blank(),
-            axis.text.x  = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1,size = 10),
-            axis.ticks.x = ggplot2::element_blank(),
-            axis.line = ggplot2::element_blank()) +
-      ggplot2::geom_text(ggplot2::aes(label = label),size = 3)
+    p <- ggplot(data, aes(Var1, Var2, fill = Freq)) +
+      geom_tile() +
+      scale_fill_gradient2(name = "cor",low = "blue", mid = 'yellow', high = "red")  +
+      theme_nothing() +
+      labs(x = " ", y = " ") +
+      theme(axis.text.y  = element_text(angle = 0, vjust = 0.5, hjust = 1,size = 10),
+            axis.ticks.y = element_blank(),
+            axis.text.x  = element_text(angle = 90, vjust = 0.5, hjust = 1,size = 10),
+            axis.ticks.x = element_blank(),
+            axis.line = element_blank()) +
+      geom_text(aes(label = label),size = 3)
     print(p)
   }
-  return(cell_subtype_list)
+  return(neighbor_celltypes_list)
 }
 
 
 
-#' Get all markers
+#' get_neighbor_markers_pb
 #'
-#' Get global markers and neighbor specific markers from reference
+#' @param metacell_Seurat todo
+#' @param neighbor_celltypes todo
+#' @param global_markers todo
+#' @param threads todo
 #'
-#' @param pb.ref a pseudo bulk matrix whose rows are features and columns are cell types
-#' @param atlas which atlas to use, default is \code{'H'}
-#'  \itemize{
-#'   \item{H: }{use the Human Cell Atlas}
-#'   \item{M: }{use the Mouse Cell Atlas}
-#' }
-#' @param cell.subtype the list of cell subtypes get from \code{get_cell_subtype()}
-#' @param HEG.prop the proportion of highly expressed genes to first find, default is 0.2
-#' @param marker.num the number of markers to find of each cell type
-#'
-#' @return Returns a list containing global markers and neighbor specific markers.
+#' @return todo
 #' @export
 #'
-get_all_markers <- function(pb.ref,
-                            atlas = "H",
-                            cell.subtype,
-                            HEG.prop = 0.2,
-                            marker.num = 200) {
+#' @examples todo
+get_neighbor_markers_pb <- function(metacell_Seurat,neighbor_celltypes,global_markers,threads = 10){
+  pb_counts <- get_pseudo_bulk_mtx(metacell_Seurat@assays$RNA@counts,metacell_Seurat$orig.ident,mode = 'sum')
+  all_cts <- levels(metacell_Seurat$orig.ident)
+  Idents(metacell_Seurat) <- 'orig.ident'
+  all_global_markers <- unlist(lapply(global_markers,function(x){x$global_markers}),use.names = F) %>% unique()
 
-  # global markers
-  if (atlas == "H") {
-    utils::data(HCA, envir = environment())
-    atlas <- HCA
-  } else {
-    utils::data(MCA, envir = environment())
-    atlas <- MCA
-  }
-  pb_ref_tmp <- Seurat::NormalizeData(pb.ref, verbose = F) %>%
-    BiocGenerics::t() %>%
-    Seurat::ScaleData(do.center = F, verbose = F) %>%
-    BiocGenerics::t()
-  common_genes <- intersect(rownames(pb_ref_tmp), rownames(atlas))
-  pb_all <- cbind(pb_ref_tmp[common_genes, ], atlas[common_genes, ])
-  global_markers_df <- get_pb_markers(pb_all,
-                                      ct.to.find.mk = colnames(pb_ref_tmp),
-                                      each.ct.top = marker.num, HEG.prop = HEG.prop
-  )
-  global_marker_list <- lapply(colnames(pb_ref_tmp), function(ct) {
-    global_markers <- global_markers_df[, ct]
-    background_genes <- setdiff(rownames(pb_ref_tmp), global_markers) %>% sample(marker.num)
-    markers <- list(
-      global_markers = global_markers,
-      background_genes = background_genes
-    )
-    return(markers)
-  })
-  names(global_marker_list) <- colnames(pb_ref_tmp)
-
-  # neighbor markers
-  neighbor_markers_list <- lapply(names(cell.subtype), function(ct) {
-    each_cell_subtype_i <- cell.subtype[[`ct`]]
-    if (length(each_cell_subtype_i) == 1) {
-      pb_ref <- pb.ref
-    } else {
-      pb_ref <- pb.ref[, each_cell_subtype_i]
+  neighbor_markers <- pbmcapply::pbmclapply(all_cts,function(ct){
+    # ct <- 'CD4_TE'
+    ct_HEG <- pb_counts[,ct] %>% sort(T) %>% names() %>% head(.,ceiling(length(.)*0.8))
+    if(length(neighbor_celltypes[[ct]]) == 1){
+      ct_neighbor_markers <- global_markers[[ct]]$global_markers
+      ct_neighbor_bg_genes <- setdiff(all_global_markers,ct_neighbor_markers)
+    } else{
+      metacell_Seurat_sub <- subset(metacell_Seurat,cells = which(metacell_Seurat$orig.ident %in% neighbor_celltypes[[ct]]))
+      ct_all_neighbor_mak_df <- FindAllMarkers(metacell_Seurat_sub,only.pos = T,verbose = F,
+                                               logfc.threshold = 0.5,min.cells.group = 1,return.thresh = 0.1)
+      ct_all_neighbor_mak_df$fdr <- stats::p.adjust(ct_all_neighbor_mak_df$p_val,method = 'fdr')
+      if(min(table(dplyr::filter(ct_all_neighbor_mak_df,fdr < 0.01)$cluster)) > 10){
+        ct_all_neighbor_mak_df <- dplyr::filter(ct_all_neighbor_mak_df,fdr < 0.01)
+      }
+      ct_neighbor_markers_tmp <- dplyr::filter(ct_all_neighbor_mak_df,cluster == ct)$gene
+      ct_neighbor_bg_genes_tmp <- dplyr::filter(ct_all_neighbor_mak_df,cluster != ct)$gene %>% unique()
+      ct_neighbor_markers <- setdiff(ct_neighbor_markers_tmp,ct_neighbor_bg_genes_tmp)
+      ct_neighbor_bg_genes <- setdiff(ct_neighbor_bg_genes_tmp,ct_neighbor_markers_tmp)
     }
-    markers_df <- get_pb_markers(pb_ref, each.ct.top = marker.num, HEG.prop = HEG.prop)
-    ct_markers <- markers_df[, ct]
-    neighbor_markers <- markers_df[, setdiff(colnames(markers_df), ct)] %>%
-      BiocGenerics::t() %>%
-      as.vector() %>%
-      unique()
-    neighbor_markers <- neighbor_markers[1:marker.num]
-    markers <- list(
-      this_ct_markers = ct_markers,
-      neighbor_markers = neighbor_markers
-    )
-    return(markers)
-  })
-  names(neighbor_markers_list) <- names(cell.subtype)
 
-  all_markers <- list(
-    global_markers = global_marker_list,
-    neighbor_markers = neighbor_markers_list
-  )
-  return(all_markers)
+    ct_markers <- list(neighbor_markers = ct_neighbor_markers,
+                       neighbor_bg_genes = ct_neighbor_bg_genes)
+    return(ct_markers)
+  },mc.cores = threads)
+  names(neighbor_markers) <- all_cts
+  return(neighbor_markers)
 }
+
+
+
+
 
 
 #' Get feature selected pseudo bulk reference
 #'
-#' Get feature selected pseudo bulk reference matrix to calculate cell-cell type correlation
-#'
-#' @param pb.ref a pseudo bulk matrix whose rows are features and columns are cell types
-#' @param HEG.prop the proportion of highly expressed genes to first find, default is 0.2,
-#' if the matrix is real bulk matrix it is recommended to set as 0.8
-#' @param each.ct.top the number of top marker genes to find for a cell type
-#'
-#' @return Returns a feature selected pseudo bulk reference matrix.
-#' @export
-#'
-#' @examples
-#' feature_selected_pb_ref <- get_feature_selected_pb_ref(pb_ref)
-get_feature_selected_pb_ref <- function(pb.ref,
-                                        HEG.prop = 0.2,
-                                        each.ct.top = 200) {
-  ref_selected_genes <- get_pb_markers(pb.ref, HEG.prop = HEG.prop, each.ct.top = each.ct.top) %>%
-    unlist(use.names = F)
-  pb_ref_selected <- pb.ref[ref_selected_genes, ]
-  return(pb_ref_selected)
-}
-
-
-#' Get feature selected query matrix
-#'
-#' Get feature selected query matrix to calculate cell-cell type correlation
-#'
-#' @param query.mtx query gene activity matrix whose rows are genes and columns are cells
-#' @param query.nmf.embedding a dimension reduced matrix whose rows are query cells and
-#' columns are factors (meta-programs)
-#'
-#' @return Returns a feature selected query matrix.
-#' @export
-#'
-#' @examples
-#' get_feature_selected_query_mtx <- get_feature_selected_query_mtx(query_mtx, query_nmf_embedding)
-get_feature_selected_query_mtx <- function(query.mtx,
-                                           query.nmf.embedding) {
-  clusters_tmp <- Seurat::FindNeighbors(query.nmf.embedding, verbose = F)$snn %>%
-    Seurat::FindClusters(verbose = F)
-  clusters_que <- as.character(clusters_tmp[, 1])
-  names(clusters_que) <- rownames(clusters_tmp)
-  pb_que <- get_pseudo_bulk_mtx(query.mtx, cell.type = clusters_que)
-  que_selected_genes <- get_pb_markers(pb_que, HEG.prop = 0.2, each.ct.top = 200) %>%
-    unlist(use.names = F)
-  query_mtx_selected <- query.mtx[que_selected_genes, ]
-  return(query_mtx_selected)
-}
-
-
 #' Get first round annotation correlation matrix
 #'
 #' Get first round annotation correlation matrix of each query cell to each reference cell type using
 #' Kendall correlation coefficient
 #'
-#' @param feature.selected.pb.ref the feature selected pseudo bulk reference
-#' @param feature.selected.query.mtx the feature selected query matrix
+#' @param ref_metacell_Seurat ref_metacell_Seurat
+#' @param query_mtx query_mtx
+#' @param global_markers global_markers
+#' @param query_mtx query_mtx
 #' @param threads the number of threads, default is 10
 #' @param verbose whether to display messages, default is TRUE
 #'
@@ -202,31 +226,46 @@ get_feature_selected_query_mtx <- function(query.mtx,
 #' reference cell types.
 #' @export
 #'
-get_cor_mtx <- function(feature.selected.pb.ref,
-                        feature.selected.query.mtx,
-                        threads = 10,
-                        verbose = T) {
-  intersect_genes <- intersect(rownames(feature.selected.pb.ref), rownames(feature.selected.query.mtx))
-  feature.selected.pb.ref <- feature.selected.pb.ref[intersect_genes, ]
-  feature.selected.query.mtx <- feature.selected.query.mtx[intersect_genes, ]
+#' @examples
+#' cor_mtx <- get_cor_mtx(feature_selected_pb_ref, feature_selected_query_mtx)
+get_cor_mtx <- function(ref_metacell_Seurat,query_mtx,global_markers,query_nmf_embedding,threads = 10,verbose = T) {
+  # ref
+  if (verbose == T) {
+    message("Processing reference...")
+  }
+  all_ref_global_markers <- unlist(lapply(global_markers,function(x){x$global_markers}),use.names = F) %>% unique()
+  pb_ref_counts <- get_pseudo_bulk_mtx(ref_metacell_Seurat@assays$RNA@counts,ref_metacell_Seurat$orig.ident,mode = 'sum')
+  # query
+  if (verbose == T) {
+    message("Processing query...")
+  }
+  query_clusters <- (Seurat::FindNeighbors(query_nmf_embedding, verbose = F)$snn %>%
+                       Seurat::FindClusters(verbose = F))[,1]
+  query_metacell_Seurat <- get_metacell_exp(query_mtx,query_clusters)
+  query_global_markers <- get_global_markers_pb(query_metacell_Seurat,threads = threads)
+  all_query_global_markers <- unlist(lapply(query_global_markers,function(x){x$global_markers}),use.names = F) %>% unique()
+  # intersect_genes
+  intersect_genes <- intersect(all_ref_global_markers, all_query_global_markers)
+  feature.selected.pb.ref <- pb_ref_counts[intersect_genes, ]
+  feature.selected.query_mtx <- query_mtx[intersect_genes, ]
 
   if (verbose == T) {
     message(paste0("Intersect genes number: ", length(intersect_genes)))
     message(paste0("Computing Kendall correlation coefficient using ", threads, " threads..."))
   }
-
+  # correlation
   celltypes <- colnames(feature.selected.pb.ref)
-  RESULT <- pbmcapply::pbmclapply(celltypes, function(celltype) {
+  out <- pbmcapply::pbmclapply(celltypes, function(celltype) {
     celltype_exp <- feature.selected.pb.ref[, celltype]
-    celltype_cor <- apply(feature.selected.query.mtx, 2, pcaPP::cor.fk, y = celltype_exp)
+    celltype_cor <- apply(feature.selected.query_mtx, 2, pcaPP::cor.fk, y = celltype_exp)
     return(celltype_cor)
-  }, mc.cores = threads)
-
-  out <- as.data.frame(RESULT)
+  }, mc.cores = threads) %>% do.call(what = 'cbind')
   colnames(out) <- celltypes
-  out <- out[colnames(feature.selected.query.mtx), ]
+  out <- as.data.frame(out)
   return(out)
 }
+
+
 
 
 
@@ -234,15 +273,17 @@ get_cor_mtx <- function(feature.selected.pb.ref,
 #'
 #' Get first round annotation labels from correlation matrix
 #'
-#' @param cor.mtx the correlation matrix get from \code{get_cor_mtx()}
+#' @param cor_mtx the correlation matrix get from \code{get_cor_mtx()}
 #'
 #' @return Returns a cell metadata whose rows are query cells and columns are first round labels.
 #' @export
 #'
+#' @examples
+#' cell_meta <- get_kendall_pred(cor_mtx)
 #'
-get_kendall_pred <- function(cor.mtx) {
-  cell_meta <- data.frame(row.names = rownames(cor.mtx))
-  cell_meta$kendall_pred <- colnames(cor.mtx)[apply(cor.mtx, 1, function(row) {
+get_kendall_pred <- function(cor_mtx) {
+  cell_meta <- data.frame(row.names = rownames(cor_mtx))
+  cell_meta$kendall_pred <- colnames(cor_mtx)[apply(cor_mtx, 1, function(row) {
     ifelse(any(is.na(row)), c(1), which.max(row))
   })]
   return(cell_meta)
@@ -251,18 +292,18 @@ get_kendall_pred <- function(cor.mtx) {
 
 #' Add the true labels to cell metadata
 #'
-#' @param cell.meta a cell metadata
-#' @param true.label a vector of true cell labels
-#' @param cor.mtx the correlation matrix get from \code{get_cor_mtx()}
+#' @param cell_meta a cell metadata
+#' @param true_labels a vector of true cell labels
+#' @param cor_mtx the correlation matrix get from \code{get_cor_mtx()}
 #'
 #' @return Returns a new cell metadata with true labels.
 #' @export
 #'
+#' @examples
+#' cell_meta <- get_cell_meta_with_true(cell_meta, true_labels = TRUE_LABEL, cor_mtx)
 #'
-get_cell_meta_with_true <- function(cell.meta,
-                                    true.label,
-                                    cor.mtx = NULL) {
-  if (!is.null(cor.mtx)) {
+get_cell_meta_with_true <- function(cell_meta,true_labels,cor_mtx = NULL) {
+  if (!is.null(cor_mtx)) {
     get_rank <- function(row, names, ct.num, whose.rank) {
       names(row) <- names
       row_cor <- as.numeric(row[1:ct.num])
@@ -271,16 +312,16 @@ get_cell_meta_with_true <- function(cell.meta,
       rank <- which(names(sorted_row) == row[whose.rank])
       return(rank)
     }
-    ct_num <- ncol(cor.mtx)
-    cor.mtx$true <- true.label
-    cell.meta$true_rank <- apply(cor.mtx, 1, get_rank, names = colnames(cor.mtx), ct_num, whose.rank = "true")
+    ct_num <- ncol(cor_mtx)
+    cor_mtx$true <- true_labels
+    cell_meta$true_rank <- apply(cor_mtx, 1, get_rank, names = colnames(cor_mtx), ct_num, whose.rank = "true")
   }
 
-  cell.meta$true <- true.label
-  if ('kendall_pred' %in% colnames(cell.meta)){
-    cell.meta$kendall_pred_booltrue <- (cell.meta$kendall_pred == true.label)
+  cell_meta$true <- true_labels
+  if ('kendall_pred' %in% colnames(cell_meta)){
+    cell_meta$kendall_pred_booltrue <- (cell_meta$kendall_pred == true_labels)
   }
-  return(cell.meta)
+  return(cell_meta)
 }
 
 
@@ -289,9 +330,11 @@ get_cell_meta_with_true <- function(cell.meta,
 #'
 #' Test markers of first round annotation
 #'
-#' @param query.mtx query gene activity matrix whose rows are genes and columns are cells
-#' @param cell.meta a cell metadata
-#' @param all.markers all markers get from \code{get_all_markers()}
+#' @param query_mtx query gene activity matrix whose rows are genes and columns are cells
+#' @param cell_meta a cell metadata
+#' @param global_markers global_markers
+#' @param neighbor_markers neighbor_markers
+#' @param which_label which_label
 #' @param threads the number of threads, default is 10
 #' @param verbose whether to display messages, default is TRUE
 #'
@@ -299,71 +342,61 @@ get_cell_meta_with_true <- function(cell.meta,
 #' @export
 #'
 #'
-test_markers <- function(query.mtx,
-                         cell.meta,
-                         which.label = 'kendall_pred',
-                         all.markers,
-                         threads = 10,
-                         verbose = T) {
-  used_genes <- unique(unlist(all.markers, use.names = F))
-  scale.query.mtx <- Seurat::ScaleData(query.mtx[used_genes, ], do.center = F, verbose = F)
+test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,which_label = 'kendall_pred',threads = 10,verbose = T) {
+  used_genes <- unique(unlist(c(global_markers,neighbor_markers), use.names = F))
+  scale.query_mtx <- Seurat::ScaleData(query_mtx[used_genes, ], do.center = F, verbose = F)
+  # scale.query_mtx <- as.matrix(query_mtx[used_genes, ])
 
   if (verbose == T) {
     message(paste0("Start testing markers using ", threads, " threads..."))
   }
 
-  barcodes <- row.names(cell.meta)
+  barcodes <- row.names(cell_meta)
   RESULT <- pbmcapply::pbmclapply(barcodes, function(barcode) {
-    # barcode <- barcodes[1]
-    barcode_cellype <- as.character(cell.meta[barcode, which.label])
+    # barcode <- barcodes[8]
+    barcode_cellype <- as.character(cell_meta[barcode, which_label])
     # global markers test
-    barcode.G.markers <- all.markers$global_markers[[barcode_cellype]]$global_markers
-    barcode.G.markers.exp <- scale.query.mtx[barcode.G.markers, barcode]
-    barcode.background.genes <- all.markers$global_markers[[barcode_cellype]]$background_genes
-    barcode.background.genes.exp <- scale.query.mtx[barcode.background.genes, barcode]
-    global.test <- stats::wilcox.test(x = barcode.G.markers.exp, y = barcode.background.genes.exp, alternative = "great")
+    barcode.G.markers <- global_markers[[barcode_cellype]]$global_markers
+    barcode.G.markers.exp <- scale.query_mtx[barcode.G.markers, barcode]
+    barcode.GBG.genes <- global_markers[[barcode_cellype]]$global_bg_genes
+    barcode.GBG.genes.exp <- scale.query_mtx[barcode.GBG.genes, barcode]
+    global.test <- stats::wilcox.test(x = barcode.G.markers.exp, y = barcode.GBG.genes.exp, alternative = "great")
     GMSS <- -log10(max(global.test$p.value, 1e-100))
+    GMSS
 
     # neighbor markers test
-    barcode.N.markers <- all.markers$neighbor_markers[[barcode_cellype]]$this_ct_markers
-    barcode.N.markers.exp <- scale.query.mtx[barcode.N.markers, barcode]
-    neighbor.N.markers <- all.markers$neighbor_markers[[barcode_cellype]]$neighbor_markers
-    neighbor.N.markers.exp <- scale.query.mtx[neighbor.N.markers, barcode]
-    neighbor.test <- stats::wilcox.test(x = barcode.N.markers.exp, y = neighbor.N.markers.exp, alternative = "great")
+    barcode.N.markers <- neighbor_markers[[barcode_cellype]]$neighbor_markers
+    barcode.N.markers.exp <- scale.query_mtx[barcode.N.markers, barcode]
+    barcode.NBG.genes <- neighbor_markers[[barcode_cellype]]$neighbor_bg_genes
+    barcode.NBG.genes.exp <- scale.query_mtx[barcode.NBG.genes, barcode]
+    neighbor.test <- stats::wilcox.test(x = barcode.N.markers.exp, y = barcode.NBG.genes.exp, alternative = "great")
     NMSS <- -log10(max(neighbor.test$p.value, 1e-100))
-    NMFC <- mean(barcode.N.markers.exp, na.rm = T) / mean(neighbor.N.markers.exp, na.rm = T)
-    if (NMFC == "NaN") {
-      NMFC <- 0
-    }
-    if (NMFC == Inf) {
-      NMFC <- 5
-    }
+    NMSS
 
-    out <- c(GMSS, NMSS, NMFC)
+    out <- c(GMSS, NMSS)
     return(out)
   }, mc.cores = threads)
 
-  out <- matrix(unlist(RESULT), nrow = 3)
-  cell.meta$GMSS <- out[1, ]
-  cell.meta$NMSS <- out[2, ]
-  cell.meta$NMFC <- out[3, ]
-  rm(scale.query.mtx)
+  out <- matrix(unlist(RESULT), nrow = 2)
+  cell_meta$GMSS <- out[1, ]
+  cell_meta$NMSS <- out[2, ]
+  rm(scale.query_mtx)
 
-  return(cell.meta)
+  return(cell_meta)
 }
 
 
 
 
-#' get_candidate_seed_barcodes
+
+#' get_seed_barcode
 #'
-#' @param cell_meta a cell metadata
-#' @param threads number of threads
+#' @param cell_meta
 #'
-#' @return the candidate seed barcodes
+#' @return the seed barcodes
 #' @export
 #'
-get_candidate_seed_barcodes <- function(cell_meta,threads = 10){
+get_seed_candidates <- function(cell_meta){
 
   cell_meta_li <- split(cell_meta,cell_meta$kendall_pred)
   names(cell_meta_li)
@@ -390,11 +423,10 @@ get_candidate_seed_barcodes <- function(cell_meta,threads = 10){
     if(nrow(cell_meta_i_mini) < 3){
       seed_cell_barcode <- NULL
     } else{
-      mclustBIC <- mclust::mclustBIC
       if(nrow(cell_meta_i_mini) < 10000){
-        mclust_out1 <- mclust::Mclust(cell_meta_i_mini$NMSS,G = 2,verbose = F)
+        mclust_out1 <- Mclust(cell_meta_i_mini$NMSS,G = 2,verbose = F)
       } else{
-        mclust_out1 <- mclust::Mclust(cell_meta_i_mini$NMSS,G = 10,verbose = F)
+        mclust_out1 <- Mclust(cell_meta_i_mini$NMSS,G = 10,verbose = F)
       }
       NMSS_cutoffs <- sort(mclust_out1$parameters$mean,decreasing = T)
       NMSS_cutoffs
@@ -414,12 +446,10 @@ get_candidate_seed_barcodes <- function(cell_meta,threads = 10){
       }
       final_NMSS_cutoff
       cell_meta_i_mini$NMSS_classification <- as.character(mclust_out1$classification)
-
-      # ggplot2::ggplot(cell_meta_i_mini, ggplot2::aes(x = NMSS, color = NMSS_classification)) +
-      #   ggplot2::geom_density(ggplot2::aes(y = ggplot2::after_stat(count), fill = NMSS_classification,alpha = 0.2)) +
-      #   ggplot2::scale_y_continuous(expand = c(0,0)) +
-      #   ggplot2::geom_vline(xintercept = final_NMSS_cutoff, linetype="dotted")
-
+      ggplot(cell_meta_i_mini, aes(x = NMSS, color = NMSS_classification)) +
+        geom_density(aes(y = after_stat(count), fill = NMSS_classification,alpha = 0.2)) +
+        scale_y_continuous(expand = c(0,0)) +
+        geom_vline(xintercept=final_NMSS_cutoff, linetype="dotted")
       # (ggplot(cell_meta_i_mini) +
       #     geom_point(aes(x = GMSS,y = NMSS,color = kendall_pred_booltrue)) +
       #     geom_vline(xintercept=2, linetype="dotted") +
@@ -438,17 +468,20 @@ get_candidate_seed_barcodes <- function(cell_meta,threads = 10){
       # get_benchmark(cell_meta_i_mini$true,cell_meta_i_mini$kendall_pred)[1]
       # best_cluster_idx
       seed_cell_idx <- which(cell_meta_i_mini$NMSS >= final_NMSS_cutoff)
-      # get_benchmark(cell_meta_i_mini[seed_cell_idx,]$true,
-      #               cell_meta_i_mini[seed_cell_idx,]$kendall_pred)[1]
+      get_benchmark(cell_meta_i_mini[seed_cell_idx,]$true,
+                    cell_meta_i_mini[seed_cell_idx,]$kendall_pred)[1]
       length(seed_cell_idx)
       seed_cell_barcode <- rownames(cell_meta_i_mini)[seed_cell_idx]
-
     }
     return(seed_cell_barcode)
-  },mc.cores = threads) %>% unlist(use.names = F)
+  },mc.cores = 10) %>% unlist(use.names = F)
 
   return(seed_barcodes)
 }
+
+
+
+
 
 
 

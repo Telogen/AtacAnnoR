@@ -4,12 +4,12 @@
 \alias{pre_processing}
 \title{Pre-process input matrices}
 \usage{
-pre_processing(ref.mtx, query.mtx, verbose = T)
+pre_processing(ref_mtx, query_mtx, verbose = T)
 }
 \arguments{
-\item{ref.mtx}{a reference gene expression matrix whose rows are genes and columns are cells/samples}
+\item{ref_mtx}{a reference gene expression matrix whose rows are genes and columns are cells/samples}
 
-\item{query.mtx}{query gene activity matrix whose rows are genes and columns are cells}
+\item{query_mtx}{query gene activity matrix whose rows are genes and columns are cells}
 
 \item{verbose}{whether to display messages, default is TRUE}
 }
@@ -18,4 +18,10 @@ Returns a list containing two matrices after pre-processing.
 }
 \description{
 Pre-process two matrices to remove 0 expressed genes and keep common genes
+}
+\examples{
+pre_processing_mtxs <- pre_processing(ref_mtx = REF_MTX, query_mtx = GA_MTX)
+ref_mtx <- pre_processing_mtxs$ref_mtx
+query_mtx <- pre_processing_mtxs$query_mtx
+
 }

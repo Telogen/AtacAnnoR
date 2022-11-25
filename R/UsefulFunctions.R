@@ -25,7 +25,7 @@ get_benchmark <- function(true.labels, pred.labels){
   # accuracy
   accuracy <- get_accuracy(true.labels, pred.labels)
   # balanced_accuracy
-  df <- data.frame(true = true.labels, pred = pred.labels)
+  df <- data.frame(true = as.character(true.labels), pred = as.character(pred.labels))
   df_li <- split(df,df$true)
   each_group_acc <- sapply(df_li,function(df_i){
     return(get_accuracy(df_i$true,df_i$pred))
@@ -306,45 +306,8 @@ plot_pred_scores <- function(cell.meta,mode = 1){
 
 
 
-# Garnett & MAESTRO get marker genes
-get_signature <- function(Seurat.RNA,max.marker = 50,logfc.threshold = 0.5,min.pct = 0.3,return.thresh = 1e-5){
-  library(Seurat) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  Idents(Seurat.RNA) <- 'true'
-  markers <- FindAllMarkers(Seurat.RNA,only.pos = T,
-                            logfc.threshold = logfc.threshold,min.pct = min.pct,return.thresh = return.thresh)
-  markers_meta <- split(markers,markers$cluster)
-  markers_li <- lapply(markers_meta,function(i){
-    if(nrow(i) < max.marker){
-      markers <- i$gene
-    } else{
-      markers <- i[1:max.marker,]$gene
-    }
-    return(markers)
-  })
-}
 
 
-
-
-
-get_MAESTRO_signatures <- function(signature.list){
-  n_markers <- sapply(signature.list,length)
-  # lucky_dog <- which.max(n_markers)
-  OUT <- c()
-  for (i in 1:length(signature.list)){
-    signature.list_i <- signature.list[i]
-    celltype <- names(signature.list_i)
-    markers <- signature.list_i[[1]]
-    # if (i == lucky_dog){
-    #   markers <- markers[1:(length(markers)-1)]
-    # }
-    num <- length(markers)
-    out_i <- data.frame(V1 = rep(celltype,num),
-                        V2 = markers)
-    OUT <- rbind(OUT,out_i)
-  }
-  return(OUT)
-}
 
 
 

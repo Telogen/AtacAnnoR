@@ -7,7 +7,16 @@
 get_neighbors(train, test, k, dist.metric = "cosine")
 }
 \arguments{
-\item{metric}{}
+\item{train}{todo}
+
+\item{test}{todo}
+
+\item{k}{todo}
+
+\item{metric}{todo}
+}
+\value{
+todo
 }
 \description{
 get_neighbors

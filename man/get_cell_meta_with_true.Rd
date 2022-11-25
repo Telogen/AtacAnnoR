@@ -4,18 +4,22 @@
 \alias{get_cell_meta_with_true}
 \title{Add the true labels to cell metadata}
 \usage{
-get_cell_meta_with_true(cell.meta, true.label, cor.mtx = NULL)
+get_cell_meta_with_true(cell_meta, true_labels, cor_mtx = NULL)
 }
 \arguments{
-\item{cell.meta}{a cell metadata}
+\item{cell_meta}{a cell metadata}
 
-\item{true.label}{a vector of true cell labels}
+\item{true_labels}{a vector of true cell labels}
 
-\item{cor.mtx}{the correlation matrix get from \code{get_cor_mtx()}}
+\item{cor_mtx}{the correlation matrix get from \code{get_cor_mtx()}}
 }
 \value{
 Returns a new cell metadata with true labels.
 }
 \description{
 Add the true labels to cell metadata
+}
+\examples{
+cell_meta <- get_cell_meta_with_true(cell_meta, true_labels = TRUE_LABEL, cor_mtx)
+
 }

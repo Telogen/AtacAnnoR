@@ -4,14 +4,18 @@
 \alias{get_kendall_pred}
 \title{Get first round annotation labels}
 \usage{
-get_kendall_pred(cor.mtx)
+get_kendall_pred(cor_mtx)
 }
 \arguments{
-\item{cor.mtx}{the correlation matrix get from \code{get_cor_mtx()}}
+\item{cor_mtx}{the correlation matrix get from \code{get_cor_mtx()}}
 }
 \value{
 Returns a cell metadata whose rows are query cells and columns are first round labels.
 }
 \description{
 Get first round annotation labels from correlation matrix
+}
+\examples{
+cell_meta <- get_kendall_pred(cor_mtx)
+
 }
