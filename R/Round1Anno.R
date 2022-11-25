@@ -361,8 +361,7 @@ test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,whi
     barcode.GBG.genes <- global_markers[[barcode_cellype]]$global_bg_genes
     barcode.GBG.genes.exp <- scale.query_mtx[barcode.GBG.genes, barcode]
     global.test <- stats::wilcox.test(x = barcode.G.markers.exp, y = barcode.GBG.genes.exp, alternative = "great")
-    GMSS <- -log10(max(global.test$p.value, 1e-100))
-    GMSS
+    GM.pvalue <- global.test$p.value
 
     # neighbor markers test
     barcode.N.markers <- neighbor_markers[[barcode_cellype]]$neighbor_markers
@@ -370,16 +369,15 @@ test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,whi
     barcode.NBG.genes <- neighbor_markers[[barcode_cellype]]$neighbor_bg_genes
     barcode.NBG.genes.exp <- scale.query_mtx[barcode.NBG.genes, barcode]
     neighbor.test <- stats::wilcox.test(x = barcode.N.markers.exp, y = barcode.NBG.genes.exp, alternative = "great")
-    NMSS <- -log10(max(neighbor.test$p.value, 1e-100))
-    NMSS
+    NM.pvalue <- neighbor.test$p.value
 
-    out <- c(GMSS, NMSS)
+    out <- c(GM.pvalue, NM.pvalue)
     return(out)
   }, mc.cores = threads)
 
   out <- matrix(unlist(RESULT), nrow = 2)
-  cell_meta$GMSS <- out[1, ]
-  cell_meta$NMSS <- out[2, ]
+  cell_meta$GMSS <- stats::p.adjust(out[1, ],method = 'fdr')
+  cell_meta$NMSS <- stats::p.adjust(out[2, ],method = 'fdr')
   rm(scale.query_mtx)
 
   return(cell_meta)
