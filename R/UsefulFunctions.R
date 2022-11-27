@@ -59,9 +59,9 @@ get_benchmark <- function(true.labels, pred.labels){
 
 
 
-get_each_recall <- function(cell.meta,ident = 'kendall_pred'){
-  cell.meta_li <- split(cell.meta,cell.meta$true)
-  out <- sapply(cell.meta_li,function(cell_meta_i){
+get_each_recall <- function(cell_meta,ident = 'kendall_pred'){
+  cell_meta_li <- split(cell_meta,cell_meta$true)
+  out <- sapply(cell_meta_li,function(cell_meta_i){
     c(pred_true_cells = length(which(cell_meta_i[,ident] == cell_meta_i$true)),
       all_true_cells = length(cell_meta_i$true),
       recall = length(which(cell_meta_i[,ident] == cell_meta_i$true))/length(cell_meta_i$true))
@@ -74,9 +74,9 @@ get_each_recall <- function(cell.meta,ident = 'kendall_pred'){
 
 
 
-get_each_precision <- function(cell.meta,ident = 'kendall_pred'){
-  cell.meta_li <- split(cell.meta,cell.meta[,ident])
-  out <- sapply(cell.meta_li,function(cell_meta_i){
+get_each_precision <- function(cell_meta,ident = 'kendall_pred'){
+  cell_meta_li <- split(cell_meta,cell_meta[,ident])
+  out <- sapply(cell_meta_li,function(cell_meta_i){
     c(true_cells = length(which(cell_meta_i[,ident] == cell_meta_i$true)),
       predicted_cells = length(cell_meta_i$true),
       precision = length(which(cell_meta_i[,ident] == cell_meta_i$true))/length(cell_meta_i$true))
@@ -90,11 +90,11 @@ get_each_precision <- function(cell.meta,ident = 'kendall_pred'){
 
 
 
-plot_confusion_matrix <- function(cell.meta, which.group, mode = 1,title = NULL){
+plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = NULL){
   library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(cowplot) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
 
-  bench <- get_benchmark(cell.meta$true,cell.meta[,which(colnames(cell.meta) == which.group)])
+  bench <- get_benchmark(cell_meta$true,cell_meta[,which(colnames(cell_meta) == which.group)])
   bench <- round(bench*100,2)
   if(is.null(title)){
     title <- mode
@@ -110,7 +110,7 @@ plot_confusion_matrix <- function(cell.meta, which.group, mode = 1,title = NULL)
 
   # calculate recall
   if (mode == 1){
-    predictions <- table(cell.meta$true, cell.meta[,which(colnames(cell.meta) == which.group)])
+    predictions <- table(cell_meta$true, cell_meta[,which(colnames(cell_meta) == which.group)])
     predictions <- predictions/rowSums(predictions)
     predictions <- as.data.frame(predictions)
     common_levels <- intersect(levels(predictions$Var1),levels(predictions$Var2))
@@ -135,7 +135,7 @@ plot_confusion_matrix <- function(cell.meta, which.group, mode = 1,title = NULL)
 
   # calculate precision
   if (mode == 2){
-    predictions <- table(cell.meta$true, cell.meta[,which(colnames(cell.meta) == which.group)])
+    predictions <- table(cell_meta$true, cell_meta[,which(colnames(cell_meta) == which.group)])
     predictions <- t(predictions)/colSums(predictions)
     predictions <- as.data.frame(predictions)
     common_levels <- intersect(levels(predictions$Var1),levels(predictions$Var2))
@@ -160,7 +160,7 @@ plot_confusion_matrix <- function(cell.meta, which.group, mode = 1,title = NULL)
 
   # number
   if (mode == 3){
-    predictions <- table(cell.meta$true, cell.meta[,which(colnames(cell.meta) == which.group)])
+    predictions <- table(cell_meta$true, cell_meta[,which(colnames(cell_meta) == which.group)])
     predictions <- as.data.frame(predictions)
     common_levels <- intersect(levels(predictions$Var1),levels(predictions$Var2))
     predictions$Var1 <- factor(predictions$Var1,
@@ -202,26 +202,26 @@ plot_highlight_cells <- function(Seurat.object, celltype, ident, label = T, pt.s
 
 
 
-plot_cell_distribution <- function(cell.meta,celltypes.to.plot = NULL,group.by = 'kendall_pred',
+plot_cell_distribution <- function(cell_meta,celltypes.to.plot = NULL,group.by = 'kendall_pred',
                                    x = 'NMSS',y = 'NMFC',size = 'GMSS',shape = 'is_seed'){
   library(aplot) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(Seurat) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  if(is.null(cell.meta$is_seed)){
-    cell.meta$is_seed <- FALSE
+  if(is.null(cell_meta$is_seed)){
+    cell_meta$is_seed <- FALSE
   }
   name_booltrue <- paste0(group.by,'_booltrue')
-  cell.meta[[name_booltrue]] <- (cell.meta[,group.by] == cell.meta[,'true'])
+  cell_meta[[name_booltrue]] <- (cell_meta[,group.by] == cell_meta[,'true'])
 
-  cell.meta_li <- split(cell.meta,cell.meta[,group.by])
+  cell_meta_li <- split(cell_meta,cell_meta[,group.by])
 
   if (is.null(celltypes.to.plot)){
-    cell.meta_li <- cell.meta_li
+    cell_meta_li <- cell_meta_li
   } else{
-    cell.meta_li <- cell.meta_li[celltypes.to.plot]
+    cell_meta_li <- cell_meta_li[celltypes.to.plot]
   }
 
-  for(i in cell.meta_li){
+  for(i in cell_meta_li){
     DATA <- i
 
     p1 <- ggplot(data = DATA) +
@@ -262,14 +262,14 @@ plot_cell_distribution <- function(cell.meta,celltypes.to.plot = NULL,group.by =
 
 
 
-plot_seeds <- function(Seurat.object,cell.meta,ident,pt.size = 0.5,label = F,reduction = DefaultDimReduc(Seurat.object)){
+plot_seeds <- function(Seurat.object,cell_meta,ident,pt.size = 0.5,label = F,reduction = DefaultDimReduc(Seurat.object)){
   library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(Seurat) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
 
-  seed.cell.meta <- cell.meta[which(cell.meta$is_seed == TRUE),]
-  seed.cell.meta$booltrue <- seed.cell.meta[[ident]] == seed.cell.meta$true
-  cells <- list(true_seeds = rownames(seed.cell.meta[which(seed.cell.meta$booltrue == 'TRUE'),]),
-                false_seeds = rownames(seed.cell.meta[which(seed.cell.meta$booltrue == 'FALSE'),]))
+  seed.cell_meta <- cell_meta[which(cell_meta$is_seed == TRUE),]
+  seed.cell_meta$booltrue <- seed.cell_meta[[ident]] == seed.cell_meta$true
+  cells <- list(true_seeds = rownames(seed.cell_meta[which(seed.cell_meta$booltrue == 'TRUE'),]),
+                false_seeds = rownames(seed.cell_meta[which(seed.cell_meta$booltrue == 'FALSE'),]))
   p <- DimPlot(Seurat.object,
                cells.highlight = cells,
                group.by = "true",
@@ -278,24 +278,24 @@ plot_seeds <- function(Seurat.object,cell.meta,ident,pt.size = 0.5,label = F,red
                label = label,
                cols.highlight = c('red','blue')) +
     ggtitle(paste0('Seed cell accuracy: ',
-                   round(get_benchmark(seed.cell.meta$true,seed.cell.meta[[ident]])[1],3)))
+                   round(get_benchmark(seed.cell_meta$true,seed.cell_meta[[ident]])[1],3)))
   return(p)
 }
 
 
 
 
-plot_pred_scores <- function(cell.meta,mode = 1){
-  cell.meta$annotation_correct <- factor(cell.meta$true == cell.meta$final_pred,levels = c(TRUE,FALSE))
+plot_pred_scores <- function(cell_meta,mode = 1){
+  cell_meta$annotation_correct <- factor(cell_meta$true == cell_meta$final_pred,levels = c(TRUE,FALSE))
   if (mode == 1){
-    p1 <- ggplot(cell.meta, aes(pred_score, fill = annotation_correct, colour = annotation_correct)) +
+    p1 <- ggplot(cell_meta, aes(pred_score, fill = annotation_correct, colour = annotation_correct)) +
       geom_density(position = "fill",aes(y = after_stat(count),alpha = 0.5)) +
       scale_fill_manual(values=c("#00BFC4", "#F8766D")) +
       scale_color_manual(values=c("#00BFC4", "#F8766D")) +
       xlab("Prediction Score")
     print(p1)
   } else{
-    p2 <- ggplot(cell.meta, aes(pred_score, fill = annotation_correct, colour = annotation_correct)) +
+    p2 <- ggplot(cell_meta, aes(pred_score, fill = annotation_correct, colour = annotation_correct)) +
       geom_density(position = "stack",aes(y = after_stat(count),alpha = 0.5)) +
       scale_fill_manual(values=c("#00BFC4", "#F8766D")) +
       scale_color_manual(values=c("#00BFC4", "#F8766D")) +
@@ -313,11 +313,11 @@ plot_pred_scores <- function(cell.meta,mode = 1){
 
 
 
-plot_central_cells <- function(Seurat.object, cor.mtx, label = T, pt.size = 5,reduction = DefaultDimReduc(Seurat.object)){
+plot_central_cells <- function(Seurat.object, cor_mtx, label = T, pt.size = 5,reduction = DefaultDimReduc(Seurat.object)){
   library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(Seurat) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
 
-  central_cell_idx <- apply(cor.mtx,2,which.max)
+  central_cell_idx <- apply(cor_mtx,2,which.max)
   Seurat.object$test <- ' '
   Seurat.object$test[central_cell_idx] <- names(central_cell_idx)
   p <- plot_highlight_cells(Seurat.object,setdiff(unique(Seurat.object$test),' '),ident = 'test',
