@@ -16,6 +16,7 @@ Imports:
     Matrix,
     pbmcapply,
     pcaPP,
-    RcppML,
     Seurat,
-    stats
+    stats,
+    mclust,
+    RcppML

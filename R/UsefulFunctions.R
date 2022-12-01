@@ -203,7 +203,7 @@ plot_highlight_cells <- function(Seurat.object, celltype, ident, label = T, pt.s
 
 
 plot_cell_distribution <- function(cell_meta,celltypes.to.plot = NULL,group.by = 'kendall_pred',
-                                   x = 'NMSS',y = 'NMFC',size = 'GMSS',shape = 'is_seed'){
+                                   x = 'NMSS',y = 'GMSS',shape = 'is_seed'){
   library(aplot) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(Seurat) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
@@ -225,8 +225,7 @@ plot_cell_distribution <- function(cell_meta,celltypes.to.plot = NULL,group.by =
     DATA <- i
 
     p1 <- ggplot(data = DATA) +
-      geom_point(aes_string(x = x,y = y, size = size,
-                            color = name_booltrue,shape = shape)) +
+      geom_point(aes_string(x = x,y = y, color = name_booltrue,shape = shape)) +
       scale_size(range = c(0.1, 3))
     # + geom_smooth(aes(x = NMSS,y = NMFC),method = 'lm',formula = 'y ~ x',size = .5)
 

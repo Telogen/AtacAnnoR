@@ -140,17 +140,17 @@ get_neighbor_celltypes <- function(metacell_Seurat,global_markers,min.cor = 0.6,
     data <- as.data.frame(as.table(COR[ord,ord]))
     data$label <- round((data$Freq*100),0)
     data$label[which(data$label < (min.cor*100))] <- ' '
-    p <- ggplot(data, aes(Var1, Var2, fill = Freq)) +
-      geom_tile() +
-      scale_fill_gradient2(name = "cor",low = "blue", mid = 'yellow', high = "red")  +
-      theme_nothing() +
-      labs(x = " ", y = " ") +
-      theme(axis.text.y  = element_text(angle = 0, vjust = 0.5, hjust = 1,size = 10),
-            axis.ticks.y = element_blank(),
-            axis.text.x  = element_text(angle = 90, vjust = 0.5, hjust = 1,size = 10),
-            axis.ticks.x = element_blank(),
-            axis.line = element_blank()) +
-      geom_text(aes(label = label),size = 3)
+    p <- ggplot2::ggplot(data, ggplot2::aes(Var1, Var2, fill = Freq)) +
+      ggplot2::geom_tile() +
+      ggplot2::scale_fill_gradient2(name = "cor",low = "blue", mid = 'yellow', high = "red")  +
+      ggplot2::theme_bw() +
+      ggplot2::labs(x = " ", y = " ") +
+      ggplot2::theme(axis.text.y = ggplot2::element_text(angle = 0, vjust = 0.5, hjust = 1,size = 10),
+            axis.ticks.y = ggplot2::element_blank(),
+            axis.text.x  = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1,size = 10),
+            axis.ticks.x = ggplot2::element_blank(),
+            axis.line =  ggplot2::element_blank()) +
+      ggplot2::geom_text( ggplot2::aes(label = label),size = 3)
     print(p)
   }
   return(neighbor_celltypes_list)
@@ -376,8 +376,8 @@ test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,whi
   }, mc.cores = threads)
 
   out <- matrix(unlist(RESULT), nrow = 2)
-  cell_meta$GMSS <- stats::p.adjust(out[1, ],method = 'fdr')
-  cell_meta$NMSS <- stats::p.adjust(out[2, ],method = 'fdr')
+  cell_meta$GMSS <- stats::p.adjust(out[1, ],method = 'fdr') %>% sapply(function(x){-log10(max(x, 1e-100))})
+  cell_meta$NMSS <- stats::p.adjust(out[2, ],method = 'fdr') %>% sapply(function(x){-log10(max(x, 1e-100))})
   rm(scale.query_mtx)
 
   return(cell_meta)
@@ -398,10 +398,13 @@ get_seed_candidates <- function(cell_meta){
 
   cell_meta_li <- split(cell_meta,cell_meta$kendall_pred)
   names(cell_meta_li)
+  suppressMessages(library(mclust))
   seed_barcodes <- pbmcapply::pbmclapply(cell_meta_li,function(cell_meta_i){
-    # cell_meta_i <- cell_meta_li$`Activated CD4 T cells`
+    # cell_meta_i <- cell_meta_li[[8]]
     # GMSS
+    plot_cell_distribution(cell_meta_i)
     hist(cell_meta_i$GMSS,100)
+    plot_cell_distribution(cell_meta_i)
     get_quantile <- function(data,x){
       which.min(abs(sort(data) - x))/length(data)
     }
@@ -421,10 +424,10 @@ get_seed_candidates <- function(cell_meta){
     if(nrow(cell_meta_i_mini) < 3){
       seed_cell_barcode <- NULL
     } else{
-      if(nrow(cell_meta_i_mini) < 10000){
-        mclust_out1 <- Mclust(cell_meta_i_mini$NMSS,G = 2,verbose = F)
+      if(nrow(cell_meta_i_mini) < 100000){
+        mclust_out1 <- mclust::Mclust(cell_meta_i_mini$NMSS,G = 2,verbose = F)
       } else{
-        mclust_out1 <- Mclust(cell_meta_i_mini$NMSS,G = 10,verbose = F)
+        mclust_out1 <- mclust::Mclust(cell_meta_i_mini$NMSS,G = 10,verbose = F)
       }
       NMSS_cutoffs <- sort(mclust_out1$parameters$mean,decreasing = T)
       NMSS_cutoffs
@@ -443,28 +446,6 @@ get_seed_candidates <- function(cell_meta){
         }
       }
       final_NMSS_cutoff
-      cell_meta_i_mini$NMSS_classification <- as.character(mclust_out1$classification)
-      ggplot(cell_meta_i_mini, aes(x = NMSS, color = NMSS_classification)) +
-        geom_density(aes(y = after_stat(count), fill = NMSS_classification,alpha = 0.2)) +
-        scale_y_continuous(expand = c(0,0)) +
-        geom_vline(xintercept=final_NMSS_cutoff, linetype="dotted")
-      # (ggplot(cell_meta_i_mini) +
-      #     geom_point(aes(x = GMSS,y = NMSS,color = kendall_pred_booltrue)) +
-      #     geom_vline(xintercept=2, linetype="dotted") +
-      #     geom_hline(yintercept=final_NMSS_cutoff, linetype="dotted")) %>%
-      #   aplot::insert_right((ggplot(cell_meta_i_mini,aes(x = NMSS,color = kendall_pred_booltrue)) +
-      #                          geom_density(aes(y = after_stat(count),fill = kendall_pred_booltrue,alpha = 0.2)) +
-      #                          scale_y_continuous(expand = c(0,0)) +
-      #                          theme_void() +
-      #                          theme(axis.title = element_blank(),
-      #                                axis.text = element_blank(),
-      #                                axis.ticks = element_blank()) +
-      #                          coord_flip() +
-      #                          NoLegend()),
-      #                       0.2)
-      # get_benchmark(cell_meta_i$true,cell_meta_i$kendall_pred)[1]
-      # get_benchmark(cell_meta_i_mini$true,cell_meta_i_mini$kendall_pred)[1]
-      # best_cluster_idx
       seed_cell_idx <- which(cell_meta_i_mini$NMSS >= final_NMSS_cutoff)
       get_benchmark(cell_meta_i_mini[seed_cell_idx,]$true,
                     cell_meta_i_mini[seed_cell_idx,]$kendall_pred)[1]
