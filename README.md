@@ -2,9 +2,9 @@
 
 ## Overview
 
-AtacAnnoR is an accurate and robust cross-modality cell type annotation method for scATAC-seq data.
+AtacAnnoR: A Reference-Based Annotation Tool for Single Cell ATAC-seq Data
 
-<img src="https://github.com/Telogen/AtacAnnoR/blob/main/figures/pipeline.png" width="700">
+<img src="https://github.com/Telogen/AtacAnnoR/blob/main/figures/fig1A.png" width="700">
 
 ## Installation
 
@@ -21,9 +21,6 @@ devtools::install_github("Telogen/AtacAnnoR")
 - Recommended packages: (will not affect the use of basic functions)
 
 ```R
-install.packages('ComplexHeatmap')
-install.packages('circlize')
-install.packages('grid')
 install.packages('ggplot2')
 install.packages('cowplot')
 install.packages('aplot')
