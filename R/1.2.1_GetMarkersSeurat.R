@@ -5,7 +5,7 @@
 
 
 
-get_global_markers_Seurat <- function(sc_counts_mtx, labels,max_marker = 200,return_raw = F){
+get_global_markers_Seurat <- function(sc_counts_mtx, labels,max_marker = 200,threads = 10,return_raw = F){
   # sc_counts_mtx <- ref_mtx
   # labels <- SeuratObj_RNA$true
   # return.raw = F
@@ -57,7 +57,7 @@ get_global_markers_Seurat <- function(sc_counts_mtx, labels,max_marker = 200,ret
     } else{
       return(markers)
     }
-  },mc.cores = 10)
+  },mc.cores = threads)
   names(Seurat_marker_list) <- all_cts
   
   
@@ -82,7 +82,7 @@ get_global_markers_Seurat <- function(sc_counts_mtx, labels,max_marker = 200,ret
 
 
 
-get_neighbor_markers_Seurat <- function(sc_counts_mtx, labels, neighbor_celltypes, global_markers,max_marker = 200){
+get_neighbor_markers_Seurat <- function(sc_counts_mtx, labels, neighbor_celltypes, global_markers,max_marker = 200,threads = threads){
   # sc_counts_mtx <- ref_mtx
   # labels <- SeuratObj_RNA$true
   
@@ -143,7 +143,7 @@ get_neighbor_markers_Seurat <- function(sc_counts_mtx, labels, neighbor_celltype
       }
     }
     return(markers)
-  },mc.cores = 10)
+  },mc.cores = threads)
   names(Seurat_marker_list) <- all_cts
   
   # get neighbor_bg_genes for each ct

@@ -105,7 +105,7 @@ get_nmf_embedding <- function(peak_counts, binarize = T, tfidf = T, normalize = 
   }
   suppressMessages(library(RcppML))
   ATAC_model <- RcppML::nmf(peak_counts, k = n_factors, nonneg = T, tol = 1e-05, seed = nmf_seed, verbose = F)
-  ATAC_emd <- ATAC_model$h
+  ATAC_emd <- ATAC_model@h
   dimnames(ATAC_emd) <- list(paste0("factor_", 1:n_factors),
                              colnames(peak_counts))
   return(t(ATAC_emd))

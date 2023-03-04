@@ -2,7 +2,7 @@
 # get_seed_candidates
 
 
-get_seed_candidates <- function(cell_meta){
+get_seed_candidates <- function(cell_meta,threads = threads){
   
   cell_meta_li <- split(cell_meta,cell_meta$kendall_pred)
   table(cell_meta$kendall_pred)
@@ -99,7 +99,7 @@ get_seed_candidates <- function(cell_meta){
     return(cell_meta_i)
     # seed_cell_barcode <- rownames(cell_meta_i_NMSS)
     # return(seed_cell_barcode)
-  },mc.cores = 10)
+  },mc.cores = threads)
   
   new_cell_meta <- do.call(what = 'rbind',new_cell_meta_li)
   rownames(new_cell_meta) <- new_cell_meta$barcode

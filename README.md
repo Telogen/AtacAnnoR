@@ -28,23 +28,57 @@ install.packages('aplot')
 
 ## Tutorial
 
-### Get the input for AtacAnnoR
+```
+pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
+                     ref_celltype = SeuratObj_RNA$true, 
+                     ref_type = "sc",
+                     query_gene_activity = SeuratObj_ATAC[['ACTIVITY']]@counts, 
+                     query_peak_counts = SeuratObj_ATAC[['ATAC']]@counts, 
+                     query_nmf_embedding = NULL,
+                     threads = 10, 
+                     verbose = TRUE, 
+                     simple_output = TRUE) 
 
-- We recommend to use [Seurat](https://satijalab.org/seurat/index.html) to process scRNA-seq data and [Signac](https://satijalab.org/signac/) to process scATAC-seq data. You can get the input for AtacAnnoR following [this tutorial](https://github.com/Telogen/AtacAnnoR/blob/main/tutorial/get_scMAGICatac_input.ipynb).
+get_benchmark(SeuratObj_ATAC$true,pred)
+#          accuracy    average_recall average_precision          macro_f1 
+#         0.9132731         0.8897061         0.8968420         0.8904343 
+```
 
-### A quick start to AtacAnnoR
+- Run AtacAnnoR in Signac pipeline
 
-- Run AtacAnnoR in a line with default parameters, see [this tutorial](https://github.com/Telogen/AtacAnnoR/blob/main/tutorial/quick_start_to_scMAGICatac.ipynb).
+```
+SeuratObj_ATAC <- RunAtacAnnoR_Signac(ref_SeuratObj = SeuratObj_RNA,
+                                      ref_assay = 'RNA',
+                                      ref_ident = 'true',
+                                      ref_type = "sc",
+                                      query_SeuratObj = SeuratObj_ATAC,
+                                      query_ga_assay = 'ACTIVITY',
+                                      query_peak_assay = 'ATAC',
+                                      threads = 10, verbose = TRUE)
+```
+
+- Run AtacAnnoR in SnapATAC pipeline
+
+```
+query_snapObj <- RunAtacAnnoR_SnapATAC(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
+                                       ref_celltype = SeuratObj_RNA$true, 
+                                       ref_type = "sc",
+                                       query_snapObj = query_snapObj,
+                                       threads = 10, verbose = TRUE)
+```
 
 
-### Run AtacAnnoR step by step
+- Run AtacAnnoR in ArchR pipeline
 
-- You can also run AtacAnnoR step by step to see how AtacAnnoR works and modify parameters to annotate your scATAC-seq cells better, see [this tutorial](https://github.com/Telogen/AtacAnnoR/blob/main/tutorial/run_scMAGICatac_step_by_step.ipynb).
+```
+query_ArchRproj <- RunAtacAnnoR_ArchR(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
+                                      ref_celltype = SeuratObj_RNA$true, 
+                                      ref_type = "sc",
+                                      query_ArchRproj = query_ArchRproj,
+                                      threads = 10, 
+                                      verbose = TRUE)
+```
 
-
-### Run AtacAnnoR in Signac, SnapATAC, ArchR and Cicero pipeline
-
-- See [this tutorial](https://github.com/Telogen/AtacAnnoR/blob/main/tutorial/run_scMAGICatac_in_other_pipelines.ipynb).
 
 ## Citation
 

@@ -6,7 +6,7 @@
 
 
 
-get_global_markers_edgeR <- function(sc_counts_mtx,labels,max_marker = 200,return_raw = F){
+get_global_markers_edgeR <- function(sc_counts_mtx,labels,max_marker = 200,threads = 10,return_raw = F){
   
   pb_ref <- get_pseudo_bulk_mtx(sc_counts_mtx, labels)
   HEG_num <- round(nrow(pb_ref) * 0.5)
@@ -49,7 +49,7 @@ get_global_markers_edgeR <- function(sc_counts_mtx,labels,max_marker = 200,retur
       return(markers_edgeR)
     }
 
-  },mc.cores = 10)
+  },mc.cores = threads)
   names(edgeR_marker_list) <- all_cts
   # sapply(edgeR_marker_list,length)
   
@@ -76,7 +76,7 @@ get_global_markers_edgeR <- function(sc_counts_mtx,labels,max_marker = 200,retur
 
 
 
-get_neighbor_markers_edgeR <- function(sc_counts_mtx,labels,neighbor_celltypes, global_markers,max_marker = 200){
+get_neighbor_markers_edgeR <- function(sc_counts_mtx,labels,neighbor_celltypes, global_markers,max_marker = 200,threads = 10){
   
   pb_ref <- get_pseudo_bulk_mtx(sc_counts_mtx, labels)
   HEG_num <- round(nrow(pb_ref) * 0.5)
@@ -123,7 +123,7 @@ get_neighbor_markers_edgeR <- function(sc_counts_mtx,labels,neighbor_celltypes, 
     }
     return(markers_edgeR)
     
-  },mc.cores = 10)
+  },mc.cores = threads)
   names(edgeR_marker_list) <- all_cts
   # sapply(edgeR_marker_list,length)
   
