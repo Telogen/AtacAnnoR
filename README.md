@@ -4,7 +4,7 @@
 
 AtacAnnoR: A Reference-Based Annotation Tool for Single Cell ATAC-seq Data
 
-<img src="https://github.com/Telogen/AtacAnnoR/blob/main/figures/fig1A.png" width="700">
+<img src="https://github.com/Telogen/AtacAnnoR/blob/main/figures/fig1A.png" width="800">
 
 ## Installation
 
