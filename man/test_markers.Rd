@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.4_TestMarkers.R
 \name{test_markers}
 \alias{test_markers}
-\title{Test markers of first round annotation}
+\title{Test markers}
 \usage{
 test_markers(
   query_mtx,
@@ -19,19 +19,19 @@ test_markers(
 
 \item{cell_meta}{a cell metadata}
 
-\item{global_markers}{global_markers}
+\item{global_markers}{global markers}
 
-\item{neighbor_markers}{neighbor_markers}
+\item{neighbor_markers}{neighbor markers}
 
-\item{which_label}{which_label}
+\item{which_label}{which label to test, default is 'kendall_pred'}
 
 \item{threads}{the number of threads, default is 10}
 
 \item{verbose}{whether to display messages, default is TRUE}
 }
 \value{
-Returns a new cell metadata with columns 'GMSS','NMSS','NMFC'.
+Returns a new cell metadata with new columns 'GMSS','NMSS'
 }
 \description{
-Test markers of first round annotation
+Test whether the markers are of high activity in the predicted cells
 }

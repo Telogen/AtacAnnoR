@@ -288,54 +288,8 @@ get_merged_labels_Monaco <- function(df){
 
 
 
-get_Zhu_score <- function(celltype){
-  score = c(1,1,2,2,1,2,2,2,1,1,1,1,1,1,1)
-  names(score) <- c('Naive T cells','Cytotoxic CD8 T cells','MAIT','NKs','Activated CD4 T cells',
-                    'Naive B cells','Memory B cells','XCL+ NKs','Cycling T cells','Monocytes',
-                    'DCs','Megakaryocytes','Plasma','Cycling Plasma','Stem cells')
-  return(score[celltype])
-}
 
-get_Wilk_score <- function(celltype){
-  score = c(1,2,2,1,1,1,2,1,2,1,2,2,1,1,1,1,1)
-  names(score) <- c('NK','CD8m T','CD14 Monocyte','B','CD4n T','CD4m T','CD16 Monocyte',
-                    'gd T','DC','RBC','pDC','CD8eff T','Plasmablast','SC & Eosinophil',
-                    'Platelet','Granulocyte','CD4 T')
-  return(score[celltype])
-}
-
-
-get_Stephenson_score <- function(celltype){
-  score = c(2,1,2,2,1,2,2,2,2,1,2,2,2,1,3,2,1,2,3,3,1,1,1,2,3,2,1,2)
-  names(score) <- c('NK','CD4.Naive','CD14.mono','CD4.CM','CD8.Naive','CD4.IL22','CD8.TE',
-                    'CD8.EM','B_naive','gdT','MAIT','CD16.mono','DC','Platelets',
-                    'B_switched_memory','CD4.Th','NKT','pDC','B_immature','B_non-switched_memory',
-                    'Plasma','Lymph.prolif','RBC','ILC','B_exhausted','CD4.EM','HSC','Treg')
-  return(score[celltype])
-}
-
-get_Hao_score <- function(celltype){
-  score = c(2,2,2,2,2,2,2,2,2,1,3,2,2,2,2,3,1,2,2,1,1,1,1,2,1,3)
-  names(score) <- c('CD14 Mono','NK','CD4 Naive','CD4 TCM','CD8 TEM','CD8 Naive','B naive',
-                    'CD16 Mono','CD4 TEM','gdT','B memory','CD8 TCM','MAIT','cDC',
-                    'Treg','B intermediate','Platelet','CD4 CTL','pDC','Proliferating',
-                    'Plasmablast','dnT','HSPC','ILC','Eryth','ASDC')
-  return(score[celltype])
-}
-
-get_Monaco_score <- function(celltype){
-  score = c(3,2,3,3,1,2,2,2,2,2,2,2,2,2,2,1,1,2,2,1,1,2,2,2,2,2,2,2,2)
-  names(score) <- c('B_Ex','B_naive','B_NSM','B_SM','Basophils','C_mono','CD4_naive',
-                    'CD8_CM','CD8_EM','CD8_naive','CD8_TE','I_mono','MAIT','mDC',
-                    'NC_mono','Neutrophils','NK','nVD2_gdT','pDC','Plasmablasts',
-                    'Progenitor','TFH','Th1','Th1.Th17','Th17','Th2','Treg',
-                    'VD2_gdT','CD4_TE')
-  return(score[celltype])
-}
-
-
-
-get_merged_labels_dataset0 <- function(df){
+get_merged_labels_10XMultiome <- function(df){
   if(class(df) != 'data.frame'){
     df_new <- data.frame(df = df)
   } else{
@@ -347,8 +301,7 @@ get_merged_labels_dataset0 <- function(df){
     labels[which(labels %in% c("CD16 Mono"))] = 'CD16Mono'
     labels[which(labels %in% c("CD4 Naive"))] = 'CD4NT'
     labels[which(labels %in% c("CD8 Naive"))] = 'CD8NT'
-    labels[which(labels %in% c("CD4 TCM"))] = 'CD4TCM'
-    labels[which(labels %in% c("CD4 TEM"))] = 'CD4TEM'
+    labels[which(labels %in% c("CD4 TCM","CD4 TEM"))] = 'CD4T'
     labels[which(labels %in% c("NK"))] = 'ILC'
     labels[which(labels %in% c("Naive B"))] = 'NaiveB'
     labels[which(labels %in% c("CD8 TEM_2", "CD8 TEM_1"))] = 'CD8T'
@@ -364,11 +317,33 @@ get_merged_labels_dataset0 <- function(df){
   }
 }
 
-get_dataset0_score <- function(celltype){
-  score = c(2,2,2,2,2,1,2,2,3,2,2,2,2,1,2,2,2,1,1)
-  names(score) <- c('CD14 Mono','CD4 Naive','CD8 Naive','CD4 TCM','CD16 Mono','NK',
-                    'Naive B','CD8 TEM_2','Intermediate B','CD8 TEM_1','CD4 TEM',
-                    'cDC','Treg','gdT','Memory B','MAIT','pDC','HSPC','Plasma')
-  return(score[celltype])
+
+
+
+
+GET_GML <- function(dataset){
+  if(dataset %in% c('10X-Multiome','SNARE-seq','BloodDev','Brain')){
+    GML <- function(x){return(x)}
+  } else if(dataset == 'ISSAAC-seq'){
+    GML <- get_merged_labels_dataset_ISSAACseq
+  } else if(dataset == 'SHARE-seq'){
+    GML <- get_merged_labels_dataset_SHAREseq
+  } else if(dataset == 'Kidney'){
+    GML <- get_merged_labels_Kidney
+  } else if(dataset == 'Zhu'){
+    GML <- get_merged_labels_Zhu
+  } else if(dataset == 'Wilk'){
+    GML <- get_merged_labels_Wilk
+  } else if(dataset == 'Stephenson'){
+    GML <- get_merged_labels_Stephenson
+  } else if(dataset == 'Hao'){
+    GML <- get_merged_labels_Hao
+  } else if(dataset == 'Monaco'){
+    GML <- get_merged_labels_Monaco
+  }
+  return(GML)
 }
+
+
+
 

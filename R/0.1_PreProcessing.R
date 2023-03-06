@@ -15,10 +15,6 @@
 #' @return Returns a list containing two matrices after pre-processing.
 #' @export
 #'
-#' @examples
-#' pre_processing_mtxs <- pre_processing(ref_mtx = REF_MTX, query_mtx = GA_MTX)
-#' ref_mtx <- pre_processing_mtxs$ref_mtx
-#' query_mtx <- pre_processing_mtxs$query_mtx
 #'
 pre_processing <- function(ref_mtx, query_mtx, verbose = T) {
   ref_mtx <- ref_mtx[which(Matrix::rowSums(ref_mtx) > 0), ]
@@ -65,24 +61,21 @@ mytfidf <- function (object){
 
 
 
-#' Get dimension reduced cell embedding by NMF
+#' Get meta-program matrix by NMF
 #'
-#' Get dimension reduced cell embedding by NMF from scATAC-seq peak counts
+#' Get meta-program matrix by NMF from scATAC-seq peak counts matrix
 #'
 #' @param peak_counts a query scATAC-seq peak counts whose rows are peaks and columns are cells
 #' @param binarize whether to binarize the peak counts matrix, default is TRUE (recommended)
 #' @param tfidf whether to do TF-IDF, default is TRUE (recommended)
 #' @param normalize whether to do normalization, default is TRUE (recommended)
-#' @param nmf_seed the seed set for \code{RcppML::nmf}, default is NULL
+#' @param nmf_seed the seed set for NMF, default is NULL
 #' @param n_factors the number of factors (meta-programs) to get, default is 50
 #' @param verbose whether to display messages, default is TRUE
 #'
-#' @return Returns a dimension reduced matrix whose rows are cells and columns are
-#' factors (meta-programs).
+#' @return Returns a dimension reduced matrix whose rows are cells and columns are factors (meta-programs).
 #' @export
 #'
-#' @examples
-#' query_nmf_embedding <- get_nmf_embedding(PEAK_COUNTS, n_factors = 50)
 get_nmf_embedding <- function(peak_counts, binarize = T, tfidf = T, normalize = T,nmf_seed = NULL,
                               n_factors = 50L, verbose = T) {
   if (binarize == T) {

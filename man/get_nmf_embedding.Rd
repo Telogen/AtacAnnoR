@@ -2,7 +2,7 @@
 % Please edit documentation in R/0.1_PreProcessing.R
 \name{get_nmf_embedding}
 \alias{get_nmf_embedding}
-\title{Get dimension reduced cell embedding by NMF}
+\title{Get meta-program matrix by NMF}
 \usage{
 get_nmf_embedding(
   peak_counts,
@@ -23,19 +23,15 @@ get_nmf_embedding(
 
 \item{normalize}{whether to do normalization, default is TRUE (recommended)}
 
-\item{nmf_seed}{the seed set for \code{RcppML::nmf}, default is NULL}
+\item{nmf_seed}{the seed set for NMF, default is NULL}
 
 \item{n_factors}{the number of factors (meta-programs) to get, default is 50}
 
 \item{verbose}{whether to display messages, default is TRUE}
 }
 \value{
-Returns a dimension reduced matrix whose rows are cells and columns are
-factors (meta-programs).
+Returns a dimension reduced matrix whose rows are cells and columns are factors (meta-programs).
 }
 \description{
-Get dimension reduced cell embedding by NMF from scATAC-seq peak counts
-}
-\examples{
-query_nmf_embedding <- get_nmf_embedding(PEAK_COUNTS, n_factors = 50)
+Get meta-program matrix by NMF from scATAC-seq peak counts matrix
 }

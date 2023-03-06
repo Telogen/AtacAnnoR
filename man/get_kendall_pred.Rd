@@ -13,9 +13,5 @@ get_kendall_pred(cor_mtx)
 Returns a cell metadata whose rows are query cells and columns are first round labels.
 }
 \description{
-Get first round annotation labels from correlation matrix
-}
-\examples{
-cell_meta <- get_kendall_pred(cor_mtx)
-
+Get first round annotation labels from the correlation matrix
 }

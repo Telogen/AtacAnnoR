@@ -1,11 +1,23 @@
-########### GetMarkersSeurat ###########
-# get_global_markers_Seurat
-# get_neighbor_markers_Seurat
+########### GetMarkers_sc ###########
+# get_global_markers_sc
+# get_neighbor_markers_sc
 
 
 
 
-get_global_markers_Seurat <- function(sc_counts_mtx, labels,max_marker = 200,threads = 10,return_raw = F){
+#' Get global markers for scRNA-seq gene counts matrix
+#' 
+#' Get global markers for scRNA-seq gene counts matrix
+#'
+#' @param sc_counts_mtx scRNA-seq counts matrix
+#' @param labels scRNA-seq cell labels
+#' @param max_marker maximum number of markers for each cell type
+#' @param threads the number of threads, default is 10
+#' @param return_raw whether return raw data, default is FALSE
+#'
+#' @return Returns a list of global markers for each cell type
+#' @export
+get_global_markers_sc <- function(sc_counts_mtx, labels,max_marker = 200,threads = 10,return_raw = F){
   # sc_counts_mtx <- ref_mtx
   # labels <- SeuratObj_RNA$true
   # return.raw = F
@@ -82,7 +94,20 @@ get_global_markers_Seurat <- function(sc_counts_mtx, labels,max_marker = 200,thr
 
 
 
-get_neighbor_markers_Seurat <- function(sc_counts_mtx, labels, neighbor_celltypes, global_markers,max_marker = 200,threads = threads){
+#' Get neighbor markers for scRNA-seq gene counts matrix
+#' 
+#' Get neighbor markers for scRNA-seq gene counts matrix
+#'
+#' @param sc_counts_mtx scRNA-seq counts matrix
+#' @param labels scRNA-seq cell labels
+#' @param neighbor_celltypes neighbor celltypes got from `get_neighbor_celltypes()`
+#' @param global_markers global markers got from `get_global_markers_sc()`
+#' @param max_marker maximum number of markers for each cell type
+#' @param threads the number of threads, default is 10
+#'
+#' @return Returns a list of neighbor markers for each cell type
+#' @export
+get_neighbor_markers_sc <- function(sc_counts_mtx, labels, neighbor_celltypes, global_markers,max_marker = 200,threads = 10){
   # sc_counts_mtx <- ref_mtx
   # labels <- SeuratObj_RNA$true
   

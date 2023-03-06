@@ -19,7 +19,3 @@ Returns a new cell metadata with true labels.
 \description{
 Add the true labels to cell metadata
 }
-\examples{
-cell_meta <- get_cell_meta_with_true(cell_meta, true_labels = TRUE_LABEL, cor_mtx)
-
-}

@@ -84,18 +84,5 @@ get_each_precision <- function(cell_meta,ident = 'kendall_pred'){
 
 
 
-# get_each_f1 <- function(cell_meta,ident = 'kendall_pred'){
-#   cell_meta_li <- split(cell_meta,cell_meta[,ident])
-#   out <- sapply(cell_meta_li,function(cell_meta_i){
-#     c(true_cells = length(which(cell_meta_i[,ident] == cell_meta_i$true)),
-#       predicted_cells = length(cell_meta_i$true),
-#       precision = length(which(cell_meta_i[,ident] == cell_meta_i$true))/length(cell_meta_i$true))
-#   }) %>% t() %>% as.data.frame()
-#   out$true_cells <- as.numeric(out$true_cells)
-#   out$predicted_cells <- as.numeric(out$predicted_cells)
-#   out$precision <- as.numeric(out$precision) %>% round(3)
-#   return(out)
-# }
-
 
 

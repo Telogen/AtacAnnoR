@@ -19,9 +19,3 @@ Returns a list containing two matrices after pre-processing.
 \description{
 Pre-process two matrices to remove 0 expressed genes and keep common genes
 }
-\examples{
-pre_processing_mtxs <- pre_processing(ref_mtx = REF_MTX, query_mtx = GA_MTX)
-ref_mtx <- pre_processing_mtxs$ref_mtx
-query_mtx <- pre_processing_mtxs$query_mtx
-
-}

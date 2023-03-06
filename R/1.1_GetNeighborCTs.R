@@ -4,13 +4,13 @@
 
 
 
-#' Get the pseudo bulk matrix
+#' Get the pseudo bulk gene expression matrix
 #'
-#' Get the pseudo bulk matrix from a single cell matrix
-#'
-#' @param sc_mtx a single cell matrix whose rows are features and columns are cells
+#' Get the pseudo bulk gene expression matrix from a single cell gene expression matrix
+#' 
+#' @param sc_mtx a single cell gene expression matrix whose rows are features and columns are cells
 #' @param labels a vector of cell types whose orders are same as the columns of sc_mtx
-#' @param mode the method to aggragate cells, default is \code{'mean'}
+#' @param mode the method to aggregate cells, default is \code{'mean'}
 #'  \itemize{
 #'   \item{'mean': }{get the mean of each cell type}
 #'   \item{'sum': }{get the sum of each cell type}
@@ -19,8 +19,6 @@
 #' @return Returns a pseudo bulk matrix whose rows are features and columns are cell types.
 #' @export
 #'
-#' @examples
-#' pb_ref <- get_pseudo_bulk_mtx(sc_mtx = ref_mtx, labels = REF_CELLTYPE)
 get_pseudo_bulk_mtx <- function(sc_mtx, labels, mode = "mean") {
   Seurat_obj <- SeuratObject::CreateSeuratObject(sc_mtx,meta.data = data.frame(group = labels,row.names = colnames(sc_mtx))) %>% suppressWarnings()
   if (mode == "mean") {
@@ -37,27 +35,25 @@ get_pseudo_bulk_mtx <- function(sc_mtx, labels, mode = "mean") {
 
 
 
-#' Get cell neighbors from a pseudo bulk matrix
+#' Get neighbor cell types
 #'
-#' Get cell neighbors from a pseudo bulk matrix
+#' Get neighbor cell types from a pseudo bulk matrix
 #'
-#' @param pb.ref a pseudo bulk matrix whose rows are features and columns are cell types
-#' @param min.cor the minimum cutoff of cell type correlation
+#' @param sc_count_mtx scRNA-seq counts matrix
+#' @param labels scRNA-seq cell labels
+#' @param global_markers global markers got from `get_global_markers_sc()`
+#' @param min.cor the minimum cutoff of cell type correlation to define 'neighbor cells', default is 0.7
 #' @param verbose whether to display messages and plot, default is TRUE
 #'
-#' @return Returns a list of cell subtypes.
+#' @return Returns a list of cell subtypes
 #' @export
 #'
 #' @importFrom pcaPP cor.fk
-get_neighbor_celltypes <- function(sc_count_mtx,labels,global_markers,min.cor = NULL,verbose = T) {
+get_neighbor_celltypes <- function(sc_count_mtx,labels,global_markers,min.cor = 0.7,verbose = T) {
   pb_counts <- get_pseudo_bulk_mtx(sc_count_mtx,labels,mode = 'sum')
   features <- unlist(global_markers,use.names = F) %>% unique()
   pb_counts_selected <- pb_counts[features,]
   COR <- pcaPP::cor.fk(pb_counts_selected)
-  if(is.null(min.cor)){
-    min.cor <- round(summary(as.numeric(COR))[5],3)
-    message(paste0('min.cor automatically set to: ',min.cor))
-  }
   neighbor_celltypes_list <- apply(COR,1,function(row){
     names(which(sort(row, decreasing = T) > min.cor))
   })

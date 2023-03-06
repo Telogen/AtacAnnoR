@@ -2,7 +2,7 @@
 % Please edit documentation in R/3_MAPLabelCorrector.R
 \name{correct_labels}
 \alias{correct_labels}
-\title{correct labels}
+\title{Correct labels}
 \usage{
 correct_labels(
   merged_labels,
@@ -16,19 +16,19 @@ correct_labels(
 \arguments{
 \item{merged_labels}{merged_labels got from \code{get_merged_labels()}}
 
-\item{query_nmf_embedding}{the nmf_embedding of query data}
+\item{query_nmf_embedding}{query meta-program matrix}
 
-\item{cutoff}{0.6 by default, smaller value means more strict correction}
+\item{cutoff}{the cutoff to drfinr 'similar' cells, smaller value means more strict correction, default is 0.6}
 
-\item{max_edit_distance}{number of references-1 by default}
+\item{max_edit_distance}{max edit distance, by default is the number of references-1}
 
-\item{threads}{number of threads}
+\item{threads}{threads the number of threads, default is 10}
 
-\item{verbose}{verbose}
+\item{verbose}{whether to display messages, default is TRUE}
 }
 \value{
-Return a list containing the information of the corrected labels
+Returns a list containing the information of the corrected labels
 }
 \description{
-correct labels
+Correct labels
 }

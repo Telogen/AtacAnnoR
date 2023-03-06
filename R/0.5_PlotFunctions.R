@@ -5,15 +5,15 @@
 # plot_pred_scores
 # plot_seed_cells
 
-plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = NULL){
+plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
   library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(cowplot) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   
   bench <- get_benchmark(cell_meta$true,cell_meta[,which(colnames(cell_meta) == which.group)])
   bench <- round(bench*100,2)
-  if(is.null(title)){
-    title <- mode
-  }
+  # if(is.null(title)){
+  #   title <- mode
+  # }
   
   if(title == 1){
     myggtitle <- ggtitle(paste0(which.group,' average recall: ',bench[2],'%'))
@@ -43,8 +43,9 @@ plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = NULL)
       xlab("True cell type") +
       ylab("Predicted cell type") +
       theme_cowplot() +
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-      geom_text(aes(label = freq_morethan5),size = 3)
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    # +
+    #   geom_text(aes(label = freq_morethan5),size = 3)
     
   }
   
@@ -68,8 +69,9 @@ plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = NULL)
       xlab("Predicted cell type") +
       ylab("True cell type") +
       theme_cowplot() +
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-      geom_text(aes(label = freq_morethan5),size = 3)
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+    # +
+    #   geom_text(aes(label = freq_morethan5),size = 3)
     
   }
   
@@ -89,8 +91,9 @@ plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = NULL)
       ylab("Predicted cell type") +
       xlab("True cell type") +
       theme_cowplot() +
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-      geom_text(aes(label = Freq),size = 3)
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    # +
+    #   geom_text(aes(label = Freq),size = 3)
     
   }
   
@@ -122,7 +125,7 @@ plot_cell_distribution <- function(cell_meta,celltypes.to.plot = NULL,group.by =
   library(aplot) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(Seurat) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  if(is.null(cell_meta$is_seed)){
+  if(is.null(cell_meta[['is_seed']])){
     cell_meta$is_seed <- FALSE
   }
   name_booltrue <- paste0(group.by,'_booltrue')
@@ -140,7 +143,7 @@ plot_cell_distribution <- function(cell_meta,celltypes.to.plot = NULL,group.by =
     DATA <- i
     
     p1 <- ggplot(data = DATA) +
-      geom_point(aes_string(x = x,y = y, color = name_booltrue,shape = 'is_seed',size = 1)) +
+      geom_point(aes_string(x = x,y = y, color = name_booltrue,shape = 'is_seed')) +
       scale_x_continuous(expand=c(0,0)) + 
       scale_y_continuous(expand=c(0,0))
     
@@ -173,22 +176,23 @@ plot_cell_distribution <- function(cell_meta,celltypes.to.plot = NULL,group.by =
       seed_candidate_DATA <- DATA[which(DATA$is_seed_candidate),]
       seed_DATA <- DATA[which(DATA$is_seed),]
       p1 <- p1 + 
-        geom_vline(xintercept = DATA$NMSS_cutoff[1], linetype = 2) + 
-        annotate("text",x=Inf, y = Inf, vjust=2, hjust=1,size = 5,
-                 label = paste0(' Kept cell number: ',
-                                nrow(seed_candidate_DATA),
-                                ' (',
-                                round(nrow(seed_candidate_DATA)/nrow(DATA)*100,2),
-                                '%) \n Seed candidate ccuracy: ',
-                                round(get_benchmark(seed_candidate_DATA$true,seed_candidate_DATA$kendall_pred)[1],3),
-                                ' \n Final seed number: ',
-                                nrow(seed_DATA),
-                                ' (',
-                                round(nrow(seed_DATA)/nrow(DATA)*100,2),
-                                '%) \n Final seed accuracy: ',
-                                round(get_benchmark(seed_DATA$true,seed_DATA$kendall_pred)[1],3)
-                                )
-                 )
+        geom_vline(xintercept = DATA$NMSS_cutoff[1], linetype = 2)
+      # + 
+      #   annotate("text",x=Inf, y = Inf, vjust=2, hjust=1,size = 5,
+      #            label = paste0(' Kept cell number: ',
+      #                           nrow(seed_candidate_DATA),
+      #                           ' (',
+      #                           round(nrow(seed_candidate_DATA)/nrow(DATA)*100,2),
+      #                           '%) \n Seed candidate ccuracy: ',
+      #                           round(get_benchmark(seed_candidate_DATA$true,seed_candidate_DATA$kendall_pred)[1],3),
+      #                           ' \n Final seed number: ',
+      #                           nrow(seed_DATA),
+      #                           ' (',
+      #                           round(nrow(seed_DATA)/nrow(DATA)*100,2),
+      #                           '%) \n Final seed accuracy: ',
+      #                           round(get_benchmark(seed_DATA$true,seed_DATA$kendall_pred)[1],3)
+      #                           )
+      #            )
     }
     
     P <- p1 %>% insert_top(p2,height = 0.2) %>% insert_right(p3,0.2)
@@ -205,31 +209,6 @@ plot_cell_distribution <- function(cell_meta,celltypes.to.plot = NULL,group.by =
     return(P_list)
   }
 }
-
-
-
-
-
-
-plot_pred_scores <- function(cell_meta,mode = 1){
-  cell_meta$annotation_correct <- factor(cell_meta$true == cell_meta$final_pred,levels = c(TRUE,FALSE))
-  if (mode == 1){
-    p1 <- ggplot(cell_meta, aes(pred_score, fill = annotation_correct, colour = annotation_correct)) +
-      geom_density(position = "fill",aes(y = after_stat(count),alpha = 0.5)) +
-      scale_fill_manual(values=c("#00BFC4", "#F8766D")) +
-      scale_color_manual(values=c("#00BFC4", "#F8766D")) +
-      xlab("Prediction Score")
-    print(p1)
-  } else{
-    p2 <- ggplot(cell_meta, aes(pred_score, fill = annotation_correct, colour = annotation_correct)) +
-      geom_density(position = "stack",aes(y = after_stat(count),alpha = 0.5)) +
-      scale_fill_manual(values=c("#00BFC4", "#F8766D")) +
-      scale_color_manual(values=c("#00BFC4", "#F8766D")) +
-      xlab("Prediction Score")
-    print(p2)
-  }
-}
-
 
 
 

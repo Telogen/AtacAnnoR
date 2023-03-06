@@ -3,19 +3,19 @@
 
 
 
-#' Test markers of first round annotation
+#' Test markers
 #'
-#' Test markers of first round annotation
+#' Test whether the markers are of high activity in the predicted cells
 #'
 #' @param query_mtx query gene activity matrix whose rows are genes and columns are cells
 #' @param cell_meta a cell metadata
-#' @param global_markers global_markers
-#' @param neighbor_markers neighbor_markers
-#' @param which_label which_label
+#' @param global_markers global markers
+#' @param neighbor_markers neighbor markers
+#' @param which_label which label to test, default is 'kendall_pred'
 #' @param threads the number of threads, default is 10
 #' @param verbose whether to display messages, default is TRUE
 #'
-#' @return Returns a new cell metadata with columns 'GMSS','NMSS','NMFC'.
+#' @return Returns a new cell metadata with new columns 'GMSS','NMSS'
 #' @export
 #'
 #'

@@ -2,16 +2,16 @@
 % Please edit documentation in R/3_MAPLabelCorrector.R
 \name{get_merged_labels}
 \alias{get_merged_labels}
-\title{get merged labels}
+\title{Get merged labels}
 \usage{
 get_merged_labels(pred_df)
 }
 \arguments{
-\item{pred_df}{}
+\item{pred_df}{a data frame whose rows are cells and each column is the predictions from a specific reference}
 }
 \value{
-Return the merged label
+Returns the merged labels
 }
 \description{
-get merged labels
+Get merged labels
 }

@@ -3,14 +3,16 @@
 # weighted_knn
 
 
-#' get_neighbors
+#' Get neighbors
+#' 
+#' Get neighbors for each cell
 #'
-#' @param train todo
-#' @param test todo
-#' @param k todo
-#' @param metric euclidean, cosine, manhattan, and hamming
+#' @param train a matrix whose rows are cells and columns are features, each row represents a cell in train dataset
+#' @param test a matrix whose rows are cells and columns are features, each row represents a cell to find neighbor from `train`
+#' @param k the number of nearest neighbor cells to find for each cell in `test`
+#' @param metric the metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`, default is `cosine`
 #'
-#' @return todo
+#' @return Returns a list containing the nearest neighbor index and the nearest neighbor distance
 #' @export
 #'
 get_neighbors <- function(train,test,k,dist.metric = 'cosine'){
@@ -28,13 +30,15 @@ get_neighbors <- function(train,test,k,dist.metric = 'cosine'){
 
 
 
-#' weighted_knn
+#' Weighted KNN
+#' 
+#' Apply the weighted KNN algorithm to make the predictions
 #'
-#' @param neighbors todo
-#' @param train.labels todo
-#' @param type NULL or 'prob'
+#' @param neighbors neighbors got from `get_neighbors()`
+#' @param train.labels the labels of cells in the train dataset
+#' @param type return type, default is NULL, which means only return labels, `prob` means return the predicted probability
 #'
-#' @return todo
+#' @return Returns the predicted labels
 #' @export
 #'
 weighted_knn <- function(neighbors,train.labels,type = NULL){

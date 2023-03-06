@@ -14,7 +14,7 @@
 #' @param ref_celltype a vector of cell types whose orders are same as the columns of sc.mtx
 #' @param ref_type which type of the reference matrix is
 #'  \itemize{
-#'   \item{'sc': }{the reference matrix is a single cell RNS-seq matrix}
+#'   \item{'sc': }{the reference matrix is a single cell RNA-seq matrix}
 #'   \item{'bulk': }{the reference matrix is a bulk RNA-seq matrix}
 #' }
 #' @param query_gene_activity a query gene activity matrix whose rows are genes and columns are cells
@@ -25,19 +25,19 @@
 #' @param verbose whether to display messages and plots, default is TRUE
 #' @param simple_output whether to return a simple output, default is TRUE
 #'
-#' @return If \code{simple_output} is set to TRUE, return a vector of predicted labels.
-#'   If \code{simple_output} is set to FALSE, return a list object of all outputs.
+#' @return If \code{simple_output} is set to TRUE, returns a vector of predicted labels.
+#'   If \code{simple_output} is set to FALSE, returns a list object of all outputs.
 #' @export
 #'
 RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
-                           query_gene_activity, query_peak_counts = NULL, query_nmf_embedding = NULL,
-                           threads = 10, verbose = TRUE, simple_output = TRUE) {
+                         query_gene_activity, query_peak_counts = NULL, query_nmf_embedding = NULL,
+                         threads = 10, verbose = TRUE, simple_output = TRUE) {
   if(ref_type == 'bulk'){
-    get_global_markers <- get_global_markers_edgeR
-    get_neighbor_markers <- get_neighbor_markers_edgeR
+    get_global_markers <- get_global_markers_bulk
+    get_neighbor_markers <- get_neighbor_markers_bulk
   } else{
-    get_global_markers <- get_global_markers_Seurat
-    get_neighbor_markers <- get_neighbor_markers_Seurat
+    get_global_markers <- get_global_markers_sc
+    get_neighbor_markers <- get_neighbor_markers_sc
   }
   
   # Pre-Processing

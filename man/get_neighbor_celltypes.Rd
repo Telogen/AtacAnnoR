@@ -2,26 +2,30 @@
 % Please edit documentation in R/1.1_GetNeighborCTs.R
 \name{get_neighbor_celltypes}
 \alias{get_neighbor_celltypes}
-\title{Get cell neighbors from a pseudo bulk matrix}
+\title{Get neighbor cell types}
 \usage{
 get_neighbor_celltypes(
   sc_count_mtx,
   labels,
   global_markers,
-  min.cor = NULL,
+  min.cor = 0.7,
   verbose = T
 )
 }
 \arguments{
-\item{min.cor}{the minimum cutoff of cell type correlation}
+\item{sc_count_mtx}{scRNA-seq counts matrix}
+
+\item{labels}{scRNA-seq cell labels}
+
+\item{global_markers}{global markers got from \code{get_global_markers_sc()}}
+
+\item{min.cor}{the minimum cutoff of cell type correlation to define 'neighbor cells', default is 0.7}
 
 \item{verbose}{whether to display messages and plot, default is TRUE}
-
-\item{pb.ref}{a pseudo bulk matrix whose rows are features and columns are cell types}
 }
 \value{
-Returns a list of cell subtypes.
+Returns a list of cell subtypes
 }
 \description{
-Get cell neighbors from a pseudo bulk matrix
+Get neighbor cell types from a pseudo bulk matrix
 }

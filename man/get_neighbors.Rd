@@ -2,22 +2,22 @@
 % Please edit documentation in R/2.1_WKNN.R
 \name{get_neighbors}
 \alias{get_neighbors}
-\title{get_neighbors}
+\title{Get neighbors}
 \usage{
 get_neighbors(train, test, k, dist.metric = "cosine")
 }
 \arguments{
-\item{train}{todo}
+\item{train}{a matrix whose rows are cells and columns are features, each row represents a cell in train dataset}
 
-\item{test}{todo}
+\item{test}{a matrix whose rows are cells and columns are features, each row represents a cell to find neighbor from \code{train}}
 
-\item{k}{todo}
+\item{k}{the number of nearest neighbor cells to find for each cell in \code{test}}
 
-\item{metric}{euclidean, cosine, manhattan, and hamming}
+\item{metric}{the metric to calculate distance, can be \code{euclidean}, \code{cosine}, \code{manhattan}, and \code{hamming}, default is \code{cosine}}
 }
 \value{
-todo
+Returns a list containing the nearest neighbor index and the nearest neighbor distance
 }
 \description{
-get_neighbors
+Get neighbors for each cell
 }

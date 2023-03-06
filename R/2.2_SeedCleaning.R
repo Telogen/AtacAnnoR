@@ -2,6 +2,17 @@
 # seed_cleaning
 
 
+#' Seed cell cleaning
+#' 
+#' Clean seed cell candidates
+#'
+#' @param cell_meta a cell metadata 
+#' @param query_nmf_embedding query meta-program matrix
+#' @param dist.metric the metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`, default is `cosine`
+#'
+#' @return Returns a new cell meta data with a column `is_seed`
+#' @export
+#'
 seed_cleaning <- function(cell_meta,query_nmf_embedding,dist.metric = 'cosine'){
   
   seed_meta <- cell_meta[which(cell_meta$is_seed_candidate == T),]

@@ -1,10 +1,18 @@
-# AtacAnnoR
+# AtacAnnoR: A Reference-Based Annotation Tool for Single Cell ATAC-seq Data
 
 ## Overview
 
-AtacAnnoR: A Reference-Based Annotation Tool for Single Cell ATAC-seq Data
+AtacAnnoR is a novel scATAC-seq cell type annotation method using scRNA-seq data as the reference. 
 
 <img src="https://github.com/Telogen/AtacAnnoR/blob/main/figures/fig1A.png" width="800">
+
+AtacAnnoR performs **two rounds** of annotation, which annotate scATAC-seq cells at gene-level and genome-wide-level, respectively.
+
+In the first round, AtacAnnoR compares gene activity profiles derived from scATAC-seq data with reference gene expression profiles, assigning a subset of query cells with reference cell type labels. 
+
+In the second round, AtacAnnoR predicts the labels of the remaining query cells using a meta-program matrix derived from genome-wide ATAC-peaks. 
+
+
 
 ## Installation
 
@@ -16,6 +24,9 @@ devtools::install_github("TianLab-Bioinfo/AtacAnnoR")
 
 ## Usage
 
+
+### Run AtacAnnoR in a line with default parameters
+
 ```
 pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
                      ref_celltype = SeuratObj_RNA$true, 
@@ -26,13 +37,21 @@ pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
                      threads = 10, 
                      verbose = TRUE, 
                      simple_output = TRUE) 
-
 get_benchmark(SeuratObj_ATAC$true,pred)
-#          accuracy    average_recall average_precision          macro_f1 
-#         0.9132731         0.8897061         0.8968420         0.8904343 
+##          accuracy    average_recall average_precision          macro_f1 
+##         0.9132731         0.8897061         0.8968420         0.8904343 
 ```
 
-- Run AtacAnnoR in Signac pipeline
+### Run AtacAnnoR step by step
+
+See [here](https://telogen.github.io/Run_AtacAnnoR_step_by_step.html)
+
+
+
+### Run AtacAnnoR in other scATAC-seq analysis pipelines
+
+
+- Run AtacAnnoR in [Signac](https://stuartlab.org/signac)
 
 ```
 SeuratObj_ATAC <- RunAtacAnnoR_Signac(ref_SeuratObj = SeuratObj_RNA,
@@ -46,7 +65,8 @@ SeuratObj_ATAC <- RunAtacAnnoR_Signac(ref_SeuratObj = SeuratObj_RNA,
                                       verbose = TRUE)
 ```
 
-- Run AtacAnnoR in SnapATAC pipeline
+- Run AtacAnnoR in [SnapATAC](https://github.com/r3fang/SnapATAC)
+
 
 ```
 query_snapObj <- RunAtacAnnoR_SnapATAC(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
@@ -58,7 +78,7 @@ query_snapObj <- RunAtacAnnoR_SnapATAC(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
 ```
 
 
-- Run AtacAnnoR in ArchR pipeline
+- Run AtacAnnoR in [ArchR](https://www.archrproject.com/bookdown)
 
 ```
 query_ArchRproj <- RunAtacAnnoR_ArchR(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
@@ -69,10 +89,21 @@ query_ArchRproj <- RunAtacAnnoR_ArchR(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
                                       verbose = TRUE)
 ```
 
+- Run AtacAnnoR in [Cicero](https://cole-trapnell-lab.github.io/cicero-release/)
+
+```
+query_cds <- RunAtacAnnoR_Cicero(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
+                                 ref_celltype = SeuratObj_RNA$true, 
+                                 ref_type = "sc",
+                                 query_cds = query_cds,
+                                 query_gene_activity = query_gene_activity,
+                                 threads = 10, 
+                                 verbose = TRUE)
+```
 
 
 ## Contact
 
-- Lejin Tian: ljtian20@fudan.edu.cn
+Lejin Tian: ljtian20@fudan.edu.cn
 
 

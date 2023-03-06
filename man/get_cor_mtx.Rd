@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.3_GetKendallPred.R
 \name{get_cor_mtx}
 \alias{get_cor_mtx}
-\title{Get feature selected pseudo bulk reference}
+\title{Get correlation matrix}
 \usage{
 get_cor_mtx(
   sc_count_mtx,
@@ -15,27 +15,23 @@ get_cor_mtx(
 )
 }
 \arguments{
-\item{query_mtx}{query_mtx}
+\item{sc_count_mtx}{reference gene counts matrix}
 
-\item{global_markers}{global_markers}
+\item{labels}{reference cell type labels}
+
+\item{query_mtx}{query_mtx query gene activity matrix}
+
+\item{global_markers}{global markers got from \code{get_global_markers_sc()} or \code{get_global_markers_bulk()}}
+
+\item{query_nmf_embedding}{query meta-program matrix}
 
 \item{threads}{the number of threads, default is 10}
 
 \item{verbose}{whether to display messages, default is TRUE}
-
-\item{ref_metacell_Seurat}{ref_metacell_Seurat}
 }
 \value{
-Returns a correlation matrix whose rows are query cells and columns are
-reference cell types.
+Returns a correlation matrix whose rows are query cells and columns are reference cell types
 }
 \description{
-Get first round annotation correlation matrix
-}
-\details{
-Get first round annotation correlation matrix of each query cell to each reference cell type using
-Kendall correlation coefficient
-}
-\examples{
-cor_mtx <- get_cor_mtx(feature_selected_pb_ref, feature_selected_query_mtx)
+Get correlation matrix of each query cell to each reference cell type using Kendall correlation coefficient
 }

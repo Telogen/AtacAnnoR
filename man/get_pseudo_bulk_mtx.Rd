@@ -2,16 +2,16 @@
 % Please edit documentation in R/1.1_GetNeighborCTs.R
 \name{get_pseudo_bulk_mtx}
 \alias{get_pseudo_bulk_mtx}
-\title{Get the pseudo bulk matrix}
+\title{Get the pseudo bulk gene expression matrix}
 \usage{
 get_pseudo_bulk_mtx(sc_mtx, labels, mode = "mean")
 }
 \arguments{
-\item{sc_mtx}{a single cell matrix whose rows are features and columns are cells}
+\item{sc_mtx}{a single cell gene expression matrix whose rows are features and columns are cells}
 
 \item{labels}{a vector of cell types whose orders are same as the columns of sc_mtx}
 
-\item{mode}{the method to aggragate cells, default is \code{'mean'}
+\item{mode}{the method to aggregate cells, default is \code{'mean'}
 \itemize{
 \item{'mean': }{get the mean of each cell type}
 \item{'sum': }{get the sum of each cell type}
@@ -21,8 +21,5 @@ get_pseudo_bulk_mtx(sc_mtx, labels, mode = "mean")
 Returns a pseudo bulk matrix whose rows are features and columns are cell types.
 }
 \description{
-Get the pseudo bulk matrix from a single cell matrix
-}
-\examples{
-pb_ref <- get_pseudo_bulk_mtx(sc_mtx = ref_mtx, labels = REF_CELLTYPE)
+Get the pseudo bulk gene expression matrix from a single cell gene expression matrix
 }

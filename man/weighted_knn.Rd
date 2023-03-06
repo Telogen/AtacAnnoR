@@ -2,20 +2,20 @@
 % Please edit documentation in R/2.1_WKNN.R
 \name{weighted_knn}
 \alias{weighted_knn}
-\title{weighted_knn}
+\title{Weighted KNN}
 \usage{
 weighted_knn(neighbors, train.labels, type = NULL)
 }
 \arguments{
-\item{neighbors}{todo}
+\item{neighbors}{neighbors got from \code{get_neighbors()}}
 
-\item{train.labels}{todo}
+\item{train.labels}{the labels of cells in the train dataset}
 
-\item{type}{NULL or 'prob'}
+\item{type}{return type, default is NULL, which means only return labels, \code{prob} means return the predicted probability}
 }
 \value{
-todo
+Returns the predicted labels
 }
 \description{
-weighted_knn
+Apply the weighted KNN algorithm to make the predictions
 }

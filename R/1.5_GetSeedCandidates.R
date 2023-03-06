@@ -2,7 +2,17 @@
 # get_seed_candidates
 
 
-get_seed_candidates <- function(cell_meta,threads = threads){
+#' Get seed cell candidates
+#' 
+#' Determine GMSS cutoff and NMSSS cutoff for each cell type
+#'
+#' @param cell_meta a cell metadata
+#' @param threads the number of threads, default is 10
+#'
+#' @return Returns a new cell_meta with column `GMSS_cutoff` and `NMSS_cutoff`
+#' @export
+#'
+get_seed_candidates <- function(cell_meta,threads = 10){
   
   cell_meta_li <- split(cell_meta,cell_meta$kendall_pred)
   table(cell_meta$kendall_pred)
@@ -27,6 +37,7 @@ get_seed_candidates <- function(cell_meta,threads = threads){
       min_cell_num
       
       # GMSS
+      suppressMessages(library(mclust))
       mclust_out1 <- mclust::Mclust(cell_meta_i$GMSS,G = 2:9,verbose = F)
       GMSS_cutoff_tmp <- sort(mclust_out1$parameters$mean,T)[1:2] %>% mean()
       GMSS_cutoff_candidates <- sort(c(sort(mclust_out1$parameters$mean,T)[-1],GMSS_cutoff_tmp),decreasing = T)

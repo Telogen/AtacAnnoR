@@ -7,26 +7,21 @@
 
 
 
-#' Get feature selected pseudo bulk reference
+#' Get correlation matrix
 #'
-#' Get first round annotation correlation matrix
+#' Get correlation matrix of each query cell to each reference cell type using Kendall correlation coefficient
 #'
-#' Get first round annotation correlation matrix of each query cell to each reference cell type using
-#' Kendall correlation coefficient
-#'
-#' @param ref_metacell_Seurat ref_metacell_Seurat
-#' @param query_mtx query_mtx
-#' @param global_markers global_markers
-#' @param query_mtx query_mtx
+#' @param sc_count_mtx reference gene counts matrix
+#' @param labels reference cell type labels
+#' @param query_mtx query_mtx query gene activity matrix
+#' @param global_markers global markers got from `get_global_markers_sc()` or `get_global_markers_bulk()`
+#' @param query_nmf_embedding query meta-program matrix
 #' @param threads the number of threads, default is 10
 #' @param verbose whether to display messages, default is TRUE
 #'
-#' @return Returns a correlation matrix whose rows are query cells and columns are
-#' reference cell types.
+#' @return Returns a correlation matrix whose rows are query cells and columns are reference cell types
 #' @export
 #'
-#' @examples
-#' cor_mtx <- get_cor_mtx(feature_selected_pb_ref, feature_selected_query_mtx)
 get_cor_mtx <- function(sc_count_mtx,labels,query_mtx,global_markers,query_nmf_embedding,threads = 10,verbose = T) {
   # ref
   if (verbose) {
@@ -40,7 +35,7 @@ get_cor_mtx <- function(sc_count_mtx,labels,query_mtx,global_markers,query_nmf_e
   }
   query_clusters <- (Seurat::FindNeighbors(query_nmf_embedding, verbose = F)$snn %>%
                        Seurat::FindClusters(verbose = F))[,1] %>% as.character()
-  query_global_markers <- get_global_markers_Seurat(sc_counts_mtx = query_mtx,labels = query_clusters)
+  query_global_markers <- get_global_markers_sc(sc_counts_mtx = query_mtx,labels = query_clusters)
   query_selected_features <- unlist(query_global_markers,use.names = F) %>% unique()
   # query_selected_features <- rownames(query_mtx)
   
@@ -71,15 +66,13 @@ get_cor_mtx <- function(sc_count_mtx,labels,query_mtx,global_markers,query_nmf_e
 
 #' Get first round annotation labels
 #'
-#' Get first round annotation labels from correlation matrix
+#' Get first round annotation labels from the correlation matrix
 #'
 #' @param cor_mtx the correlation matrix get from \code{get_cor_mtx()}
 #'
 #' @return Returns a cell metadata whose rows are query cells and columns are first round labels.
 #' @export
 #'
-#' @examples
-#' cell_meta <- get_kendall_pred(cor_mtx)
 #'
 get_kendall_pred <- function(cor_mtx) {
   cell_meta <- data.frame(row.names = rownames(cor_mtx))
@@ -91,6 +84,8 @@ get_kendall_pred <- function(cor_mtx) {
 
 
 #' Add the true labels to cell metadata
+#' 
+#' Add the true labels to cell metadata
 #'
 #' @param cell_meta a cell metadata
 #' @param true_labels a vector of true cell labels
@@ -99,8 +94,6 @@ get_kendall_pred <- function(cor_mtx) {
 #' @return Returns a new cell metadata with true labels.
 #' @export
 #'
-#' @examples
-#' cell_meta <- get_cell_meta_with_true(cell_meta, true_labels = TRUE_LABEL, cor_mtx)
 #'
 get_cell_meta_with_true <- function(cell_meta,true_labels,cor_mtx = NULL) {
   if (!is.null(cor_mtx)) {

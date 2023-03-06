@@ -1,12 +1,25 @@
-########### GetMarkersEdgeR ###########
-# get_global_markers_edgeR
-# get_neighbor_markers_edgeR
+########### GetMarkers_bulk ###########
+# get_global_markers_bulk
+# get_neighbor_markers_bulk
 
 
 
 
 
-get_global_markers_edgeR <- function(sc_counts_mtx,labels,max_marker = 200,threads = 10,return_raw = F){
+#' Get global markers for bulk RNA-seq gene counts matrix
+#'
+#' Get global markers for bulk RNA-seq gene counts matrix
+#' 
+#' @param sc_counts_mtx bulk RNA-seq counts matrix
+#' @param labels bulk RNA-seq sample labels
+#' @param max_marker maximum number of markers for each cell type
+#' @param threads the number of threads, default is 10
+#' @param return_raw whether return raw data, default is FALSE
+#'
+#' @return Returns a list of global markers for each cell type
+#' @export
+#'
+get_global_markers_bulk <- function(sc_counts_mtx,labels,max_marker = 200,threads = 10,return_raw = F){
   
   pb_ref <- get_pseudo_bulk_mtx(sc_counts_mtx, labels)
   HEG_num <- round(nrow(pb_ref) * 0.5)
@@ -75,8 +88,21 @@ get_global_markers_edgeR <- function(sc_counts_mtx,labels,max_marker = 200,threa
 
 
 
-
-get_neighbor_markers_edgeR <- function(sc_counts_mtx,labels,neighbor_celltypes, global_markers,max_marker = 200,threads = 10){
+#' Get neighbor markers for bulk RNA-seq gene counts matrix
+#'
+#' Get neighbor markers for bulk RNA-seq gene counts matrix
+#'
+#' @param sc_counts_mtx bulk RNA-seq counts matrix
+#' @param labels bulk RNA-seq sample labels
+#' @param neighbor_celltypes neighbor celltypes got from `get_neighbor_celltypes()`
+#' @param global_markers global markers got from `get_global_markers_bulk()`
+#' @param max_marker maximum number of markers for each cell type
+#' @param threads the number of threads, default is 10
+#'
+#' @return Returns a list of neighbor markers for each cell type
+#' @export
+#'
+get_neighbor_markers_bulk <- function(sc_counts_mtx,labels,neighbor_celltypes, global_markers,max_marker = 200,threads = 10){
   
   pb_ref <- get_pseudo_bulk_mtx(sc_counts_mtx, labels)
   HEG_num <- round(nrow(pb_ref) * 0.5)
@@ -98,12 +124,12 @@ get_neighbor_markers_edgeR <- function(sc_counts_mtx,labels,neighbor_celltypes, 
       group <- factor(as.numeric(labels2 == ct))
       design <- model.matrix(~ 0 + group)
       dge <- edgeR::DGEList(sc_counts_mtx2, group=group)
-      keep.exprs <- edgeR::filterByExpr(dge) #自动筛选过滤低表达基因
+      keep.exprs <- edgeR::filterByExpr(dge) 
       dge <- dge[keep.exprs,,keep.lib.sizes=FALSE] 
-      dge <- edgeR::calcNormFactors(dge, method = 'TMM') #归一化因子用于 normalizes the library sizes
+      dge <- edgeR::calcNormFactors(dge, method = 'TMM') 
       dge <- edgeR::estimateDisp(dge, design, robust=T) 
       fit <- edgeR::glmFit(dge, design, robust=T)
-      lt <- edgeR::glmLRT(fit, contrast=c(-1,1))  #比对:顺序实验/对照，已设对照为1
+      lt <- edgeR::glmLRT(fit, contrast=c(-1,1))  
       tempDEG <- edgeR::topTags(lt, n = Inf,sort.by = 'logFC') 
       tempDEG <- as.data.frame(tempDEG)
       DEG_edgeR <- na.omit(tempDEG)
