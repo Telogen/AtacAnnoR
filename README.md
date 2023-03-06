@@ -6,11 +6,11 @@ AtacAnnoR is a novel scATAC-seq cell type annotation method using scRNA-seq data
 
 <img src="https://github.com/Telogen/AtacAnnoR/blob/main/figures/fig1A.png" width="800">
 
-AtacAnnoR performs **two rounds** of annotation, which annotate scATAC-seq cells at gene-level and genome-wide-level, respectively.
+- AtacAnnoR performs **two rounds** of annotation, which annotate scATAC-seq cells at gene-level and genome-wide-level, respectively.
 
-In the first round, AtacAnnoR compares gene activity profiles derived from scATAC-seq data with reference gene expression profiles, assigning a subset of query cells with reference cell type labels. 
+- In the first round, AtacAnnoR compares gene activity profiles derived from scATAC-seq data with reference gene expression profiles, assigning a subset of query cells with reference cell type labels. 
 
-In the second round, AtacAnnoR predicts the labels of the remaining query cells using a meta-program matrix derived from genome-wide ATAC-peaks. 
+- In the second round, AtacAnnoR predicts the labels of the remaining query cells using a meta-program matrix derived from genome-wide ATAC-peaks. 
 
 
 
@@ -25,7 +25,7 @@ devtools::install_github("TianLab-Bioinfo/AtacAnnoR")
 ## Usage
 
 
-### Run AtacAnnoR in a line with default parameters
+#### Run AtacAnnoR in a line with default parameters
 
 ```
 pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
@@ -37,18 +37,15 @@ pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
                      threads = 10, 
                      verbose = TRUE, 
                      simple_output = TRUE) 
-get_benchmark(SeuratObj_ATAC$true,pred)
-##          accuracy    average_recall average_precision          macro_f1 
-##         0.9132731         0.8897061         0.8968420         0.8904343 
 ```
 
-### Run AtacAnnoR step by step
+#### Run AtacAnnoR step by step
 
-See [here](https://telogen.github.io/Run_AtacAnnoR_step_by_step.html)
+- See [this tutorial](https://telogen.github.io/Run_AtacAnnoR_step_by_step.html).
 
 
 
-### Run AtacAnnoR in other scATAC-seq analysis pipelines
+#### Run AtacAnnoR in other scATAC-seq analysis pipelines
 
 
 - Run AtacAnnoR in [Signac](https://stuartlab.org/signac)
