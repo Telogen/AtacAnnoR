@@ -1,5 +1,5 @@
 Package: AtacAnnoR
-Title: An accurate and robust cross-modality cell type annotation method for scATAC-seq data
+Title: A Reference-Based Annotation Tool for Single Cell ATAC-seq Data
 Version: 0.2.5
 Authors@R: 
     person("Lejin", "Tian", , "letian20@fudan.edu.cn", role = c("aut", "cre"),

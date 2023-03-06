@@ -8,25 +8,13 @@ AtacAnnoR: A Reference-Based Annotation Tool for Single Cell ATAC-seq Data
 
 ## Installation
 
-- Required packages:
 ```R
-install.packages('Matrix')
-install.packages('Seuart')
-install.packages('pcaPP')
-install.packages('pbmcapply')
 devtools::install_github("zdebruine/RcppML")        # v0.5.4 or higher
-devtools::install_github("Telogen/AtacAnnoR")
+devtools::install_github("TianLab-Bioinfo/AtacAnnoR")
 ```
 
-- Recommended packages: (will not affect the use of basic functions)
 
-```R
-install.packages('ggplot2')
-install.packages('cowplot')
-install.packages('aplot')
-```
-
-## Tutorial
+## Usage
 
 ```
 pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
@@ -54,7 +42,8 @@ SeuratObj_ATAC <- RunAtacAnnoR_Signac(ref_SeuratObj = SeuratObj_RNA,
                                       query_SeuratObj = SeuratObj_ATAC,
                                       query_ga_assay = 'ACTIVITY',
                                       query_peak_assay = 'ATAC',
-                                      threads = 10, verbose = TRUE)
+                                      threads = 10, 
+                                      verbose = TRUE)
 ```
 
 - Run AtacAnnoR in SnapATAC pipeline
@@ -64,7 +53,8 @@ query_snapObj <- RunAtacAnnoR_SnapATAC(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
                                        ref_celltype = SeuratObj_RNA$true, 
                                        ref_type = "sc",
                                        query_snapObj = query_snapObj,
-                                       threads = 10, verbose = TRUE)
+                                       threads = 10, 
+                                       verbose = TRUE)
 ```
 
 
@@ -80,9 +70,6 @@ query_ArchRproj <- RunAtacAnnoR_ArchR(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
 ```
 
 
-## Citation
-
-- coming soon
 
 ## Contact
 
