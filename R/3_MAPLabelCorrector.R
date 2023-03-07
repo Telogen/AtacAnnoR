@@ -121,7 +121,7 @@ correct_labels <- function(merged_labels,query_nmf_embedding,cutoff = .6,max_edi
   correct_rule2 <- data.frame(before = all_combs,
                               freq = all_combs_table %>% sort(T) %>% as.numeric(),
                               after = out) %>% 
-    mutate(changed = before != after)
+    dplyr::mutate(changed = before != after)
   
   # make correct_rule
   correct_rule <- out
@@ -140,7 +140,7 @@ correct_labels <- function(merged_labels,query_nmf_embedding,cutoff = .6,max_edi
     before_num <- after_num
     # print('=====')
   }
-  print(paste0('Cluster number after correction: ',after_num))
+  message(paste0('Cluster number after correction: ',after_num))
   
   # get new labels
   new_labels <- factor(merged_labels,

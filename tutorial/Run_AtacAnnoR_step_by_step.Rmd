@@ -37,8 +37,13 @@ Gene activity was previously calculated by `Signac::Geneactivity()` and saved in
 
 #### Genome-wide-level signal extraction: meta-program matrix
 
-Meta-program matrix can be calculated using `get_nmf_embedding()` function in AtacAnnoR, the default factor number is set to 50.
+Meta-program matrix can be calculated using `get_nmf_embedding()` function in AtacAnnoR, and the default factor number is set to 50.
 
+```{r, echo = T}
+query_nmf_embedding <- get_nmf_embedding(peak_counts = SeuratObj_ATAC[['ACTIVITY']]@counts,n_factors = 50)
+```
+
+We next keep the common features of reference and query.
 
 ```{r, echo = T}
 pre_processing_mtxs <- pre_processing(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
@@ -46,7 +51,6 @@ pre_processing_mtxs <- pre_processing(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
                                       verbose = T)
 ref_mtx <- pre_processing_mtxs$ref_mtx
 query_mtx <- pre_processing_mtxs$query_mtx
-query_nmf_embedding <- get_nmf_embedding(peak_counts = SeuratObj_ATAC[['ATAC']]@counts,n_factors = 50)
 ```
 
 
@@ -58,7 +62,7 @@ query_nmf_embedding <- get_nmf_embedding(peak_counts = SeuratObj_ATAC[['ATAC']]@
 
 In the first round annotation, AtacAnnoR performs a gene-level annotation and select a fraction of cells as seed cell candidates.
 
-### Step1: Identification of reference cell type-specific marker genes
+### Step 1: Identification of reference cell type-specific marker genes
 
 In addition to the conventional marker genes (referred to as **global marker** genes here), we also identify the neighbor marker genes for a reference cell type that distinguish it from closely related adjacent cell types. 
 
@@ -70,7 +74,7 @@ global_markers <- get_global_markers_sc(sc_counts_mtx = ref_mtx,
 neighbor_celltypes <- get_neighbor_celltypes(sc_count_mtx = ref_mtx,
                                              labels = SeuratObj_RNA$true,
                                              global_markers,
-                                             min.cor = 0.7)
+                                             min.cor = 0.6)
 neighbor_markers <- get_neighbor_markers_sc(sc_counts_mtx = ref_mtx,
                                             labels = SeuratObj_RNA$true,
                                             neighbor_celltypes = neighbor_celltypes,
@@ -78,7 +82,7 @@ neighbor_markers <- get_neighbor_markers_sc(sc_counts_mtx = ref_mtx,
 ```
 
 
-### Step2: Determination of candidate cell type labels for each query cell 
+### Step 2: Determination of candidate cell type labels for each query cell 
 
 This is done by calculating the Kendall's tau between each query cell's gene activity profile and each reference cell type's gene expression profile, and the candidate cell label is determined by selecting the most similar reference cell type. The predicted labels are saved in `cell_meta$kendall_pred`.
 
@@ -94,20 +98,25 @@ get_benchmark(cell_meta$true,cell_meta$kendall_pred)
 ```
 
 
-### Step3: Validation of candidate cell type labels  
+### Step 3: Validation of candidate cell type labels  
 
 This step is done by testing whether the marker genes are of higher activity than the background genes using statistical test, which result in two scores: global marker significant score(GMSS) and neighbor marker significant score(NMSS). Then, the seed cell candidates are selected by choosing those cells with high scores using Gaussian Mixture Model (GMM).
 
-`plot_cell_distribution()` can be used to plot the distribution of GMSS and NMSS for one predicted cell type.
 
 ```{r, echo = T,fig.height=5, fig.width=6}
 cell_meta <- test_markers(query_mtx,cell_meta,global_markers,neighbor_markers,threads = 10,verbose = T)
 cell_meta <- get_seed_candidates(cell_meta)
 seed_candidate_meta <- cell_meta[which(cell_meta$is_seed_candidate == T),]
 get_benchmark(seed_candidate_meta$true,seed_candidate_meta$kendall_pred)    # seed cell candidates accuracy
-AtacAnnoR:::plot_cell_distribution(cell_meta,'CD14 Mono')
 ```
 
+
+`AtacAnnoR:::plot_cell_distribution()` can be used to plot the distribution of GMSS and NMSS for one predicted cell type.
+
+```{r, echo = T,fig.height=5, fig.width=6}
+AtacAnnoR:::plot_cell_distribution(cell_meta,'CD14 Mono')
+AtacAnnoR:::plot_cell_distribution(cell_meta,'HSPC')
+```
 
 ----
 
@@ -117,28 +126,39 @@ AtacAnnoR:::plot_cell_distribution(cell_meta,'CD14 Mono')
 In the second round annotation, AtacAnnoR performs a genome-wide-level annotation of all query scATAC-seq cells using the seed cells from query itself to avoid batch effect.
 
 
-### Step1: Seed cell cleaning
+### Step 1: Seed cell cleaning
 
 Seed cell cleaning is done by applying WKNN algorithm to the seed cell candidates themselves, and discarding those with inconsistent labels.
 
 
-```{r, echo = T,fig.height=5, fig.width=5}
+```{r, echo = T}
 cell_meta <- seed_cleaning(cell_meta,query_nmf_embedding)
-AtacAnnoR:::plot_seed_cells(SeuratObj_ATAC,cell_meta)
 seed_meta <- cell_meta[which(cell_meta$is_seed == T),]
-get_benchmark(seed_meta$true,seed_meta$kendall_pred)    # seed cell candidates accuracy
+get_benchmark(seed_meta$true,seed_meta$kendall_pred)    # seed cell accuracy
 ```
 
-### Step2: Final prediction
+`AtacAnnoR:::plot_seed_cells()` can be used to plot the seed cells on UMAP.
+
+```{r, echo = T,fig.height=5, fig.width=5}
+AtacAnnoR:::plot_seed_cells(SeuratObj_ATAC,cell_meta)
+```
+
+### Step 2: Final prediction
 
 Final prediction is done by applying WKNN algorithm again to predicted the left unlabeled cells using seed cells' labels.
 
 
-```{r, echo = T,fig.height=5, fig.width=6}
+```{r, echo = T,fig.height=5, fig.width=7}
 cell_meta <- WKNN_predict(cell_meta,query_nmf_embedding)
 get_benchmark(cell_meta$true,cell_meta$final_pred)    # final predictions accuracy
+```
+
+`AtacAnnoR:::plot_confusion_matrix()` can be used to plot the confusion matrix of the prediction.
+
+```{r, echo = T,fig.height=5, fig.width=6}
 AtacAnnoR:::plot_confusion_matrix(cell_meta,'final_pred')
 ```
+
 
 Compare the AtacAnnoR's predicted labels with the ground true labels.
 
@@ -150,7 +170,7 @@ DimPlot(SeuratObj_ATAC,group.by = 'pred',label = T) + NoLegend() |
 
 ----
 
-## sessionInfo
+## Session Info
 
 ```{r, echo = T}
 sessionInfo()

@@ -41,8 +41,7 @@ pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
 
 #### Run AtacAnnoR step by step
 
-- See [this tutorial](https://telogen.github.io/Run_AtacAnnoR_step_by_step.html).
-
+- You can run AtacAnnoR step by step to see how AtacAnnoR works and modify parameters to annotate scATAC-seq cells better. See [this tutorial](https://telogen.github.io/Run_AtacAnnoR_step_by_step.html).
 
 
 #### Run AtacAnnoR in other scATAC-seq analysis pipelines
@@ -97,6 +96,11 @@ query_cds <- RunAtacAnnoR_Cicero(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
                                  threads = 10, 
                                  verbose = TRUE)
 ```
+
+#### Beta function: AtacAnnoR label corrector
+
+- AtacAnnoR can use the predicted labels from multiple references to correct the original labels and improve accuracy. See [this tutorial](https://telogen.github.io/AtacAnnoR_label_corrector.html).
+
 
 
 ## Contact

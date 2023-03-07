@@ -216,16 +216,16 @@ plot_cell_distribution <- function(cell_meta,celltypes.to.plot = NULL,group.by =
 
 
 
-plot_seed_cells <- function(Seurat.object, cell_meta, celltype = NULL,reduction = DefaultDimReduc(Seurat.object)){
+plot_seed_cells <- function(Seurat.object, cell_meta, celltype = NULL,reduction = DefaultDimReduc(Seurat.object),pt.size = 0.3){
   final_seed_meta <- cell_meta[which(cell_meta$is_seed == T),]
   final_seed_barcodes <- rownames(final_seed_meta)
 
   Seurat.object$seed <- ' '
   Seurat.object@meta.data[final_seed_barcodes,]$seed <- final_seed_meta$kendall_pred
   if(is.null(celltype)){
-    p <- plot_highlight_cells(Seurat.object,celltype = setdiff(unique(Seurat.object$seed),' '),'seed') + NoLegend()
+    p <- plot_highlight_cells(Seurat.object,celltype = setdiff(unique(Seurat.object$seed),' '),'seed',pt.size = pt.size) + NoLegend()
   } else{
-    p <- plot_highlight_cells(Seurat.object,celltype = celltype,'seed') + NoLegend()
+    p <- plot_highlight_cells(Seurat.object,celltype = celltype,'seed',pt.size = pt.size) + NoLegend()
   }
   return(p)
 }

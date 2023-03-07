@@ -1,0 +1,123 @@
+---
+title: "AtacAnnoR label corrector"
+output: html_document
+date: "2023-03-06"
+author: "Lejin Tian"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+AtacAnnoR provides a function based on maximum a posteriori (MAP) to improve the annotation accuracy when multiple references are used.
+
+Briefly speaking, for a given target cluster we identify all candidate clusters that have labels in common with the target cluster and compute a posterior probability for each. 
+
+According to Bayes’ theorem, the posteriori probability is determined by the priori probability of the candidate cluster and the likelihood that cells in the candidate cluster is falsely assigned to the target cluster. 
+
+The former is equivalent to the proportion of all query cells in this cluster, and the latter can be inferred by calculating the percentage of cells in the candidate cluster that are very similar to cells in the target cluster based on their meta-program profiles.
+
+
+----
+
+## Load required packages and datasets
+
+```{r, echo = T}
+library(AtacAnnoR)
+library(Seurat)
+library(ggplot2)
+library(DT)
+setwd('~/txmdata/scATAC_seq/AtacAnnoR')
+SeuratObj_ATAC <- readRDS('./data/10X-Multiome/SeuratObj/SeuratObj_ATAC.RDS')
+AtacAnnoR_pred_list <- readRDS('./data/tools_pred/AtacAnnoR_pred_list.RDS')
+```
+
+
+----
+
+## Construct a prediction data frame
+
+Each row represents a query cell and each column represents the labels predicted by a specific reference.
+
+```{r, echo = T}
+pred_df <- data.frame(Hao = AtacAnnoR_pred_list$Hao,
+                      Stephenson = AtacAnnoR_pred_list$Stephenson,
+                      Wilk = AtacAnnoR_pred_list$Wilk,
+                      Zhu = AtacAnnoR_pred_list$Zhu,
+                      Monaco = AtacAnnoR_pred_list$Monaco)
+head(pred_df)
+```
+
+
+
+
+
+## Run label corrector
+
+
+```{r, echo = T}
+merged_laels <- get_merged_labels(pred_df)
+query_nmf_embedding <- SeuratObj_ATAC@reductions[['nmf']]@cell.embeddings
+OUT <- correct_labels(merged_laels,query_nmf_embedding)
+```
+
+
+### View merged label index after correction
+
+```{r, echo = T,fig.height=6, fig.width=6}
+SeuratObj_ATAC$corrected_merged_labels_idx <- OUT$corrected_merged_labels_idx
+DimPlot(SeuratObj_ATAC,group.by = 'corrected_merged_labels_idx',label = T) + NoLegend() 
+```
+
+
+### View merged label index and its corresponding merged label name
+
+```{r, echo = T}
+datatable(OUT$label_idx_df,options = list(pageLength = 25))
+```
+
+### View label correct rule
+
+```{r, echo = T}
+datatable(OUT$correct_rule)
+```
+
+### Check the accuracy after correction compared to the original accuracy in terms of each reference
+
+```{r, echo = T}
+datasets <- c('Hao','Stephenson','Wilk','Zhu','Monaco')
+names(OUT$each_corrected_df) <- datasets
+out_df <- c()
+for(dataset in datasets){
+  GML <- AtacAnnoR:::GET_GML(dataset)
+  before_accuracy <- get_benchmark(GML(SeuratObj_ATAC$true),GML(pred_df[[dataset]]))[1]
+  after_accuracy <- get_benchmark(GML(SeuratObj_ATAC$true),GML(OUT$each_corrected_df[[dataset]]))[1]
+  out_df <- rbind(out_df,
+                  c(accuracy = before_accuracy,dataset = dataset,situation = 'before'),
+                  c(accuracy = after_accuracy,dataset = dataset,situation = 'after'))
+}
+out_df <- as.data.frame(out_df)
+out_df$accuracy <- as.numeric(out_df$accuracy)
+out_df$dataset <- factor(out_df$dataset, levels = datasets)
+out_df$situation <- factor(out_df$situation,levels = c('before','after'))
+ggplot(out_df,aes(x = dataset, y = accuracy, fill = situation, group = situation)) + 
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8, preserve = "single"), width = 0.7) + 
+  geom_text(aes(label = round(accuracy, 2)), size = 3, position = position_dodge(0.8), vjust = -0.2) + 
+  coord_cartesian(ylim = c(0.85, 0.95))
+```
+
+
+
+----
+
+## Session Info
+
+```{r, echo = T}
+sessionInfo()
+```
+
+
+
+
+
