@@ -25,7 +25,7 @@ devtools::install_github("TianLab-Bioinfo/AtacAnnoR")
 ## Usage
 
 
-#### Run AtacAnnoR in a line with default parameters
+### Run AtacAnnoR in a line with default parameters
 
 ```
 pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
@@ -39,12 +39,12 @@ pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
                      simple_output = TRUE) 
 ```
 
-#### Run AtacAnnoR step by step
+### Run AtacAnnoR step by step
 
 - You can run AtacAnnoR step by step to see how AtacAnnoR works and modify parameters to annotate scATAC-seq cells better. See [this tutorial](https://telogen.github.io/Run_AtacAnnoR_step_by_step.html).
 
 
-#### Run AtacAnnoR in other scATAC-seq analysis pipelines
+### Run AtacAnnoR in other scATAC-seq analysis pipelines
 
 
 - Run AtacAnnoR in [Signac](https://stuartlab.org/signac)
@@ -97,7 +97,7 @@ query_cds <- RunAtacAnnoR_Cicero(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
                                  verbose = TRUE)
 ```
 
-#### Beta function: AtacAnnoR label corrector
+### Beta function: AtacAnnoR label corrector
 
 - AtacAnnoR can use the predicted labels from multiple references to correct the original labels and improve accuracy. See [this tutorial](https://telogen.github.io/AtacAnnoR_label_corrector.html).
 
