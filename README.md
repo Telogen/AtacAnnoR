@@ -17,8 +17,6 @@ AtacAnnoR is a novel scATAC-seq cell type annotation method using scRNA-seq data
 ## Installation
 
 ```R
-if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-BiocManager::install("edgeR")
 if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
 devtools::install_github("zdebruine/RcppML")        # v0.5.4 or higher
 devtools::install_github("TianLab-Bioinfo/AtacAnnoR")
