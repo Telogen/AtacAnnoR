@@ -3,7 +3,7 @@ Title: A Reference-Based Annotation Tool for Single Cell ATAC-seq Data
 Version: 0.2.5
 Authors@R: 
     person("Lejin", "Tian", , "letian20@fudan.edu.cn", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "0009-0001-0673-2988"))
 Description: AtacAnnoR is a novel method designed for scATAC-seq cell type annotation using well-labeled scRNA-seq data as reference. 
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -19,5 +19,8 @@ Imports:
     Seurat,
     stats,
     mclust,
-    RcppML,
+    RcppML (>= 0.5.4)
+biocViews:
+Imports:
     edgeR
+    
