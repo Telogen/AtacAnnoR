@@ -20,6 +20,6 @@ Imports:
     Seurat,
     stats,
     mclust,
-    RcppML (>= 0.5.4)
+    RcppML (>= 0.5.4),
     edgeR
     
