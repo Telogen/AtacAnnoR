@@ -1,0 +1,85 @@
+---
+title: "AtacAnnoR “Combine and Discard” strategy"
+output: html_document
+date: "2023-03-06"
+author: "Lejin Tian"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+We develop a “Combine and Discard” strategy to improve the accuracy of query cell annotations given multiple references. The cost is discarding some cells with inconsistent labels across different references' annotation results. 
+
+
+----
+
+## Load required packages and datasets
+
+```{r, echo = T}
+library(AtacAnnoR)
+setwd('~/txmdata/scATAC_seq/AtacAnnoR')
+SeuratObj_ATAC <- readRDS('./data/10X-Multiome/SeuratObj/SeuratObj_ATAC.RDS')
+AtacAnnoR_pred_list <- readRDS('./data/tools_pred/AtacAnnoR_pred_list.RDS')
+```
+
+
+----
+
+## Construct a prediction data frame
+
+Each row represents a query cell and each column represents the labels predicted by a specific reference.
+
+```{r, echo = T}
+pred_df <- data.frame(Hao = AtacAnnoR_pred_list$Hao,
+                      Stephenson = AtacAnnoR_pred_list$Stephenson,
+                      Wilk = AtacAnnoR_pred_list$Wilk,
+                      Zhu = AtacAnnoR_pred_list$Zhu,
+                      Monaco = AtacAnnoR_pred_list$Monaco)
+head(pred_df)
+```
+
+
+
+
+
+## Run “Combine and Discard” strategy based on each reference
+
+
+```{r, echo = T}
+merged_laels <- get_merged_labels(pred_df)
+datasets <- c('Hao','Stephenson','Wilk','Zhu','Monaco')
+for(dataset in datasets){
+  print(paste0('======================== ',dataset,' ========================'))
+  GML <- AtacAnnoR:::GET_GML(dataset)
+  REF <- switch(dataset,
+                'Hao' = 1,
+                'Stephenson' = 2,
+                'Wilk' = 3,
+                'Zhu' = 4,
+                'Monaco' = 5) 
+  discarded_idx <- Combine_and_Discard(merged_laels,reference = REF,fraction = 0.05,verbose = T)
+  before_bench <- get_benchmark(GML(SeuratObj_ATAC$true),GML(pred_df[[dataset]]))
+  after_bench <- get_benchmark(GML(SeuratObj_ATAC$true[-discarded_idx]),GML(pred_df[[dataset]][-discarded_idx]))
+  print('Before benchmark:')
+  print(before_bench)
+  print('After benchmark:')
+  print(after_bench)
+}
+```
+
+The results show that the accuracies are improved and the number of discarded cells is ~1,000. The left cells are enough for downstream analyses.
+
+----
+
+## Session Info
+
+```{r, echo = T}
+sessionInfo()
+```
+
+
+
+
+

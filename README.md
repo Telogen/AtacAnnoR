@@ -42,7 +42,20 @@ pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
 
 ### Run AtacAnnoR step by step
 
-- You can run AtacAnnoR step by step to see how AtacAnnoR works and modify parameters to annotate scATAC-seq cells better. See [this tutorial](https://telogen.github.io/Run_AtacAnnoR_step_by_step.html).
+- You can run AtacAnnoR step by step to see how AtacAnnoR works and modify parameters to annotate scATAC-seq cells better. See [this tutorial](https://telogen.github.io/AtacAnnoR/Run_AtacAnnoR_step_by_step.html).
+
+
+### AtacAnnoR “Combine and Discard” strategy
+
+- When multiple references' annotation results are available, AtacAnnoR applies a “Combine and Discard” strategy to discard some cells and further improve the annotation accuracy. See [this tutorial](https://telogen.github.io/AtacAnnoR/Combine_and_Discard.html).
+
+
+
+### Beta function: AtacAnnoR label corrector
+
+- AtacAnnoR also provide a more aggressive strategy to use the multiple references' annotation results to correct the original labels and improve accuracy. See [this tutorial](https://telogen.github.io/AtacAnnoR/AtacAnnoR_label_corrector.html).
+
+
 
 
 ### Run AtacAnnoR in other scATAC-seq analysis pipelines
@@ -97,10 +110,6 @@ query_cds <- RunAtacAnnoR_Cicero(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
                                  threads = 10, 
                                  verbose = TRUE)
 ```
-
-### Beta function: AtacAnnoR label corrector
-
-- AtacAnnoR can use the predicted labels from multiple references to correct the original labels and improve accuracy. See [this tutorial](https://telogen.github.io/AtacAnnoR_label_corrector.html).
 
 
 
