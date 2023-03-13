@@ -8,9 +8,9 @@ AtacAnnoR is a novel scATAC-seq cell type annotation method using scRNA-seq data
 
 - AtacAnnoR performs **two rounds** of annotation, which annotate scATAC-seq cells at gene-level and genome-wide-level, respectively.
 
-- In the first round, AtacAnnoR compares gene activity profiles derived from scATAC-seq data with reference gene expression profiles, assigning a subset of query cells with reference cell type labels. 
+- In the first round **gene-level annotation**, AtacAnnoR compares gene activity profiles derived from scATAC-seq data with reference gene expression profiles, assigning a subset of query cells with reference cell type labels. 
 
-- In the second round, AtacAnnoR predicts the labels of the remaining query cells using a meta-program matrix derived from genome-wide ATAC-peaks. 
+- In the second round **genome-wide-level annotation**, AtacAnnoR predicts the labels of the remaining query cells using a meta-program matrix derived from genome-wide ATAC-peaks. 
 
 
 
