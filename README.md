@@ -53,7 +53,7 @@ pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
 
 ### Beta function: AtacAnnoR label corrector
 
-- AtacAnnoR also provide a more aggressive strategy to use the multiple references' annotation results to correct the original labels and improve accuracy. See [this tutorial](https://telogen.github.io/AtacAnnoR/AtacAnnoR_label_corrector.html).
+- AtacAnnoR also provides a more aggressive strategy to use the multiple references' annotation results to correct the original labels and improve accuracy. See [this tutorial](https://telogen.github.io/AtacAnnoR/AtacAnnoR_label_corrector.html).
 
 
 
