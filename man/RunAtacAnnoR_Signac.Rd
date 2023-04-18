@@ -6,12 +6,12 @@
 \usage{
 RunAtacAnnoR_Signac(
   ref_SeuratObj,
-  ref_assay,
-  ref_ident,
+  ref_assay = "RNA",
+  ref_ident = "celltype",
   ref_type = "sc",
   query_SeuratObj,
-  query_ga_assay,
-  query_peak_assay,
+  query_ga_assay = "ACTIVITY",
+  query_peak_assay = "ATAC",
   threads = 10,
   verbose = TRUE
 )

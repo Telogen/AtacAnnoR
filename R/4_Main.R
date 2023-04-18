@@ -150,8 +150,8 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
 #' \code{query$final_pred} and NMF embedding restored in \code{query[['nmf']]}.
 #' @export
 RunAtacAnnoR_Signac <- function(ref_SeuratObj,ref_assay = 'RNA',ref_ident = 'celltype',ref_type = "sc",
-                                  query_SeuratObj,query_ga_assay = 'ACTIVITY',query_peak_assay = 'ATAC',
-                                  threads = 10, verbose = TRUE){
+                                query_SeuratObj,query_ga_assay = 'ACTIVITY',query_peak_assay = 'ATAC',
+                                threads = 10, verbose = TRUE){
   
   ref_mtx <- ref_SeuratObj[[`ref_assay`]]@data
   ref_celltype <- ref_SeuratObj@meta.data[,ref_ident]
