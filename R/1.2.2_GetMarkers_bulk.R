@@ -141,8 +141,8 @@ get_neighbor_markers_bulk <- function(sc_counts_mtx,labels,neighbor_celltypes, g
         select_DEG_edgeR <- dplyr::filter(DEG_edgeR,logFC > 0.2,PValue < 0.01)
       }
       
-      if(nrow(select_DEG_edgeR) > 200){
-        select_DEG_edgeR <- select_DEG_edgeR[1:200,]
+      if(nrow(select_DEG_edgeR) > max_marker){
+        select_DEG_edgeR <- select_DEG_edgeR[1:max_marker,]
       }
       
       markers_edgeR <- rownames(select_DEG_edgeR)

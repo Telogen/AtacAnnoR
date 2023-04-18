@@ -53,7 +53,7 @@ get_neighbor_celltypes <- function(sc_count_mtx,labels,global_markers,min.cor = 
   pb_counts <- get_pseudo_bulk_mtx(sc_count_mtx,labels,mode = 'sum')
   features <- unlist(global_markers,use.names = F) %>% unique()
   pb_counts_selected <- pb_counts[features,]
-  COR <- pcaPP::cor.fk(pb_counts_selected)
+  COR <- pcaPP::cor.fk(as.matrix(pb_counts_selected))
   neighbor_celltypes_list <- apply(COR,1,function(row){
     names(which(sort(row, decreasing = T) > min.cor))
   })

@@ -71,7 +71,7 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
   }
   global_markers <- get_global_markers(sc_counts_mtx = ref_mtx,labels = ref_celltype,max_marker = 200,threads = threads)
   sapply(global_markers,function(x){c(length(x[[1]]),length(x[[2]]))})
-  neighbor_celltypes <- get_neighbor_celltypes(sc_count_mtx = ref_mtx,labels = ref_celltype,global_markers,
+  neighbor_celltypes <- get_neighbor_celltypes(sc_count_mtx = ref_mtx,labels = ref_celltype,global_markers = global_markers,
                                                min.cor = 0.7,verbose = verbose)
   neighbor_markers <- get_neighbor_markers(sc_counts_mtx = ref_mtx,labels = ref_celltype,
                                            neighbor_celltypes = neighbor_celltypes,global_markers = global_markers,threads = threads)
@@ -79,7 +79,7 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
   if (verbose) {
     message("Getting candidate cell type labels...")
   }
-  cor_mtx <- get_cor_mtx(sc_count_mtx = ref_mtx,labels = SeuratObj_RNA$true,query_mtx = query_mtx,
+  cor_mtx <- get_cor_mtx(sc_count_mtx = ref_mtx,labels = ref_celltype,query_mtx = query_mtx,
                          global_markers = global_markers,query_nmf_embedding = query_nmf_embedding,threads = threads,verbose = verbose)
   cell_meta <- get_kendall_pred(cor_mtx)
   
@@ -96,9 +96,6 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
     message("Cleaning seed cell candidates...")
   }
   cell_meta <- seed_cleaning(cell_meta,query_nmf_embedding)
-  if (verbose) {
-    plot_seed_cells(SeuratObj_ATAC,cell_meta)
-  }
   seed_meta <- cell_meta[which(cell_meta$is_seed == T),]
   
   if (verbose) {
@@ -152,8 +149,8 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
 #' @return Returns a new query Seurat object with cell types predicted by AtacAnnoR restored in
 #' \code{query$final_pred} and NMF embedding restored in \code{query[['nmf']]}.
 #' @export
-RunAtacAnnoR_Signac <- function(ref_SeuratObj,ref_assay,ref_ident,ref_type = "sc",
-                                  query_SeuratObj,query_ga_assay,query_peak_assay,
+RunAtacAnnoR_Signac <- function(ref_SeuratObj,ref_assay = 'RNA',ref_ident = 'celltype',ref_type = "sc",
+                                  query_SeuratObj,query_ga_assay = 'ACTIVITY',query_peak_assay = 'ATAC',
                                   threads = 10, verbose = TRUE){
   
   ref_mtx <- ref_SeuratObj[[`ref_assay`]]@data

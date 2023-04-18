@@ -29,15 +29,28 @@ get_cor_mtx <- function(sc_count_mtx,labels,query_mtx,global_markers,query_nmf_e
   }
   ref_selected_features <- unlist(global_markers) %>% unique()
   pb_ref_counts <- get_pseudo_bulk_mtx(sc_count_mtx,labels,mode = 'sum')
+  
   # query
   if (verbose) {
     message("Processing query...")
   }
   query_clusters <- (Seurat::FindNeighbors(query_nmf_embedding, verbose = F)$snn %>%
                        Seurat::FindClusters(verbose = F))[,1] %>% as.character()
-  query_global_markers <- get_global_markers_sc(sc_counts_mtx = query_mtx,labels = query_clusters)
-  query_selected_features <- unlist(query_global_markers,use.names = F) %>% unique()
-  # query_selected_features <- rownames(query_mtx)
+  query_pb <- get_pseudo_bulk_mtx(query_mtx, query_clusters,mode = 'sum')
+  highly_expressed_genes <- apply(query_pb, 2, function(col) {
+    sort(col, T)[1:ceiling(nrow(query_pb) * 0.2)] %>% names()
+  }) %>% as.vector() %>% unique()
+  query_pb.use <- query_pb[highly_expressed_genes, ]
+  ideal_gene_mtx <- diag(ncol(query_pb.use))
+  colnames(ideal_gene_mtx) <- colnames(query_pb.use)
+  cos_mtx <- RcppML::cosine(t(query_pb.use), ideal_gene_mtx)
+  dimnames(cos_mtx) <- list(rownames(query_pb.use),colnames(ideal_gene_mtx))
+  query_selected_features <- apply(cos_mtx, 2, function(col) {
+    sort(col, T)[1:200] %>% names()
+  }) %>% as.data.frame() %>% unlist(use.names = F) %>% unique()
+  # query_global_markers <- get_global_markers_sc(sc_counts_mtx = query_mtx,labels = query_clusters)
+  # query_selected_features <- unlist(query_global_markers,use.names = F) %>% unique()
+  
   
   # intersect_genes
   intersect_genes <- intersect(ref_selected_features, query_selected_features)
