@@ -1,3 +1,4 @@
+# CombineAndDiscard
 
 #' Combine and Discard
 #'

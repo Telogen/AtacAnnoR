@@ -1,9 +1,10 @@
-################### PlotFunctions ##################
+################### BenchmarkPlotFunctions ##################
 # plot_confusion_matrix
 # plot_highlight_cells
 # plot_cell_distribution
 # plot_pred_scores
 # plot_seed_cells
+
 
 plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
   library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
@@ -42,7 +43,7 @@ plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
       scale_fill_gradient(name = "Fraction of cells",low = "#ffffc8", high = "#7d0025",limits = c(0,1))  +
       xlab("True cell type") +
       ylab("Predicted cell type") +
-      theme_cowplot() +
+      theme_classic() +
       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
     # +
     #   geom_text(aes(label = freq_morethan5),size = 3)
@@ -102,34 +103,17 @@ plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
 
 
 
-plot_highlight_cells <- function(Seurat.object, celltype, ident, label = T, pt.size = 1,reduction = DefaultDimReduc(Seurat.object)){
-  library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  library(Seurat) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  
-  Idents(Seurat.object) <- ident
-  cells.highlight <- list()
-  for (i in celltype){
-    cells.highlight[[`i`]] <- WhichCells(Seurat.object, idents = i)
-  }
-  p <- DimPlot(Seurat.object, label = label, group.by = ident, cells.highlight = cells.highlight, reduction = reduction,
-               cols.highlight = c("red", "orange",'yellow','green','skyblue','pink2','purple','darkgreen','blue'),
-               sizes.highlight = pt.size,repel = T) + ggtitle(ident)
-  return(p)
-}
-
-
-
-
 plot_cell_distribution <- function(cell_meta,celltypes.to.plot = NULL,group.by = 'kendall_pred',
-                                   x = 'NMSS',y = 'GMSS',print = T){
+                                   x = 'NMSS',y = 'GMSS',pt.size = 2,print = T){
   library(aplot) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   library(Seurat) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
+  
   if(is.null(cell_meta[['is_seed']])){
     cell_meta$is_seed <- FALSE
   }
-  name_booltrue <- paste0(group.by,'_booltrue')
-  cell_meta[[name_booltrue]] <- (cell_meta[,group.by] == cell_meta[,'true'])
+  name_booltrue <- 'Correctness'
+  cell_meta[[name_booltrue]] <- factor((cell_meta[,group.by] == cell_meta[,'true']))
   
   cell_meta_li <- split(cell_meta,cell_meta[,group.by])
   
@@ -143,9 +127,10 @@ plot_cell_distribution <- function(cell_meta,celltypes.to.plot = NULL,group.by =
     DATA <- i
     
     p1 <- ggplot(data = DATA) +
-      geom_point(aes_string(x = x,y = y, color = name_booltrue,shape = 'is_seed')) +
+      geom_point(aes_string(x = x,y = y, color = name_booltrue,shape = 'is_seed'),size = pt.size) +
       scale_x_continuous(expand=c(0,0)) + 
       scale_y_continuous(expand=c(0,0))
+    
     
     p2 <- ggplot(DATA,aes_string(x = x,color = name_booltrue)) +
       geom_density(aes(y = after_stat(count),fill = .data[[name_booltrue]],alpha = 0.2)) +
@@ -215,19 +200,45 @@ plot_cell_distribution <- function(cell_meta,celltypes.to.plot = NULL,group.by =
 
 
 
-
-plot_seed_cells <- function(Seurat.object, cell_meta, celltype = NULL,reduction = DefaultDimReduc(Seurat.object),pt.size = 0.3){
-  final_seed_meta <- cell_meta[which(cell_meta$is_seed == T),]
-  final_seed_barcodes <- rownames(final_seed_meta)
-
-  Seurat.object$seed <- ' '
-  Seurat.object@meta.data[final_seed_barcodes,]$seed <- final_seed_meta$kendall_pred
-  if(is.null(celltype)){
-    p <- plot_highlight_cells(Seurat.object,celltype = setdiff(unique(Seurat.object$seed),' '),'seed',pt.size = pt.size) + NoLegend()
+plot_cell_correctness <- function(Seurat.object,cell_meta,which_cells,
+                                  pt.size = 0.5,label = F,reduction = DefaultDimReduc(Seurat.object)){
+  library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
+  library(Seurat) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
+  
+  cell_meta$kendall_pred_booltrue <- cell_meta$kendall_pred == cell_meta$true
+  if(which_cells == 'seed'){
+    seed_meta <- cell_meta[which(cell_meta$is_seed == T),]
+    seed_barcodes <- rownames(seed_meta)
+    Seurat.object$cell_correctness <- ' '
+    Seurat.object@meta.data[seed_barcodes,]$cell_correctness <- seed_meta$kendall_pred_booltrue
+    cells.highlight <- list('TRUE' = which(Seurat.object$cell_correctness == T),
+                            'FALSE' = which(Seurat.object$cell_correctness == F))
+    
+    p <- DimPlot(Seurat.object, label = label, group.by = 'cell_correctness', 
+                 cells.highlight = cells.highlight, reduction = reduction,
+                 cols.highlight = c('red','blue'),
+                 sizes.highlight = pt.size,repel = T) + 
+      ggtitle(paste0('Seed cells accuracy: ',
+                     round(sum(seed_meta$kendall_pred_booltrue)/nrow(seed_meta)*100,2),'%'))  
   } else{
-    p <- plot_highlight_cells(Seurat.object,celltype = celltype,'seed',pt.size = pt.size) + NoLegend()
+    seed_meta <- cell_meta[which(cell_meta$is_seed_candidate == T),]
+    seed_barcodes <- rownames(seed_meta)
+    Seurat.object$cell_correctness <- ' '
+    Seurat.object@meta.data[seed_barcodes,]$cell_correctness <- seed_meta$kendall_pred_booltrue
+    cells.highlight <- list('TRUE' = which(Seurat.object$cell_correctness == T),
+                            'FALSE' = which(Seurat.object$cell_correctness == F))
+    
+    p <- DimPlot(Seurat.object, label = label, group.by = 'cell_correctness', 
+                 cells.highlight = cells.highlight, reduction = reduction,
+                 cols.highlight = c('red','blue'),
+                 sizes.highlight = pt.size,repel = T) + 
+      ggtitle(paste0('Seed cell candidates accuracy: ',
+                     round(sum(seed_meta$kendall_pred_booltrue)/nrow(seed_meta)*100,2),'%'))  
   }
   return(p)
 }
+
+
+
 
 

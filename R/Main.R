@@ -21,6 +21,7 @@
 #' @param query_peak_counts a query scATAC-seq peak counts whose rows are peaks and columns are cells
 #' @param query_nmf_embedding a query scATAC-seq NMF embedding whose rows are cells and columns are factors,
 #' can be got by \code{get_nmf_embedding()}
+#' @param min_cor the minimum of correlation to define similar cell types, default is 0.6
 #' @param threads the number of threads, default is 10
 #' @param verbose whether to display messages and plots, default is TRUE
 #' @param simple_output whether to return a simple output, default is TRUE
@@ -31,7 +32,7 @@
 #'
 RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
                          query_gene_activity, query_peak_counts = NULL, query_nmf_embedding = NULL,
-                         threads = 10, verbose = TRUE, simple_output = TRUE) {
+                         min_cor = 0.6,threads = 10, verbose = TRUE, simple_output = TRUE) {
   if(ref_type == 'bulk'){
     get_global_markers <- get_global_markers_bulk
     get_neighbor_markers <- get_neighbor_markers_bulk
@@ -72,7 +73,7 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
   global_markers <- get_global_markers(sc_counts_mtx = ref_mtx,labels = ref_celltype,max_marker = 200,threads = threads)
   sapply(global_markers,function(x){c(length(x[[1]]),length(x[[2]]))})
   neighbor_celltypes <- get_neighbor_celltypes(sc_count_mtx = ref_mtx,labels = ref_celltype,global_markers = global_markers,
-                                               min.cor = 0.7,verbose = verbose)
+                                               min.cor = min_cor,verbose = verbose)
   neighbor_markers <- get_neighbor_markers(sc_counts_mtx = ref_mtx,labels = ref_celltype,
                                            neighbor_celltypes = neighbor_celltypes,global_markers = global_markers,threads = threads)
   

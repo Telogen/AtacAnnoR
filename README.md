@@ -4,7 +4,7 @@
 
 AtacAnnoR is a novel scATAC-seq cell type annotation method using scRNA-seq data as the reference. 
 
-<img src="https://github.com/Telogen/AtacAnnoR/blob/main/figures/fig1A.png" width="800">
+<img src="https://github.com/Telogen/AtacAnnoR/blob/main/figures/Fig1.png" width="800">
 
 - AtacAnnoR performs **two rounds** of annotation, which annotate scATAC-seq cells at gene-level and genome-wide-level, respectively.
 
