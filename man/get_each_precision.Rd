@@ -12,7 +12,7 @@ get_each_precision(cell_meta, ident = "kendall_pred")
 \item{ident}{the column name of the predicted labels}
 }
 \value{
-Return a data.frame containing each cell type's precision
+Return a data frame containing each cell type's precision
 }
 \description{
 Get each cell type's precision

@@ -52,9 +52,9 @@ plot_highlight_cells <- function(Seurat.object, celltype, ident, label = T, pt.s
 #'
 #' @export
 #'
-plot_global_markers_heatmap <- function(ref_mtx,ref_labels,
-                                        global_markers,neighbor_celltypes = NULL,celltypes_to_plot = NULL,
-                                        top_marker_genes_num = 20,sample_cells_num = 20){
+plot_ref_global_markers_heatmap <- function(ref_mtx,ref_labels,
+                                            global_markers,neighbor_celltypes = NULL,celltypes_to_plot = NULL,
+                                            top_marker_genes_num = 20,sample_cells_num = 20){
   library(ComplexHeatmap) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   
   if(is.null(celltypes_to_plot)){
@@ -98,9 +98,9 @@ plot_global_markers_heatmap <- function(ref_mtx,ref_labels,
 #'
 #' @export
 #'
-plot_neighbor_markers_heatmap <- function(ref_mtx,ref_labels,
-                                          neighbor_markers,neighbor_celltypes = NULL,celltype_to_plot,
-                                          top_marker_genes_num = 20,sample_cells_num = 20){
+plot_ref_neighbor_markers_heatmap <- function(ref_mtx,ref_labels,
+                                              neighbor_markers,neighbor_celltypes = NULL,celltype_to_plot,
+                                              top_marker_genes_num = 20,sample_cells_num = 20){
   library(ComplexHeatmap) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   
   cts <- neighbor_celltypes[[celltype_to_plot]]
@@ -334,8 +334,8 @@ good_heatmap <- function(data,label){
 #' @param query_nmf_embedding The query nmf embedding
 #' @param cell_meta The cell metadata
 #' @param neighbor_celltypes `neighbor_celltypes` generate from the function `get_neighbor_celltypes()`
-#' @param category which predictions to show, either `seed_candidate`, `seed`, or `final`, default is `final`
-#' @param sample_cells Whether to sample cells, default is FALSE
+#' @param category which predictions to show, either `'seed_candidate'`, `'seed'`, or `final`, default is `'final'`
+#' @param sample_cells Whether to sample cells, default is FALSE, if is true, randomly sample 30 cells for each cell type
 #' @param celltypes_to_plot Cell type to display, default is all cell types
 #'
 #' @return Return a Heatmap-class object
@@ -359,7 +359,7 @@ plot_pred_nmf <- function(query_nmf_embedding,cell_meta,neighbor_celltypes,categ
     seed_idx <- 1:nrow(cell_meta)
   }
   
-  seed_nmf <- nmf[seed_idx,]
+  seed_nmf <- query_nmf_embedding[seed_idx,]
   seed_meta <- cell_meta[seed_idx,]
   
   all_cell_idx <- c()
@@ -412,12 +412,12 @@ plot_celltype_proportions <- function(cell_meta,ref_labels){
                           labels = c('Reference','Seed\ncell\ncandidates','Seed\ncells','Final\npredictions') %>% rev())
   ggplot(plot_df,mapping = aes(Freq,class,fill=Var1))+
     geom_bar(stat='identity',position='fill',color = 'black') +
-    theme(axis.title =element_text(size = 16),
-          axis.text =element_text(size = 14, color = 'black'))+
+    theme(axis.title = element_text(size = 16),
+          axis.text = element_text(size = 14, color = 'black'))+
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
     theme_bw() + 
     theme(axis.text.x = element_text(color = 'black',size = 10)) + 
-    theme(axis.text.y = element_text(color = 'black',size = 12),
+    theme(axis.text.y = element_text(color = 'black',size = 10),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank()) + 
     # theme(panel.border = element_blank()) +

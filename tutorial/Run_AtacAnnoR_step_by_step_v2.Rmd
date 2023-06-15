@@ -1,0 +1,242 @@
+---
+title: "Run AtacAnnoR step by step"
+output: html_document
+date: "2023-06-15"
+author: "Lejin Tian"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+In this tutorial, you can run AtacAnnoR step by step to see how AtacAnnoR works and modify parameters to annotate scATAC-seq cells better.
+
+----
+
+## Load required packages and datasets
+
+```{r, echo = T}
+library(AtacAnnoR)
+library(Seurat)
+setwd('~/txmdata/scATAC_seq/AtacAnnoR')
+SeuratObj_RNA <- readRDS('./data/10X-Multiome/SeuratObj/SeuratObj_RNA.RDS')    # reference
+SeuratObj_ATAC <- readRDS('./data/10X-Multiome/SeuratObj/SeuratObj_ATAC.RDS')    # query
+```
+
+----
+
+
+## Preprocessing reference and query data
+
+Preprocessing of scATAC-seq data in AtacAnnoR includes two steps:
+
+#### Gene-level signal extraction: gene activity matrix
+
+Gene activity was previously calculated by `Signac::Geneactivity()` and saved in 'ACTIVITY' assay of the Seurat object `SeuratObj_ATAC`, for details about calculating gene activity, see https://stuartlab.org/signac/reference/geneactivity. You can also calculate gene activity matrix using other models, like [ArchR](https://www.archrproject.com/bookdown/calculating-gene-scores-in-archr.html), [Cicero](https://cole-trapnell-lab.github.io/cicero-release/docs_m3/#cicero-gene-activity-scores), [MAESTRO](https://baigal628.github.io/MAESTRO_documentation/scatac_stepbystep.html), etc.
+
+#### Genome-wide-level signal extraction: meta-program matrix
+
+Meta-program matrix can be calculated using `get_nmf_embedding()` function in AtacAnnoR, and the default factor number is set to 50.
+
+```{r, echo = T}
+query_nmf_embedding <- get_nmf_embedding(peak_counts = SeuratObj_ATAC[['ACTIVITY']]@counts,n_factors = 50)
+query_nmf_embedding <- readRDS('~/txmdata/scATAC_seq/AtacAnnoR/data/10X-Multiome/AtacAnnoR_tmp_data/query_nmf_embedding.RDS')
+```
+
+We next keep the common features of reference and query.
+
+```{r, echo = T}
+pre_processing_mtxs <- pre_processing(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
+                                      query_mtx = SeuratObj_ATAC[['ACTIVITY']]@counts,
+                                      verbose = T)
+ref_mtx <- pre_processing_mtxs$ref_mtx
+query_mtx <- pre_processing_mtxs$query_mtx
+```
+
+
+
+----
+
+
+## First round annotation
+
+In the first round annotation, AtacAnnoR performs a gene-level annotation and select a fraction of cells as seed cell candidates.
+
+### Step 1: Identification of reference cell type-specific marker genes
+
+In addition to the conventional marker genes (referred to as **global marker** genes here), we also identify the neighbor marker genes for a reference cell type that distinguish it from closely related adjacent cell types. 
+
+
+```{r, echo = T,fig.height=5, fig.width=6}
+global_markers <- get_global_markers_sc(sc_counts_mtx = ref_mtx,
+                                        labels = SeuratObj_RNA$true,
+                                        max_marker = 200)
+neighbor_celltypes <- get_neighbor_celltypes(sc_count_mtx = ref_mtx,
+                                             labels = SeuratObj_RNA$true,
+                                             global_markers,
+                                             min.cor = 0.6)
+neighbor_markers <- get_neighbor_markers_sc(sc_counts_mtx = ref_mtx,
+                                            labels = SeuratObj_RNA$true,
+                                            neighbor_celltypes = neighbor_celltypes,
+                                            global_markers = global_markers)
+```
+
+We can assess the quality of the global marker genes by function `plot_global_markers_heatmap()`
+```{r, echo = T,fig.height=5, fig.width=7}
+plot_ref_global_markers_heatmap(ref_mtx = ref_mtx,
+                                ref_labels = SeuratObj_RNA$true,
+                                global_markers = global_markers,
+                                neighbor_celltypes = neighbor_celltypes)
+```
+
+As shown in the heatmap, neighbor markers sometimes cannot distinguish cell subtypes, such as the B cell subtypes "Naive B", "Intermediate B" and "Memory B". So function `plot_neighbor_markers_heatmap()` helps to evaluate the efficacy of these markers in distinguishing neighboring cell types.
+```{r, echo = T,fig.height=5, fig.width=7}
+plot_ref_neighbor_markers_heatmap(ref_mtx = ref_mtx,
+                                  ref_labels = SeuratObj_RNA$true,
+                                  neighbor_markers = neighbor_markers,
+                                  neighbor_celltypes = neighbor_celltypes,
+                                  celltype_to_plot = 'Memory B')
+```
+
+
+
+
+### Step 2: Determination of candidate cell type labels for each query cell 
+
+This is done by calculating the Kendall's tau between each query cell's gene activity profile and each reference cell type's gene expression profile, and the candidate cell label is determined by selecting the most similar reference cell type. The predicted labels are saved in `cell_meta$kendall_pred`.
+
+```{r, echo = T}
+cor_mtx <- get_cor_mtx(sc_count_mtx = ref_mtx,
+                       labels = SeuratObj_RNA$true,
+                       query_mtx = query_mtx,
+                       global_markers = global_markers,
+                       query_nmf_embedding = query_nmf_embedding)
+cell_meta <- get_kendall_pred(cor_mtx)
+```
+
+
+### Step 3: Validation of candidate cell type labels  
+
+This step is done by testing whether the marker genes are of higher activity than the background genes using statistical test, which result in two scores: global marker significant score(GMSS) and neighbor marker significant score(NMSS). Then, the seed cell candidates are selected by choosing those cells with high scores using Gaussian Mixture Model (GMM).
+
+
+```{r, echo = T,fig.height=5, fig.width=6}
+cell_meta <- test_markers(query_mtx,cell_meta,global_markers,neighbor_markers,threads = 10,verbose = T)
+cell_meta <- get_seed_candidates(cell_meta)
+```
+
+At the end of the first round annotation, seed cell candidates are selected according to the gene-level information of ATAC cells, we can visualize the distribution of these cells on UMAP by function `plot_pred_umap()` or check their NMF meta-program profile quality by function `plot_pred_nmf()`.
+
+
+```{r, echo = T,fig.height=6, fig.width=8}
+plot_pred_umap(Seurat.object = SeuratObj_ATAC,
+               cell_meta = cell_meta,
+               category = 'seed_candidate')
+```
+
+```{r, echo = T,fig.height=6, fig.width=10}
+plot_pred_nmf(query_nmf_embedding = query_nmf_embedding,
+              cell_meta = cell_meta,
+              neighbor_celltypes = neighbor_celltypes,
+              category = 'seed_candidate')
+```
+
+
+----
+
+
+## Second round annotation
+
+In the second round annotation, AtacAnnoR performs a genome-wide-level annotation of all query scATAC-seq cells using the seed cells from query itself to avoid batch effect.
+
+
+### Step 1: Seed cell cleaning
+
+Seed cell cleaning is done by applying WKNN algorithm to the seed cell candidates themselves, and discarding those with inconsistent labels.
+
+
+```{r, echo = T}
+cell_meta <- seed_cleaning(cell_meta,query_nmf_embedding)
+```
+
+Also, the UMAP distribution and the NMF meta-program heatmap of the seed cells can be visualized by function `plot_pred_umap()` and `plot_pred_nmf()`.
+
+
+```{r, echo = T,fig.height=6, fig.width=8}
+plot_pred_umap(Seurat.object = SeuratObj_ATAC,
+               cell_meta = cell_meta,
+               category = 'seed')
+```
+
+```{r, echo = T,fig.height=6, fig.width=10}
+plot_pred_nmf(query_nmf_embedding = query_nmf_embedding,
+              cell_meta = cell_meta,
+              neighbor_celltypes = neighbor_celltypes,
+              category = 'seed')
+```
+
+We can also check the heatmap illustrating the activity of the corresponding reference cell type-specific global/neighbor marker genes in query seed cells by function `plot_seed_global_markers_heatmap()` and `plot_seed_neighbor_markers_heatmap()` respectively.
+
+
+```{r, echo = T,fig.height=5, fig.width=7}
+plot_seed_global_markers_heatmap(query_mtx = query_mtx,
+                                 cell_meta = cell_meta,
+                                 global_markers = global_markers,
+                                 neighbor_celltypes = neighbor_celltypes)
+```
+```{r, echo = T,fig.height=5, fig.width=7}
+plot_seed_neighbor_markers_heatmap(query_mtx = query_mtx,
+                                   cell_meta = cell_meta,
+                                   neighbor_markers = neighbor_markers,
+                                   neighbor_celltypes = neighbor_celltypes,
+                                   celltype_to_plot = 'Memory B')
+```
+
+
+
+### Step 2: Final prediction
+
+Final prediction is done by applying WKNN algorithm again to predicted the left unlabeled cells using seed cells' labels.
+
+
+```{r, echo = T,fig.height=5, fig.width=7}
+cell_meta <- WKNN_predict(cell_meta,query_nmf_embedding)
+```
+
+
+In the same way, the UMAP distribution and the NMF meta-program heatmap of the final predictions can be visualized by function `plot_pred_umap()` and `plot_pred_nmf()`.
+
+```{r, echo = T,fig.height=6, fig.width=8}
+plot_pred_umap(Seurat.object = SeuratObj_ATAC,
+               cell_meta = cell_meta,
+               category = 'final')
+```
+
+```{r, echo = T,fig.height=6, fig.width=10}
+plot_pred_nmf(query_nmf_embedding = query_nmf_embedding,
+              cell_meta = cell_meta,
+              neighbor_celltypes = neighbor_celltypes,
+              category = 'final')
+```
+
+
+Finally, the cell type proportion of the reference, seed cell candidates, seed cells, and final predictions can be visualized by using function `plot_celltype_proportions()`.
+
+```{r, echo = T,fig.height=6, fig.width=11}
+plot_celltype_proportions(cell_meta,ref_labels = SeuratObj_RNA$true)
+```
+
+
+
+
+## Session Info
+
+```{r, echo = T}
+sessionInfo()
+```
+
+
+
+
+

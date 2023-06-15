@@ -42,7 +42,7 @@ pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
 
 ### Run AtacAnnoR step by step
 
-- You can run AtacAnnoR step by step to see how AtacAnnoR works and modify parameters to annotate scATAC-seq cells better. See [this tutorial](https://telogen.github.io/AtacAnnoR/Run_AtacAnnoR_step_by_step.html).
+- You can run AtacAnnoR step by step to see how AtacAnnoR works and modify parameters to annotate scATAC-seq cells better. See [this tutorial](https://telogen.github.io/AtacAnnoR/Run_AtacAnnoR_step_by_step_v2.html).
 
 
 ### AtacAnnoR “Combine and Discard” strategy

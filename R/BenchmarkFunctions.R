@@ -59,7 +59,7 @@ get_benchmark <- function(true_labels, pred_labels){
 #' @param cell_meta the cell metadata
 #' @param ident the column name of the predicted labels
 #'
-#' @return Return a data.frame containing each cell type's recall
+#' @return Return a data frame containing each cell type's recall
 #' @export
 #'
 get_each_recall <- function(cell_meta,ident = 'kendall_pred'){
@@ -82,7 +82,7 @@ get_each_recall <- function(cell_meta,ident = 'kendall_pred'){
 #' @param cell_meta the cell metadata
 #' @param ident the column name of the predicted labels
 #'
-#' @return Return a data.frame containing each cell type's precision
+#' @return Return a data frame containing each cell type's precision
 #' @export
 #'
 get_each_precision <- function(cell_meta,ident = 'kendall_pred'){

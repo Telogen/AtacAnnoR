@@ -8,8 +8,7 @@
 
 plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
   library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  library(cowplot) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  
+
   bench <- get_benchmark(cell_meta$true,cell_meta[,which(colnames(cell_meta) == which.group)])
   bench <- round(bench*100,2)
   # if(is.null(title)){
@@ -43,8 +42,10 @@ plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
       scale_fill_gradient(name = "Fraction of cells",low = "#ffffc8", high = "#7d0025",limits = c(0,1))  +
       xlab("True cell type") +
       ylab("Predicted cell type") +
-      theme_classic() +
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+      theme_bw() + 
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1,color = 'black')) +
+      theme(axis.text.y = element_text(color = 'black')) + 
+      theme(title = element_text(hjust = 0.5,color  = 'black'))
     # +
     #   geom_text(aes(label = freq_morethan5),size = 3)
     
@@ -69,8 +70,10 @@ plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
       scale_fill_gradient(name = "Fraction of cells",low = "#ffffc8", high = "#7d0025",limits = c(0,1))  +
       xlab("Predicted cell type") +
       ylab("True cell type") +
-      theme_cowplot() +
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+      theme_bw() + 
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1,color = 'black')) +
+      theme(axis.text.y = element_text(color = 'black')) + 
+      theme(title = element_text(hjust = 0.5,color  = 'black'))
     # +
     #   geom_text(aes(label = freq_morethan5),size = 3)
     
@@ -91,8 +94,10 @@ plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
       scale_fill_gradient(name = "Number of cells",low = "#ffffc8", high = "#7d0025")  +
       ylab("Predicted cell type") +
       xlab("True cell type") +
-      theme_cowplot() +
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+      theme_bw() + 
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1,color = 'black')) +
+      theme(axis.text.y = element_text(color = 'black')) + 
+      theme(title = element_text(hjust = 0.5,color  = 'black'))
     # +
     #   geom_text(aes(label = Freq),size = 3)
     
