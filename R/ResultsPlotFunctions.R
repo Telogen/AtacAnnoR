@@ -151,10 +151,14 @@ plot_seed_global_markers_heatmap <- function(query_mtx,cell_meta,
     unlist() %>% as.vector()
   all_ct_idx <- c()
   for(ct in cts){
-    # ct <- 'Plasma'
+    # ct <- 'Memory B'
     ct_idx <- which(seed_meta$kendall_pred == ct)
-    sample_num <- min(length(ct_idx),20)
-    ct_sample_idx <- sample(ct_idx,sample_num)
+    if(length(ct_idx) == 1){
+      ct_sample_idx <- ct_idx
+    } else{
+      sample_num <- min(length(ct_idx),sample_cells_num)
+      ct_sample_idx <- sample(ct_idx,sample_num)
+    }
     all_ct_idx <- c(all_ct_idx,ct_sample_idx)
   }
   all_ct_barcodes <- rownames(seed_meta)[all_ct_idx]
@@ -197,8 +201,12 @@ plot_seed_neighbor_markers_heatmap <- function(query_mtx,cell_meta,
   for(ct in cts){
     # ct <- 'Plasma'
     ct_idx <- which(seed_meta$kendall_pred == ct)
-    sample_num <- min(length(ct_idx),20)
-    ct_sample_idx <- sample(ct_idx,sample_num)
+    if(length(ct_idx) == 1){
+      ct_sample_idx <- ct_idx
+    } else{
+      sample_num <- min(length(ct_idx),sample_cells_num)
+      ct_sample_idx <- sample(ct_idx,sample_num)
+    }
     all_ct_idx <- c(all_ct_idx,ct_sample_idx)
   }
   all_ct_barcodes <- rownames(seed_meta)[all_ct_idx]
@@ -307,7 +315,7 @@ good_heatmap <- function(data,label){
   
   ComplexHeatmap::Heatmap(data[ordered_factors,], cluster_rows = F, cluster_columns = F, name = 'Cell\nembedding',
           row_title = "Meta-programs",column_title = "Cells",
-          show_column_names = F, show_row_names = T, use_raster = F,row_names_gp = gpar(fontsize = 8),
+          show_column_names = F, show_row_names = T, use_raster = F,row_names_gp = grid::gpar(fontsize = 8),
           bottom_annotation = ComplexHeatmap::HeatmapAnnotation(celltype = factor(label,levels = cts))) %>% 
     suppressMessages %>% return
 }

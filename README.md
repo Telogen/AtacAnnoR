@@ -59,13 +59,24 @@ pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
 - Run AtacAnnoR in [Signac](https://stuartlab.org/signac)
 
 ```
-SeuratObj_ATAC <- RunAtacAnnoR_Signac(ref_SeuratObj = SeuratObj_RNA,
-                                      ref_assay = 'RNA',
-                                      ref_ident = 'true',
-                                      query_SeuratObj = SeuratObj_ATAC,
+SeuratObj_ATAC <- RunAtacAnnoR_Signac(query_SeuratObj = SeuratObj_ATAC,
                                       query_ga_assay = 'ACTIVITY',
-                                      query_peak_assay = 'ATAC')
+                                      query_peak_assay = 'ATAC',
+                                      ref_SeuratObj = SeuratObj_RNA,
+                                      ref_assay = 'RNA',
+                                      ref_ident = 'true')
 ```
+
+
+
+- Run AtacAnnoR in [ArchR](https://www.archrproject.com/bookdown)
+
+```
+query_ArchRproj <- RunAtacAnnoR_ArchR(query_ArchRproj = query_ArchRproj,
+                                      ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
+                                      ref_celltype = SeuratObj_RNA$true)
+```
+
 
 - Run AtacAnnoR in [SnapATAC](https://github.com/r3fang/SnapATAC)
 
@@ -76,14 +87,6 @@ query_snapObj <- RunAtacAnnoR_SnapATAC(query_snapObj = query_snapObj,
                                        ref_celltype = SeuratObj_RNA$true)
 ```
 
-
-- Run AtacAnnoR in [ArchR](https://www.archrproject.com/bookdown)
-
-```
-query_ArchRproj <- RunAtacAnnoR_ArchR(query_ArchRproj = query_ArchRproj,
-                                      ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
-                                      ref_celltype = SeuratObj_RNA$true)
-```
 
 - Run AtacAnnoR in [Cicero](https://cole-trapnell-lab.github.io/cicero-release/)
 

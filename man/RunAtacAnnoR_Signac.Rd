@@ -5,13 +5,13 @@
 \title{Run AtacAnnoR on a Seurat object in Signac pipeline}
 \usage{
 RunAtacAnnoR_Signac(
+  query_SeuratObj,
+  query_ga_assay = "ACTIVITY",
+  query_peak_assay = "ATAC",
   ref_SeuratObj,
   ref_assay = "RNA",
   ref_ident = "celltype",
   ref_type = "sc",
-  query_SeuratObj,
-  query_ga_assay = "ACTIVITY",
-  query_peak_assay = "ATAC",
   min_cor = 0.6,
   num_global_markers = 200,
   num_neighbor_markers = 200,
@@ -20,6 +20,10 @@ RunAtacAnnoR_Signac(
 )
 }
 \arguments{
+\item{query_ga_assay}{the assay containing gene activity of the query Seurat object}
+
+\item{query_peak_assay}{the assay containing peak counts of the query Seurat object}
+
 \item{ref_SeuratObj}{the reference Seurat object}
 
 \item{ref_assay}{the assay of the reference Seurat object to use}
@@ -31,10 +35,6 @@ RunAtacAnnoR_Signac(
 \item{'sc': }{the reference matrix is a single cell RNS-seq matrix}
 \item{'bulk': }{the reference matrix is a bulk RNA-seq matrix}
 }}
-
-\item{query_ga_assay}{the assay containing gene activity of the query Seurat object}
-
-\item{query_peak_assay}{the assay containing peak counts of the query Seurat object}
 
 \item{min_cor}{the minimum of correlation to define similar cell types, default is 0.6}
 

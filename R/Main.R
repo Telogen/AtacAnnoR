@@ -140,6 +140,9 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
 #' and \code{Seurat::NormalizeData()} should be run on both reference
 #' RNA counts and query gene activity counts.
 #'
+#' @param query the query Seurat object
+#' @param query_ga_assay the assay containing gene activity of the query Seurat object
+#' @param query_peak_assay the assay containing peak counts of the query Seurat object
 #' @param ref_SeuratObj the reference Seurat object
 #' @param ref_assay the assay of the reference Seurat object to use
 #' @param ref_ident the identity of the reference Seurat object which contains the reference cell type
@@ -148,9 +151,6 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
 #'   \item{'sc': }{the reference matrix is a single cell RNS-seq matrix}
 #'   \item{'bulk': }{the reference matrix is a bulk RNA-seq matrix}
 #' }
-#' @param query the query Seurat object
-#' @param query_ga_assay the assay containing gene activity of the query Seurat object
-#' @param query_peak_assay the assay containing peak counts of the query Seurat object
 #' @param min_cor the minimum of correlation to define similar cell types, default is 0.6
 #' @param num_global_markers the number of global markers
 #' @param num_neighbor_markers the number of neighbor markers
@@ -160,8 +160,8 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
 #' @return Returns a new query Seurat object with cell types predicted by AtacAnnoR restored in
 #' \code{query$final_pred} and NMF embedding restored in \code{query[['nmf']]}.
 #' @export
-RunAtacAnnoR_Signac <- function(ref_SeuratObj,ref_assay = 'RNA',ref_ident = 'celltype',ref_type = "sc",
-                                query_SeuratObj,query_ga_assay = 'ACTIVITY',query_peak_assay = 'ATAC',
+RunAtacAnnoR_Signac <- function(query_SeuratObj,query_ga_assay = 'ACTIVITY',query_peak_assay = 'ATAC',
+                                ref_SeuratObj,ref_assay = 'RNA',ref_ident = 'celltype',ref_type = "sc",
                                 min_cor = 0.6,num_global_markers = 200, num_neighbor_markers = 200,
                                 threads = 10, verbose = TRUE){
   

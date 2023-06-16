@@ -489,7 +489,7 @@ test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,whi
     message(paste0("Start testing markers using ", threads, " threads..."))
   }
   
-  barcodes <- row.names(cell_meta)
+  barcodes <- rownames(cell_meta)
   RESULT <- pbmcapply::pbmclapply(barcodes, function(barcode) {
     # barcode <- barcodes[8]
     barcode_cellype <- as.character(cell_meta[barcode, which_label])
