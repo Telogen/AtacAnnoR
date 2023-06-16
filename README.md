@@ -19,7 +19,7 @@ AtacAnnoR is a novel scATAC-seq cell type annotation method using scRNA-seq data
 ```R
 if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
 devtools::install_github("zdebruine/RcppML")        # v0.5.4 or higher
-devtools::install_github("TianLab-Bioinfo/AtacAnnoR")
+devtools::install_github("TianLab-Bioinfo/AtacAnnoR",force = T)
 ```
 
 
@@ -31,13 +31,8 @@ devtools::install_github("TianLab-Bioinfo/AtacAnnoR")
 ```
 pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
                      ref_celltype = SeuratObj_RNA$true, 
-                     ref_type = "sc",
                      query_gene_activity = SeuratObj_ATAC[['ACTIVITY']]@counts, 
-                     query_peak_counts = SeuratObj_ATAC[['ATAC']]@counts, 
-                     query_nmf_embedding = NULL,
-                     threads = 10, 
-                     verbose = TRUE, 
-                     simple_output = TRUE) 
+                     query_peak_counts = SeuratObj_ATAC[['ATAC']]@counts) 
 ```
 
 ### Run AtacAnnoR step by step
@@ -67,48 +62,36 @@ pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts,
 SeuratObj_ATAC <- RunAtacAnnoR_Signac(ref_SeuratObj = SeuratObj_RNA,
                                       ref_assay = 'RNA',
                                       ref_ident = 'true',
-                                      ref_type = "sc",
                                       query_SeuratObj = SeuratObj_ATAC,
                                       query_ga_assay = 'ACTIVITY',
-                                      query_peak_assay = 'ATAC',
-                                      threads = 10, 
-                                      verbose = TRUE)
+                                      query_peak_assay = 'ATAC')
 ```
 
 - Run AtacAnnoR in [SnapATAC](https://github.com/r3fang/SnapATAC)
 
 
 ```
-query_snapObj <- RunAtacAnnoR_SnapATAC(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
-                                       ref_celltype = SeuratObj_RNA$true, 
-                                       ref_type = "sc",
-                                       query_snapObj = query_snapObj,
-                                       threads = 10, 
-                                       verbose = TRUE)
+query_snapObj <- RunAtacAnnoR_SnapATAC(query_snapObj = query_snapObj,
+                                       ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
+                                       ref_celltype = SeuratObj_RNA$true)
 ```
 
 
 - Run AtacAnnoR in [ArchR](https://www.archrproject.com/bookdown)
 
 ```
-query_ArchRproj <- RunAtacAnnoR_ArchR(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
-                                      ref_celltype = SeuratObj_RNA$true, 
-                                      ref_type = "sc",
-                                      query_ArchRproj = query_ArchRproj,
-                                      threads = 10, 
-                                      verbose = TRUE)
+query_ArchRproj <- RunAtacAnnoR_ArchR(query_ArchRproj = query_ArchRproj,
+                                      ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
+                                      ref_celltype = SeuratObj_RNA$true)
 ```
 
 - Run AtacAnnoR in [Cicero](https://cole-trapnell-lab.github.io/cicero-release/)
 
 ```
-query_cds <- RunAtacAnnoR_Cicero(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
+query_cds <- RunAtacAnnoR_Cicero(query_cds = query_cds,
+                                 ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
                                  ref_celltype = SeuratObj_RNA$true, 
-                                 ref_type = "sc",
-                                 query_cds = query_cds,
-                                 query_gene_activity = query_gene_activity,
-                                 threads = 10, 
-                                 verbose = TRUE)
+                                 query_gene_activity = query_gene_activity)
 ```
 
 

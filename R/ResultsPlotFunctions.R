@@ -20,20 +20,18 @@
 #'
 plot_highlight_cells <- function(Seurat.object, celltype, ident, label = T, pt.size = 1,
                                  reduction = DefaultDimReduc(Seurat.object),colors = NULL){
-  library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  library(Seurat) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  
   Idents(Seurat.object) <- ident
   cells.highlight <- list()
   for (i in celltype){
-    cells.highlight[[`i`]] <- WhichCells(Seurat.object, idents = i)
+    cells.highlight[[`i`]] <- Seurat::WhichCells(Seurat.object, idents = i)
   }
   if(is.null(colors)){
     colors <- c("red", "orange",'yellow','green','skyblue','pink2','purple','darkgreen','blue')
   }
-  p <- DimPlot(Seurat.object, label = label, group.by = ident, cells.highlight = cells.highlight, reduction = reduction,
-               cols.highlight = colors,
-               sizes.highlight = pt.size,repel = T) + ggtitle(ident)
+  p <- Seurat::DimPlot(Seurat.object, label = label, group.by = ident, 
+                       cells.highlight = cells.highlight, reduction = reduction,
+                       cols.highlight = colors,
+                       sizes.highlight = pt.size,repel = T) + ggplot2::ggtitle(ident)
   return(p)
 }
 
@@ -55,7 +53,6 @@ plot_highlight_cells <- function(Seurat.object, celltype, ident, label = T, pt.s
 plot_ref_global_markers_heatmap <- function(ref_mtx,ref_labels,
                                             global_markers,neighbor_celltypes = NULL,celltypes_to_plot = NULL,
                                             top_marker_genes_num = 20,sample_cells_num = 20){
-  library(ComplexHeatmap) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   
   if(is.null(celltypes_to_plot)){
     cts <- names(neighbor_celltypes)
@@ -74,11 +71,11 @@ plot_ref_global_markers_heatmap <- function(ref_mtx,ref_labels,
   }
   ref_mtx_norm <- Seurat::NormalizeData(ref_mtx,verbose = F)
   heat_data <- ref_mtx_norm[ordered_genes,all_ct_idx] %>% as.matrix()
-  Heatmap(t(scale(t(scale(heat_data)))), cluster_rows = F, cluster_columns = F, 
+  ComplexHeatmap::Heatmap(t(scale(t(scale(heat_data)))), cluster_rows = F, cluster_columns = F, 
           name = 'Scaled\nexpression',use_raster = F,
           row_title = "Global marker genes",column_title = "Cells",
           show_column_names = F, show_row_names = F, 
-          bottom_annotation = HeatmapAnnotation(celltype = factor(ref_labels[all_ct_idx],levels = cts))) %>% 
+          bottom_annotation = ComplexHeatmap::HeatmapAnnotation(celltype = factor(ref_labels[all_ct_idx],levels = cts))) %>% 
     suppressMessages %>% print
 }
 
@@ -101,7 +98,6 @@ plot_ref_global_markers_heatmap <- function(ref_mtx,ref_labels,
 plot_ref_neighbor_markers_heatmap <- function(ref_mtx,ref_labels,
                                               neighbor_markers,neighbor_celltypes = NULL,celltype_to_plot,
                                               top_marker_genes_num = 20,sample_cells_num = 20){
-  library(ComplexHeatmap) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
   
   cts <- neighbor_celltypes[[celltype_to_plot]]
   neighbor_marker_list <- lapply(neighbor_markers[cts],function(x){x$neighbor_markers[1:min(length(x$neighbor_markers),top_marker_genes_num)]}) 
@@ -119,13 +115,13 @@ plot_ref_neighbor_markers_heatmap <- function(ref_mtx,ref_labels,
   ref_mtx_norm <- Seurat::NormalizeData(ref_mtx,verbose = F)
   heat_data <- ref_mtx_norm[ordered_genes,all_ct_idx] %>% as.matrix()
   data <- t(scale(t(heat_data)))
-  Heatmap(data, cluster_rows = F, cluster_columns = F, 
+  ComplexHeatmap::Heatmap(data, cluster_rows = F, cluster_columns = F, 
           show_column_names = F, show_row_names = F, 
           row_title = "Neighbor marker genes",use_raster = F,
           name = 'Scaled\nexpression',
           row_split = rep(names(neighbor_marker_list),sapply(neighbor_marker_list,length)), 
           column_split = ref_labels[all_ct_idx],
-          bottom_annotation = HeatmapAnnotation(celltype = factor(ref_labels[all_ct_idx],levels = cts)))  %>% 
+          bottom_annotation = ComplexHeatmap::HeatmapAnnotation(celltype = factor(ref_labels[all_ct_idx],levels = cts)))  %>% 
     suppressMessages %>% print
 }
 
@@ -150,8 +146,7 @@ plot_ref_neighbor_markers_heatmap <- function(ref_mtx,ref_labels,
 plot_seed_global_markers_heatmap <- function(query_mtx,cell_meta,
                                              global_markers,neighbor_celltypes,celltypes_to_plot = NULL,
                                              top_marker_genes_num = 20,sample_cells_num = 20){
-  library(ComplexHeatmap) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  
+
   seed_meta <- cell_meta[which(cell_meta$is_seed == T),]
   if(is.null(celltypes_to_plot)){
     cts <- names(neighbor_celltypes)
@@ -172,11 +167,11 @@ plot_seed_global_markers_heatmap <- function(query_mtx,cell_meta,
   query_mtx_norm <- Seurat::NormalizeData(query_mtx,verbose = F)
   heat_data <- query_mtx_norm[ordered_genes,all_ct_barcodes] %>% as.matrix()
   data <- t(scale(t(heat_data)))
-  Heatmap(data, cluster_rows = F, cluster_columns = F, use_raster = F,
+  ComplexHeatmap::Heatmap(data, cluster_rows = F, cluster_columns = F, use_raster = F,
           row_title = "Global marker genes",column_title = "Cells",
           name = 'Scaled\ngene activity',
           show_column_names = F, show_row_names = F, 
-          bottom_annotation = HeatmapAnnotation(celltype = factor(seed_meta$kendall_pred[all_ct_idx],levels = cts))) %>% 
+          bottom_annotation = ComplexHeatmap::HeatmapAnnotation(celltype = factor(seed_meta$kendall_pred[all_ct_idx],levels = cts))) %>% 
     suppressMessages %>% print()
 }
 
@@ -200,7 +195,7 @@ plot_seed_global_markers_heatmap <- function(query_mtx,cell_meta,
 plot_seed_neighbor_markers_heatmap <- function(query_mtx,cell_meta,
                                                neighbor_markers = NULL,neighbor_celltypes = NULL,celltype_to_plot,
                                                top_marker_genes_num = 20,sample_cells_num = 20){
-  library(ComplexHeatmap) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
+
   seed_meta <- cell_meta[which(cell_meta$is_seed == T),]
   cts <- neighbor_celltypes[[celltype_to_plot]]
   neighbor_marker_list <- lapply(neighbor_markers[cts],function(x){x$neighbor_markers[1:min(length(x$neighbor_markers),top_marker_genes_num)]}) 
@@ -217,12 +212,12 @@ plot_seed_neighbor_markers_heatmap <- function(query_mtx,cell_meta,
   
   heat_data <- Seurat::NormalizeData(query_mtx[ordered_genes,all_ct_barcodes],verbose = F) %>% as.matrix()
   data <- t(scale(t(heat_data)))
-  Heatmap(data, cluster_rows = F, cluster_columns = F, use_raster = F,
+  ComplexHeatmap::Heatmap(data, cluster_rows = F, cluster_columns = F, use_raster = F,
           show_column_names = F, show_row_names = F, 
           name = 'Scaled\ngene activity',row_title = "Neighbor marker genes",
           row_split = rep(names(neighbor_marker_list),sapply(neighbor_marker_list,length)), 
           column_split = seed_meta$kendall_pred[all_ct_idx],
-          bottom_annotation = HeatmapAnnotation(celltype = factor(seed_meta$kendall_pred[all_ct_idx],levels = cts))) %>% 
+          bottom_annotation = ComplexHeatmap::HeatmapAnnotation(celltype = factor(seed_meta$kendall_pred[all_ct_idx],levels = cts))) %>% 
     suppressMessages %>% print()
 }
 
@@ -248,9 +243,10 @@ plot_seed_neighbor_markers_heatmap <- function(query_mtx,cell_meta,
 #' @export
 #'
 plot_pred_umap <- function(Seurat.object, cell_meta, celltype = NULL,category = 'final',
-                           label = T,pt.size = 0.3,reduction = DefaultDimReduc(Seurat.object),colors = NULL){
-  library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  library(Seurat) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
+                           label = T,pt.size = 0.3,reduction = NULL,colors = NULL){
+  if(is.null(reduction)){
+    reduction <- SeuratObject::DefaultDimReduc(Seurat.object)
+  }
   
   if(category == 'seed'){
     final_seed_meta <- cell_meta[which(cell_meta$is_seed == T),]
@@ -261,11 +257,11 @@ plot_pred_umap <- function(Seurat.object, cell_meta, celltype = NULL,category = 
     if(is.null(celltype)){
       p <- plot_highlight_cells(Seurat.object,celltype = setdiff(unique(Seurat.object$seed),' '),'seed',
                                 pt.size = pt.size,reduction = reduction,colors = colors,label = label) + 
-        ggtitle('Seed cells')
+        ggplot2::ggtitle('Seed cells')
     } else{
       p <- plot_highlight_cells(Seurat.object,celltype = celltype,'seed',
                                 pt.size = pt.size,reduction = reduction,colors = colors,label = label) + 
-        ggtitle('Seed cells')
+        ggplot2::ggtitle('Seed cells')
     }
   } else if(category == 'seed_candidate'){
     final_seed_meta <- cell_meta[which(cell_meta$is_seed_candidate == T),]
@@ -276,20 +272,20 @@ plot_pred_umap <- function(Seurat.object, cell_meta, celltype = NULL,category = 
     if(is.null(celltype)){
       p <- plot_highlight_cells(Seurat.object,celltype = setdiff(unique(Seurat.object$seed_candidate),' '),
                                 'seed_candidate',pt.size = pt.size,colors = colors,label = label) + 
-        ggtitle('Seed cell candidates')
+        ggplot2::ggtitle('Seed cell candidates')
     } else{
       p <- plot_highlight_cells(Seurat.object,celltype = celltype,'seed_candidate',
                                 label = label,pt.size = pt.size,colors = colors) + 
-        ggtitle('Seed cell candidates')
+        ggplot2::ggtitle('Seed cell candidates')
     } 
   } else{
     Seurat.object$pred <- cell_meta$final_pred
     if(is.null(celltype)){
-      p <- DimPlot(Seurat.object,group.by = 'pred',label = label,pt.size = pt.size,cols = colors) + 
-        ggtitle('Final predictions')
+      p <- Seurat::DimPlot(Seurat.object,group.by = 'pred',label = label,pt.size = pt.size,cols = colors) + 
+        ggplot2::ggtitle('Final predictions')
     } else{
       p <- plot_highlight_cells(Seurat.object,celltype = celltype,ident = 'pred',label = label,pt.size = pt.size,colors = colors) + 
-        ggtitle('Final predictions')
+        ggplot2::ggtitle('Final predictions')
     }
   }
   return(p)
@@ -300,7 +296,7 @@ plot_pred_umap <- function(Seurat.object, cell_meta, celltype = NULL,category = 
 
 
 good_heatmap <- function(data,label){
-  library(ComplexHeatmap) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
+  
   # label <- seed_meta$kendall_pred[all_cell_idx]
   cts <- unique(label)
   nmf_pb <- get_pseudo_bulk_mtx(data,labels = label)[,cts]
@@ -316,10 +312,10 @@ good_heatmap <- function(data,label){
   names(factor_1to50_cts) <- rownames(cos_mtx)
   ordered_factors <- sort(factor(factor_1to50_cts,levels = cts)) %>% names()
   
-  Heatmap(data[ordered_factors,], cluster_rows = F, cluster_columns = F, name = 'Cell\nembedding',
+  ComplexHeatmap::Heatmap(data[ordered_factors,], cluster_rows = F, cluster_columns = F, name = 'Cell\nembedding',
           row_title = "Meta-programs",column_title = "Cells",
           show_column_names = F, show_row_names = T, use_raster = F,row_names_gp = gpar(fontsize = 8),
-          bottom_annotation = HeatmapAnnotation(celltype = factor(label,levels = cts))) %>% 
+          bottom_annotation = ComplexHeatmap::HeatmapAnnotation(celltype = factor(label,levels = cts))) %>% 
     suppressMessages %>% return
 }
 
@@ -343,8 +339,7 @@ good_heatmap <- function(data,label){
 #'
 plot_pred_nmf <- function(query_nmf_embedding,cell_meta,neighbor_celltypes,category = 'final',
                           sample_cells = F,celltypes_to_plot = NULL){
-  library(ComplexHeatmap) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-  
+
   if(is.null(celltypes_to_plot)){
     cts <- names(neighbor_celltypes)
   } else{
@@ -410,20 +405,20 @@ plot_celltype_proportions <- function(cell_meta,ref_labels){
   plot_df$class <- factor(plot_df$class,
                           levels = c('reference','seed_cell_candidates','seed_cells','final_pred') %>% rev(),
                           labels = c('Reference','Seed\ncell\ncandidates','Seed\ncells','Final\npredictions') %>% rev())
-  ggplot(plot_df,mapping = aes(Freq,class,fill=Var1))+
-    geom_bar(stat='identity',position='fill',color = 'black') +
-    theme(axis.title = element_text(size = 16),
-          axis.text = element_text(size = 14, color = 'black'))+
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
-    theme_bw() + 
-    theme(axis.text.x = element_text(color = 'black',size = 10)) + 
-    theme(axis.text.y = element_text(color = 'black',size = 10),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank()) + 
+  p <- ggplot2::ggplot(plot_df,mapping = ggplot2::aes(Freq,class,fill=Var1))+
+    ggplot2::geom_bar(stat='identity',position='fill',color = 'black') +
+    ggplot2::theme(axis.title = ggplot2::element_text(size = 16),
+                   axis.text = ggplot2::element_text(size = 14, color = 'black'))+
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) + 
+    ggplot2::theme_bw() + 
+    ggplot2::theme(axis.text.x = ggplot2::element_text(color = 'black',size = 10)) + 
+    ggplot2::theme(axis.text.y = ggplot2::element_text(color = 'black',size = 10),
+                   panel.grid.major = ggplot2::element_blank(),
+                   panel.grid.minor = ggplot2::element_blank()) + 
     # theme(panel.border = element_blank()) +
-    labs(x = 'Proportion',y = '',fill = 'Cell types') +
-    scale_y_discrete(position = "right") 
-  
+    ggplot2::labs(x = 'Proportion',y = '',fill = 'Cell types') +
+    ggplot2::scale_y_discrete(position = "right") 
+  return(p)
 }
 
 

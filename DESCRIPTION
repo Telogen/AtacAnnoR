@@ -21,5 +21,7 @@ Imports:
     stats,
     mclust,
     RcppML (>= 0.5.4),
-    edgeR
+    edgeR,
+    ComplexHeatmap
+
     

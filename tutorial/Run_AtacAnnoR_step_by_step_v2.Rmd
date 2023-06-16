@@ -41,7 +41,6 @@ Meta-program matrix can be calculated using `get_nmf_embedding()` function in At
 
 ```{r, echo = T}
 query_nmf_embedding <- get_nmf_embedding(peak_counts = SeuratObj_ATAC[['ACTIVITY']]@counts,n_factors = 50)
-query_nmf_embedding <- readRDS('~/txmdata/scATAC_seq/AtacAnnoR/data/10X-Multiome/AtacAnnoR_tmp_data/query_nmf_embedding.RDS')
 ```
 
 We next keep the common features of reference and query.
