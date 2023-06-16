@@ -5,6 +5,43 @@
 
 
 
+
+#' Add the true labels to cell metadata
+#' 
+#' Add the true labels to cell metadata
+#'
+#' @param cell_meta a cell metadata
+#' @param true_labels a vector of true cell labels
+#' @param cor_mtx the correlation matrix get from \code{get_cor_mtx()}
+#'
+#' @return Returns a new cell metadata with true labels.
+#' @export
+#'
+#'
+get_cell_meta_with_true <- function(cell_meta,true_labels,cor_mtx = NULL) {
+  if (!is.null(cor_mtx)) {
+    get_rank <- function(row, names, ct.num, whose.rank) {
+      names(row) <- names
+      row_cor <- as.numeric(row[1:ct.num])
+      names(row_cor) <- names[1:ct.num]
+      sorted_row <- sort(row_cor, decreasing = T)
+      rank <- which(names(sorted_row) == row[whose.rank])
+      return(rank)
+    }
+    ct_num <- ncol(cor_mtx)
+    cor_mtx$true <- true_labels
+    cell_meta$true_rank <- apply(cor_mtx, 1, get_rank, names = colnames(cor_mtx), ct_num, whose.rank = "true")
+  }
+  
+  cell_meta$true <- true_labels
+  if ('kendall_pred' %in% colnames(cell_meta)){
+    cell_meta$kendall_pred_booltrue <- (cell_meta$kendall_pred == true_labels)
+  }
+  return(cell_meta)
+}
+
+
+
 #' Get benchmark indicators
 #'
 #' @param true_labels a vector of the true labels

@@ -29,9 +29,6 @@ plot_seed_neighbor_markers_heatmap(
 
 \item{celltypes_to_plot}{Cell type to display, default is all cell types}
 }
-\value{
-Return a Heatmap-class object
-}
 \description{
 Plot neighbor markers heatmap of seed cells gene activity
 }

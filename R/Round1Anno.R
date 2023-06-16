@@ -454,40 +454,6 @@ get_kendall_pred <- function(cor_mtx) {
 }
 
 
-#' Add the true labels to cell metadata
-#' 
-#' Add the true labels to cell metadata
-#'
-#' @param cell_meta a cell metadata
-#' @param true_labels a vector of true cell labels
-#' @param cor_mtx the correlation matrix get from \code{get_cor_mtx()}
-#'
-#' @return Returns a new cell metadata with true labels.
-#' @export
-#'
-#'
-get_cell_meta_with_true <- function(cell_meta,true_labels,cor_mtx = NULL) {
-  if (!is.null(cor_mtx)) {
-    get_rank <- function(row, names, ct.num, whose.rank) {
-      names(row) <- names
-      row_cor <- as.numeric(row[1:ct.num])
-      names(row_cor) <- names[1:ct.num]
-      sorted_row <- sort(row_cor, decreasing = T)
-      rank <- which(names(sorted_row) == row[whose.rank])
-      return(rank)
-    }
-    ct_num <- ncol(cor_mtx)
-    cor_mtx$true <- true_labels
-    cell_meta$true_rank <- apply(cor_mtx, 1, get_rank, names = colnames(cor_mtx), ct_num, whose.rank = "true")
-  }
-  
-  cell_meta$true <- true_labels
-  if ('kendall_pred' %in% colnames(cell_meta)){
-    cell_meta$kendall_pred_booltrue <- (cell_meta$kendall_pred == true_labels)
-  }
-  return(cell_meta)
-}
-
 
 
 
@@ -514,7 +480,7 @@ get_cell_meta_with_true <- function(cell_meta,true_labels,cor_mtx = NULL) {
 #'
 #'
 test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,which_label = 'kendall_pred',threads = 10,verbose = T) {
-  query_mtx <- NormalizeData(query_mtx,verbose = F)
+  query_mtx <- Seurat::NormalizeData(query_mtx,verbose = F)
   used_genes <- unique(unlist(c(global_markers,neighbor_markers), use.names = F))
   scale.query_mtx <- Seurat::ScaleData(query_mtx[used_genes, ], do.center = F, verbose = F)
   # scale.query_mtx <- as.matrix(query_mtx[used_genes, ])
@@ -552,7 +518,6 @@ test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,whi
   out <- matrix(unlist(RESULT), nrow = 2)
   cell_meta$GMSS <- stats::p.adjust(out[1, ],method = 'fdr') %>% sapply(function(x){-log10(max(x, 1e-100))})
   cell_meta$NMSS <- stats::p.adjust(out[2, ],method = 'fdr') %>% sapply(function(x){-log10(max(x, 1e-100))})
-  rm(scale.query_mtx)
   
   return(cell_meta)
 }

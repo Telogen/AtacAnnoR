@@ -11,7 +11,7 @@ plot_pred_umap(
   category = "final",
   label = T,
   pt.size = 0.3,
-  reduction = DefaultDimReduc(Seurat.object),
+  reduction = NULL,
   colors = NULL
 )
 }

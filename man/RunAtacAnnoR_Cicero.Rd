@@ -5,16 +5,21 @@
 \title{Run AtacAnnoR on a cell_data_set(cds) object in Cicero pipeline.}
 \usage{
 RunAtacAnnoR_Cicero(
+  query_cds,
   ref_mtx,
   ref_celltype,
   ref_type = "sc",
-  query_cds,
+  min_cor = 0.6,
+  num_global_markers = 200,
+  num_neighbor_markers = 200,
   query_gene_activity,
   threads = 10,
   verbose = TRUE
 )
 }
 \arguments{
+\item{query_cds}{the query cds object}
+
 \item{ref_mtx}{a reference gene expression matrix whose rows are genes and columns are cells/samples}
 
 \item{ref_celltype}{a vector of cell types whose orders are same as the columns of sc.mtx}
@@ -25,7 +30,11 @@ RunAtacAnnoR_Cicero(
 \item{'bulk': }{the reference matrix is a bulk RNA-seq matrix}
 }}
 
-\item{query_cds}{the query cds object}
+\item{min_cor}{the minimum of correlation to define similar cell types, default is 0.6}
+
+\item{num_global_markers}{the number of global markers}
+
+\item{num_neighbor_markers}{the number of neighbor markers}
 
 \item{query_gene_activity}{a query gene activity matrix whose rows are genes and columns are cells}
 

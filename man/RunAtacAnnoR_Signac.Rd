@@ -12,6 +12,9 @@ RunAtacAnnoR_Signac(
   query_SeuratObj,
   query_ga_assay = "ACTIVITY",
   query_peak_assay = "ATAC",
+  min_cor = 0.6,
+  num_global_markers = 200,
+  num_neighbor_markers = 200,
   threads = 10,
   verbose = TRUE
 )
@@ -32,6 +35,12 @@ RunAtacAnnoR_Signac(
 \item{query_ga_assay}{the assay containing gene activity of the query Seurat object}
 
 \item{query_peak_assay}{the assay containing peak counts of the query Seurat object}
+
+\item{min_cor}{the minimum of correlation to define similar cell types, default is 0.6}
+
+\item{num_global_markers}{the number of global markers}
+
+\item{num_neighbor_markers}{the number of neighbor markers}
 
 \item{threads}{the number of threads, default is 10}
 

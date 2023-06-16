@@ -29,9 +29,6 @@ plot_seed_global_markers_heatmap(
 
 \item{sample_cells_num}{Number of the sampling cells to display for each cell type, default is 20}
 }
-\value{
-Return a Heatmap-class object
-}
 \description{
 Plot global markers heatmap of seed cells gene activity
 }

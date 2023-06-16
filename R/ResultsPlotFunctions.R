@@ -1,9 +1,4 @@
 ################### ResultsPlotFunctions ##################
-# plot_confusion_matrix
-# plot_highlight_cells
-# plot_cell_distribution
-# plot_pred_scores
-# plot_seed_cells
 
 #' Plot highlight cells
 #'
@@ -140,7 +135,6 @@ plot_ref_neighbor_markers_heatmap <- function(ref_mtx,ref_labels,
 #' @param top_marker_genes_num Number of top marker genes to display for each cell type, default is 20
 #' @param sample_cells_num Number of the sampling cells to display for each cell type, default is 20
 #'
-#' @return Return a Heatmap-class object
 #' @export
 #'
 plot_seed_global_markers_heatmap <- function(query_mtx,cell_meta,
@@ -189,7 +183,6 @@ plot_seed_global_markers_heatmap <- function(query_mtx,cell_meta,
 #' @param top_marker_genes_num Number of top marker genes to display for each cell type, default is 20
 #' @param sample_cells_num Number of the sampling cells to display for each cell type, default is 20
 #'
-#' @return Return a Heatmap-class object
 #' @export
 #'
 plot_seed_neighbor_markers_heatmap <- function(query_mtx,cell_meta,

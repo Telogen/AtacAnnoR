@@ -126,7 +126,8 @@ get_nmf_embedding <- function(peak_counts, binarize = T, tfidf = T, normalize = 
 #' @export
 #'
 get_pseudo_bulk_mtx <- function(sc_mtx, labels, mode = "mean") {
-  Seurat_obj <- SeuratObject::CreateSeuratObject(sc_mtx,meta.data = data.frame(group = labels,row.names = colnames(sc_mtx))) %>% suppressWarnings()
+  Seurat_obj <- SeuratObject::CreateSeuratObject(sc_mtx,meta.data = data.frame(group = labels,row.names = colnames(sc_mtx))) %>% 
+    suppressWarnings()
   if (mode == "mean") {
     out_mtx <- Seurat::AverageExpression(Seurat_obj,group.by = 'group',slot = 'counts')[[1]]
   } else{
