@@ -10,17 +10,17 @@
 #'
 #' AtacAnnoR main function
 #'
-#' @param ref_mtx a reference gene expression matrix whose rows are genes and columns are cells/samples
-#' @param ref_celltype a vector of cell types whose orders are same as the columns of sc.mtx
+#' @param ref_mtx a reference gene expression counts matrix whose rows are genes and columns are cells/samples
+#' @param ref_celltype a vector of cell types whose orders are same as the columns of `ref_mtx`
 #' @param ref_type which type of the reference matrix is
 #'  \itemize{
 #'   \item{'sc': }{the reference matrix is a single cell RNA-seq matrix}
 #'   \item{'bulk': }{the reference matrix is a bulk RNA-seq matrix}
 #' }
 #' @param query_gene_activity a query gene activity matrix whose rows are genes and columns are cells
-#' @param query_peak_counts a query scATAC-seq peak counts whose rows are peaks and columns are cells
-#' @param query_nmf_embedding a query scATAC-seq NMF embedding whose rows are cells and columns are factors,
-#' can be got by \code{get_nmf_embedding()}
+#' @param query_peak_counts a query scATAC-seq peak counts matrix whose rows are peaks and columns are cells
+#' @param query_nmf_embedding a query scATAC-seq NMF meta-program matrix whose rows are cells and columns are factors, 
+#' default is NULL, which means get NMF embedding automatically
 #' @param min_cor the minimum of correlation to define similar cell types, default is 0.6
 #' @param num_global_markers the number of global markers
 #' @param num_neighbor_markers the number of neighbor markers
@@ -179,7 +179,7 @@ RunAtacAnnoR_Signac <- function(ref_SeuratObj,ref_assay = 'RNA',ref_ident = 'cel
   
   query_SeuratObj@meta.data <- cbind(query_SeuratObj@meta.data,pred$cell_meta)
   query_SeuratObj@reductions[['nmf']] <- Seurat::CreateDimReducObject(embeddings = pred$query_nmf_embedding,
-                                                                   assay = query_peak_assay)
+                                                                      assay = query_peak_assay)
   return(query_SeuratObj)
 }
 

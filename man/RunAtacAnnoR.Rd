@@ -20,9 +20,9 @@ RunAtacAnnoR(
 )
 }
 \arguments{
-\item{ref_mtx}{a reference gene expression matrix whose rows are genes and columns are cells/samples}
+\item{ref_mtx}{a reference gene expression counts matrix whose rows are genes and columns are cells/samples}
 
-\item{ref_celltype}{a vector of cell types whose orders are same as the columns of sc.mtx}
+\item{ref_celltype}{a vector of cell types whose orders are same as the columns of \code{ref_mtx}}
 
 \item{ref_type}{which type of the reference matrix is
 \itemize{
@@ -32,10 +32,10 @@ RunAtacAnnoR(
 
 \item{query_gene_activity}{a query gene activity matrix whose rows are genes and columns are cells}
 
-\item{query_peak_counts}{a query scATAC-seq peak counts whose rows are peaks and columns are cells}
+\item{query_peak_counts}{a query scATAC-seq peak counts matrix whose rows are peaks and columns are cells}
 
-\item{query_nmf_embedding}{a query scATAC-seq NMF embedding whose rows are cells and columns are factors,
-can be got by \code{get_nmf_embedding()}}
+\item{query_nmf_embedding}{a query scATAC-seq NMF meta-program matrix whose rows are cells and columns are factors,
+default is NULL, which means get NMF embedding automatically}
 
 \item{min_cor}{the minimum of correlation to define similar cell types, default is 0.6}
 
