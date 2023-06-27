@@ -20,6 +20,8 @@ RunAtacAnnoR_Signac(
 )
 }
 \arguments{
+\item{query_SeuratObj}{the query Seurat object}
+
 \item{query_ga_assay}{the assay containing gene activity of the query Seurat object}
 
 \item{query_peak_assay}{the assay containing peak counts of the query Seurat object}
@@ -45,8 +47,6 @@ RunAtacAnnoR_Signac(
 \item{threads}{the number of threads, default is 10}
 
 \item{verbose}{whether to display messages and plots, default is TRUE}
-
-\item{query}{the query Seurat object}
 }
 \value{
 Returns a new query Seurat object with cell types predicted by AtacAnnoR restored in

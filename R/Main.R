@@ -19,8 +19,8 @@
 #' }
 #' @param query_gene_activity a query gene activity matrix whose rows are genes and columns are cells
 #' @param query_peak_counts a query scATAC-seq peak counts matrix whose rows are peaks and columns are cells
-#' @param query_nmf_embedding a query scATAC-seq NMF meta-program matrix whose rows are cells and columns are factors, 
-#' default is NULL, which means get NMF embedding automatically
+#' @param query_cell_embedding a query scATAC-seq cell embedding whose rows are cells and columns are factors, 
+#' default is NULL, which means getting NMF embedding automatically
 #' @param min_cor the minimum of correlation to define similar cell types, default is 0.6
 #' @param num_global_markers the number of global markers
 #' @param num_neighbor_markers the number of neighbor markers
@@ -33,7 +33,7 @@
 #' @export
 #'
 RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
-                         query_gene_activity, query_peak_counts = NULL, query_nmf_embedding = NULL,
+                         query_gene_activity, query_peak_counts = NULL, query_cell_embedding = NULL,
                          min_cor = 0.6,num_global_markers = 200, num_neighbor_markers = 200,
                          threads = 10, verbose = TRUE, simple_output = TRUE) {
   if(ref_type == 'bulk'){
@@ -54,14 +54,14 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
   rm(pre_processing_mtxs)
   gc()
   
-  if (is.null(query_peak_counts) & is.null(query_nmf_embedding)){
-    stop("Please provide query_peak_counts or query_nmf_embedding!")
+  if (is.null(query_peak_counts) & is.null(query_cell_embedding)){
+    stop("Please provide query_peak_counts or query_cell_embedding!")
   } else if (is.null(query_peak_counts)){
     if (verbose) {
-      message("Use given NMF embedding")
+      message("Using the given cell embedding")
     }
-    query_nmf_embedding <- query_nmf_embedding
-  } else if (is.null(query_nmf_embedding)){
+    query_nmf_embedding <- query_cell_embedding
+  } else if (is.null(query_cell_embedding)){
     if (verbose) {
       message("Getting NMF embedding...")
     }
@@ -140,7 +140,7 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
 #' and \code{Seurat::NormalizeData()} should be run on both reference
 #' RNA counts and query gene activity counts.
 #'
-#' @param query the query Seurat object
+#' @param query_SeuratObj the query Seurat object
 #' @param query_ga_assay the assay containing gene activity of the query Seurat object
 #' @param query_peak_assay the assay containing peak counts of the query Seurat object
 #' @param ref_SeuratObj the reference Seurat object
@@ -257,11 +257,15 @@ RunAtacAnnoR_ArchR <- function(query_ArchRproj,ref_mtx, ref_celltype,ref_type = 
                                min_cor = 0.6,num_global_markers = 200, num_neighbor_markers = 200,
                                threads = 10, verbose = TRUE){
   
+  AvailableMatrices <- ArchR::getAvailableMatrices(query_ArchRproj)
+  if(min(c('GeneScoreMatrix','PeakMatrix') %in% AvailableMatrices) == 0){
+    stop('GeneScoreMatrix and PeakMatrix must be present in query_ArchRproj!')
+  }
+  
   GeneScoreMatrix <- ArchR::getMatrixFromProject(query_ArchRproj,useMatrix = "GeneScoreMatrix",verbose = verbose)
   query_gene_activity <- GeneScoreMatrix@assays@data@listData$GeneScoreMatrix
   rownames(query_gene_activity) <- GeneScoreMatrix@elementMetadata@listData$name
   colnames(query_gene_activity) <- query_ArchRproj$cellNames
-  query_gene_activity <- Seurat::NormalizeData(query_gene_activity)
   
   PeakMatrix <- ArchR::getMatrixFromProject(query_ArchRproj,useMatrix = "PeakMatrix",verbose = verbose)
   query_peak_counts <- PeakMatrix@assays@data@listData$PeakMatrix

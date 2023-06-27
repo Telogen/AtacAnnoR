@@ -10,7 +10,7 @@ RunAtacAnnoR(
   ref_type = "sc",
   query_gene_activity,
   query_peak_counts = NULL,
-  query_nmf_embedding = NULL,
+  query_cell_embedding = NULL,
   min_cor = 0.6,
   num_global_markers = 200,
   num_neighbor_markers = 200,
@@ -34,8 +34,8 @@ RunAtacAnnoR(
 
 \item{query_peak_counts}{a query scATAC-seq peak counts matrix whose rows are peaks and columns are cells}
 
-\item{query_nmf_embedding}{a query scATAC-seq NMF meta-program matrix whose rows are cells and columns are factors,
-default is NULL, which means get NMF embedding automatically}
+\item{query_cell_embedding}{a query scATAC-seq cell embedding whose rows are cells and columns are factors,
+default is NULL, which means getting NMF embedding automatically}
 
 \item{min_cor}{the minimum of correlation to define similar cell types, default is 0.6}
 
