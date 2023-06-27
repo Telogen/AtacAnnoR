@@ -92,7 +92,7 @@ query_snapObj <- RunAtacAnnoR_SnapATAC(query_snapObj = query_snapObj,
 
 ```
 query_cds <- RunAtacAnnoR_Cicero(query_cds = query_cds,
-                                 query_gene_activity = query_gene_activity，
+                                 query_gene_activity = query_gene_activity,
                                  ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
                                  ref_celltype = SeuratObj_RNA$true)
 ```

@@ -53,9 +53,5 @@ Returns a new query Seurat object with cell types predicted by AtacAnnoR restore
 \code{query$final_pred} and NMF embedding restored in \code{query[['nmf']]}.
 }
 \description{
-Run AtacAnnoR on a Seurat object in Signac pipeline. Note that before using this
-function, the \code{Signac::GeneActivity()} should be
-run on the query Seurat object to get the gene activity,
-and \code{Seurat::NormalizeData()} should be run on both reference
-RNA counts and query gene activity counts.
+Run AtacAnnoR on a Seurat object in Signac pipeline.
 }

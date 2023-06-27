@@ -134,11 +134,7 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
 
 #' Run AtacAnnoR on a Seurat object in Signac pipeline
 #'
-#' Run AtacAnnoR on a Seurat object in Signac pipeline. Note that before using this
-#' function, the \code{Signac::GeneActivity()} should be
-#' run on the query Seurat object to get the gene activity,
-#' and \code{Seurat::NormalizeData()} should be run on both reference
-#' RNA counts and query gene activity counts.
+#' Run AtacAnnoR on a Seurat object in Signac pipeline. 
 #'
 #' @param query_SeuratObj the query Seurat object
 #' @param query_ga_assay the assay containing gene activity of the query Seurat object
@@ -165,10 +161,10 @@ RunAtacAnnoR_Signac <- function(query_SeuratObj,query_ga_assay = 'ACTIVITY',quer
                                 min_cor = 0.6,num_global_markers = 200, num_neighbor_markers = 200,
                                 threads = 10, verbose = TRUE){
   
-  ref_mtx <- ref_SeuratObj[[`ref_assay`]]@data
+  ref_mtx <- ref_SeuratObj[[`ref_assay`]]@counts
   ref_celltype <- ref_SeuratObj@meta.data[,ref_ident]
   
-  query_gene_activity <- query_SeuratObj[[`query_ga_assay`]]@data
+  query_gene_activity <- query_SeuratObj[[`query_ga_assay`]]@counts
   query_peak_counts <- query_SeuratObj[[`query_peak_assay`]]@counts
   
   pred <- RunAtacAnnoR(
@@ -214,7 +210,7 @@ RunAtacAnnoR_SnapATAC <- function(query_snapObj,ref_mtx, ref_celltype,ref_type =
                                   min_cor = 0.6,num_global_markers = 200, num_neighbor_markers = 200,
                                   threads = 10, verbose = TRUE){
   
-  query_gene_activity <- Seurat::NormalizeData(BiocGenerics::t(query_snapObj@gmat))
+  query_gene_activity <- BiocGenerics::t(query_snapObj@gmat)
   query_peak_counts <- BiocGenerics::t(query_snapObj@pmat)
   
   pred <- RunAtacAnnoR(
@@ -266,7 +262,7 @@ RunAtacAnnoR_ArchR <- function(query_ArchRproj,ref_mtx, ref_celltype,ref_type = 
   query_gene_activity <- GeneScoreMatrix@assays@data@listData$GeneScoreMatrix
   rownames(query_gene_activity) <- GeneScoreMatrix@elementMetadata@listData$name
   colnames(query_gene_activity) <- query_ArchRproj$cellNames
-  
+
   PeakMatrix <- ArchR::getMatrixFromProject(query_ArchRproj,useMatrix = "PeakMatrix",verbose = verbose)
   query_peak_counts <- PeakMatrix@assays@data@listData$PeakMatrix
   rownames(query_peak_counts) <- PeakMatrix@elementMetadata@listData$name
@@ -312,7 +308,6 @@ RunAtacAnnoR_Cicero <- function(query_cds,ref_mtx, ref_celltype,ref_type = "sc",
                                 query_gene_activity,threads = 10, verbose = TRUE){
   
   query_peak_counts <- query_cds@assays@data$counts
-  query_gene_activity <- Seurat::NormalizeData(query_gene_activity)
   
   pred <- RunAtacAnnoR(
     ref_mtx = ref_mtx, ref_celltype = ref_celltype, ref_type = ref_type,
