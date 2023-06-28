@@ -68,7 +68,6 @@ SeuratObj_ATAC <- RunAtacAnnoR_Signac(query_SeuratObj = SeuratObj_ATAC,
 ```
 
 
-
 - Run AtacAnnoR in [ArchR](https://www.archrproject.com/bookdown)
 
 ```
@@ -77,9 +76,7 @@ query_ArchRproj <- RunAtacAnnoR_ArchR(query_ArchRproj = query_ArchRproj,
                                       ref_celltype = SeuratObj_RNA$true)
 ```
 
-
 - Run AtacAnnoR in [SnapATAC](https://github.com/r3fang/SnapATAC)
-
 
 ```
 query_snapObj <- RunAtacAnnoR_SnapATAC(query_snapObj = query_snapObj,
@@ -87,8 +84,7 @@ query_snapObj <- RunAtacAnnoR_SnapATAC(query_snapObj = query_snapObj,
                                        ref_celltype = SeuratObj_RNA$true)
 ```
 
-
-- Run AtacAnnoR in [Cicero](https://cole-trapnell-lab.github.io/cicero-release/)
+- Run AtacAnnoR in [Monocle3/Cicero](https://cole-trapnell-lab.github.io/cicero-release/)
 
 ```
 query_cds <- RunAtacAnnoR_Cicero(query_cds = query_cds,
