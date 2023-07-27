@@ -29,6 +29,7 @@ devtools::install_github("TianLab-Bioinfo/AtacAnnoR",force = T)
 ### Run AtacAnnoR in a line with default parameters
 
 ```
+library(AtacAnnoR)
 pred <- RunAtacAnnoR(ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
                      ref_celltype = SeuratObj_RNA$true, 
                      query_gene_activity = SeuratObj_ATAC[['ACTIVITY']]@counts, 

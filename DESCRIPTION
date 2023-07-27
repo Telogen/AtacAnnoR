@@ -1,6 +1,6 @@
 Package: AtacAnnoR
 Title: A Reference-Based Annotation Tool for Single Cell ATAC-seq Data
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: 
     person("Lejin", "Tian", , "letian20@fudan.edu.cn", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0001-0673-2988"))
