@@ -16,15 +16,15 @@ correct_labels(
 \arguments{
 \item{merged_labels}{merged_labels got from \code{get_merged_labels()}}
 
-\item{query_nmf_embedding}{query meta-program matrix}
+\item{query_nmf_embedding}{Query meta-program matrix}
 
-\item{cutoff}{the cutoff to drfinr 'similar' cells, smaller value means more strict correction, default is 0.6}
+\item{cutoff}{The cutoff to drfinr 'similar' cells, smaller value means more strict correction, default is 0.6}
 
-\item{max_edit_distance}{max edit distance, by default is the number of references-1}
+\item{max_edit_distance}{Max edit distance, by default is the number of references-1}
 
-\item{threads}{threads the number of threads, default is 10}
+\item{threads}{The number of threads, default is 10}
 
-\item{verbose}{whether to display messages, default is TRUE}
+\item{verbose}{Whether to display messages, default is TRUE}
 }
 \value{
 Returns a list containing the information of the corrected labels

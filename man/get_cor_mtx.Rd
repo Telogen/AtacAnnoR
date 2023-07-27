@@ -15,19 +15,19 @@ get_cor_mtx(
 )
 }
 \arguments{
-\item{sc_count_mtx}{reference gene counts matrix}
+\item{sc_count_mtx}{Reference gene counts matrix}
 
-\item{labels}{reference cell type labels}
+\item{labels}{Reference cell type labels}
 
 \item{query_mtx}{query_mtx query gene activity matrix}
 
-\item{global_markers}{global markers got from \code{get_global_markers_sc()} or \code{get_global_markers_bulk()}}
+\item{global_markers}{Global markers got from \code{get_global_markers_sc()} or \code{get_global_markers_bulk()}}
 
-\item{query_nmf_embedding}{query meta-program matrix}
+\item{query_nmf_embedding}{Query meta-program matrix}
 
-\item{threads}{the number of threads, default is 10}
+\item{threads}{The number of threads, default is 10}
 
-\item{verbose}{whether to display messages, default is TRUE}
+\item{verbose}{Whether to display messages, default is TRUE}
 }
 \value{
 Returns a correlation matrix whose rows are query cells and columns are reference cell types

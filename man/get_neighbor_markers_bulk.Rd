@@ -14,17 +14,17 @@ get_neighbor_markers_bulk(
 )
 }
 \arguments{
-\item{sc_counts_mtx}{bulk RNA-seq counts matrix}
+\item{sc_counts_mtx}{Bulk RNA-seq counts matrix}
 
-\item{labels}{bulk RNA-seq sample labels}
+\item{labels}{Bulk RNA-seq sample labels}
 
-\item{neighbor_celltypes}{neighbor celltypes got from \code{get_neighbor_celltypes()}}
+\item{neighbor_celltypes}{Neighbor celltypes got from \code{get_neighbor_celltypes()}}
 
-\item{global_markers}{global markers got from \code{get_global_markers_bulk()}}
+\item{global_markers}{Global markers got from \code{get_global_markers_bulk()}}
 
-\item{max_marker}{maximum number of markers for each cell type}
+\item{max_marker}{Maximum number of markers for each cell type}
 
-\item{threads}{the number of threads, default is 10}
+\item{threads}{The number of threads, default is 10}
 }
 \value{
 Returns a list of neighbor markers for each cell type

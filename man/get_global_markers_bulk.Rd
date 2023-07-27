@@ -13,15 +13,15 @@ get_global_markers_bulk(
 )
 }
 \arguments{
-\item{sc_counts_mtx}{bulk RNA-seq counts matrix}
+\item{sc_counts_mtx}{Bulk RNA-seq counts matrix}
 
-\item{labels}{bulk RNA-seq sample labels}
+\item{labels}{Bulk RNA-seq sample labels}
 
-\item{max_marker}{maximum number of markers for each cell type}
+\item{max_marker}{Maximum number of markers for each cell type}
 
-\item{threads}{the number of threads, default is 10}
+\item{threads}{The number of threads, default is 10}
 
-\item{return_raw}{whether return raw data, default is FALSE}
+\item{return_raw}{Whether return raw data, default is FALSE}
 }
 \value{
 Returns a list of global markers for each cell type

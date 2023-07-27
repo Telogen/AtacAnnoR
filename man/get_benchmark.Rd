@@ -7,9 +7,9 @@
 get_benchmark(true_labels, pred_labels)
 }
 \arguments{
-\item{true_labels}{a vector of the true labels}
+\item{true_labels}{A vector of the true labels}
 
-\item{pred_labels}{a vector of the predicted labels}
+\item{pred_labels}{A vector of the predicted labels}
 }
 \value{
 Returns a vector of the accuracy, average recall (balanced accuracy), average precision and mean F1 score.

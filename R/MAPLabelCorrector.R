@@ -16,7 +16,7 @@ get_edit_dist_n_combs <- function(one_comb,all_combs,dist_n = 1){
 
 #' Get merged labels
 #'
-#' @param pred_df a data frame whose rows are cells and each column is the predictions from a specific reference
+#' @param pred_df A data frame whose rows are cells and each column is the predictions from a specific reference
 #'
 #' @return Returns the merged labels
 #' @export
@@ -36,11 +36,11 @@ get_merged_labels <- function(pred_df){
 #' Correct labels
 #'
 #' @param merged_labels merged_labels got from `get_merged_labels()`
-#' @param query_nmf_embedding query meta-program matrix
-#' @param cutoff the cutoff to drfinr 'similar' cells, smaller value means more strict correction, default is 0.6
-#' @param max_edit_distance max edit distance, by default is the number of references-1 
-#' @param threads threads the number of threads, default is 10
-#' @param verbose whether to display messages, default is TRUE
+#' @param query_nmf_embedding Query meta-program matrix
+#' @param cutoff The cutoff to drfinr 'similar' cells, smaller value means more strict correction, default is 0.6
+#' @param max_edit_distance Max edit distance, by default is the number of references-1 
+#' @param threads The number of threads, default is 10
+#' @param verbose Whether to display messages, default is TRUE
 #'
 #' @return Returns a list containing the information of the corrected labels  
 #' @export

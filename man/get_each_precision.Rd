@@ -7,9 +7,9 @@
 get_each_precision(cell_meta, ident = "kendall_pred")
 }
 \arguments{
-\item{cell_meta}{the cell metadata}
+\item{cell_meta}{The cell metadata}
 
-\item{ident}{the column name of the predicted labels}
+\item{ident}{The column name of the predicted labels}
 }
 \value{
 Return a data frame containing each cell type's precision

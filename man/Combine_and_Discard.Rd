@@ -7,9 +7,9 @@
 Combine_and_Discard(merged_laels, reference = 1, fraction = 0.05, verbose = T)
 }
 \arguments{
-\item{reference}{the index of reference to be based on}
+\item{reference}{The index of reference to be based on}
 
-\item{fraction}{default is 0.05}
+\item{fraction}{Default is 0.05}
 
 \item{merged_labels}{merged_labels got from \code{get_merged_labels()}}
 }

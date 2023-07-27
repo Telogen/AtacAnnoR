@@ -20,9 +20,9 @@ plot_pred_umap(
 
 \item{cell_meta}{The cell metadata}
 
-\item{celltype}{which cell types to show}
+\item{celltype}{Which cell types to show}
 
-\item{category}{which predictions to show, either \code{seed_candidate}, \code{seed}, or \code{final}, default is \code{final}}
+\item{category}{Which predictions to show, either \code{seed_candidate}, \code{seed}, or \code{final}, default is \code{final}}
 
 \item{label}{Whether to display the cell type label on the plot, default is TRUE}
 
@@ -33,7 +33,7 @@ plot_pred_umap(
 \item{colors}{Colors of different cell types}
 }
 \value{
-Return a ggplot object
+Returns a ggplot object
 }
 \description{
 Plot the UMAP of the predictions

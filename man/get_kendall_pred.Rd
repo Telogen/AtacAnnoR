@@ -7,7 +7,7 @@
 get_kendall_pred(cor_mtx)
 }
 \arguments{
-\item{cor_mtx}{the correlation matrix get from \code{get_cor_mtx()}}
+\item{cor_mtx}{The correlation matrix get from \code{get_cor_mtx()}}
 }
 \value{
 Returns a cell metadata whose rows are query cells and columns are first round labels.

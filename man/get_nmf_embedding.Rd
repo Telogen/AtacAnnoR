@@ -15,19 +15,19 @@ get_nmf_embedding(
 )
 }
 \arguments{
-\item{peak_counts}{a query scATAC-seq peak counts whose rows are peaks and columns are cells}
+\item{peak_counts}{A query scATAC-seq peak counts whose rows are peaks and columns are cells}
 
-\item{binarize}{whether to binarize the peak counts matrix, default is TRUE (recommended)}
+\item{binarize}{Whether to binarize the peak counts matrix, default is TRUE (recommended)}
 
-\item{tfidf}{whether to do TF-IDF, default is TRUE (recommended)}
+\item{tfidf}{Whether to do TF-IDF, default is TRUE (recommended)}
 
-\item{normalize}{whether to do normalization, default is TRUE (recommended)}
+\item{normalize}{Whether to do normalization, default is TRUE (recommended)}
 
-\item{nmf_seed}{the seed set for NMF, default is NULL}
+\item{nmf_seed}{The seed set for NMF, default is NULL}
 
-\item{n_factors}{the number of factors (meta-programs) to get, default is 50}
+\item{n_factors}{The number of factors (meta-programs) to get, default is 50}
 
-\item{verbose}{whether to display messages, default is TRUE}
+\item{verbose}{Whether to display messages, default is TRUE}
 }
 \value{
 Returns a dimension reduced matrix whose rows are cells and columns are factors (meta-programs).

@@ -7,7 +7,7 @@
 get_merged_labels(pred_df)
 }
 \arguments{
-\item{pred_df}{a data frame whose rows are cells and each column is the predictions from a specific reference}
+\item{pred_df}{A data frame whose rows are cells and each column is the predictions from a specific reference}
 }
 \value{
 Returns the merged labels

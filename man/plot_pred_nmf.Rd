@@ -20,14 +20,14 @@ plot_pred_nmf(
 
 \item{neighbor_celltypes}{\code{neighbor_celltypes} generate from the function \code{get_neighbor_celltypes()}}
 
-\item{category}{which predictions to show, either \code{'seed_candidate'}, \code{'seed'}, or \code{final}, default is \code{'final'}}
+\item{category}{Which predictions to show, either \code{'seed_candidate'}, \code{'seed'}, or \code{final}, default is \code{'final'}}
 
 \item{sample_cells}{Whether to sample cells, default is FALSE, if is true, randomly sample 30 cells for each cell type}
 
 \item{celltypes_to_plot}{Cell type to display, default is all cell types}
 }
 \value{
-Return a Heatmap-class object
+Returns a Heatmap-class object
 }
 \description{
 Plot the NMF meta-program heatmap of the predictions

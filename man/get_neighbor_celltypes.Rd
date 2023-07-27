@@ -17,11 +17,11 @@ get_neighbor_celltypes(
 
 \item{labels}{scRNA-seq cell labels}
 
-\item{global_markers}{global markers got from \code{get_global_markers_sc()}}
+\item{global_markers}{Global markers got from \code{get_global_markers_sc()}}
 
-\item{min.cor}{the minimum cutoff of cell type correlation to define 'neighbor cells', default is 0.7}
+\item{min.cor}{The minimum cutoff of cell type correlation to define 'neighbor cells', default is 0.7}
 
-\item{verbose}{whether to display messages and plot, default is TRUE}
+\item{verbose}{Whether to display messages and plot, default is TRUE}
 }
 \value{
 Returns a list of cell subtypes

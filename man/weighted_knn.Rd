@@ -7,11 +7,11 @@
 weighted_knn(neighbors, train.labels, type = NULL)
 }
 \arguments{
-\item{neighbors}{neighbors got from \code{get_neighbors()}}
+\item{neighbors}{Neighbors got from \code{get_neighbors()}}
 
-\item{train.labels}{the labels of cells in the train dataset}
+\item{train.labels}{The labels of cells in the train dataset}
 
-\item{type}{return type, default is NULL, which means only return labels, \code{prob} means return the predicted probability}
+\item{type}{Return type, default is NULL, which means only return labels, \code{prob} means return the predicted probability}
 }
 \value{
 Returns the predicted labels

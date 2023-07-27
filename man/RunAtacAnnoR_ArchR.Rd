@@ -17,27 +17,27 @@ RunAtacAnnoR_ArchR(
 )
 }
 \arguments{
-\item{query_ArchRproj}{the query ArchRProject}
+\item{query_ArchRproj}{The query ArchRProject}
 
-\item{ref_mtx}{a reference gene expression matrix whose rows are genes and columns are cells/samples}
+\item{ref_mtx}{A reference gene expression matrix whose rows are genes and columns are cells/samples}
 
-\item{ref_celltype}{a vector of cell types whose orders are same as the columns of sc.mtx}
+\item{ref_celltype}{A vector of cell types whose orders are same as the columns of sc.mtx}
 
-\item{ref_type}{which type of the reference matrix is
+\item{ref_type}{Which type of the reference matrix is
 \itemize{
-\item{'sc': }{the reference matrix is a single cell RNS-seq matrix}
-\item{'bulk': }{the reference matrix is a bulk RNA-seq matrix}
+\item{'sc': }{The reference matrix is a single cell RNS-seq matrix}
+\item{'bulk': }{The reference matrix is a bulk RNA-seq matrix}
 }}
 
-\item{min_cor}{the minimum of correlation to define similar cell types, default is 0.6}
+\item{min_cor}{The minimum of correlation to define similar cell types, default is 0.6}
 
-\item{num_global_markers}{the number of global markers}
+\item{num_global_markers}{The number of global markers}
 
-\item{num_neighbor_markers}{the number of neighbor markers}
+\item{num_neighbor_markers}{The number of neighbor markers}
 
-\item{threads}{the number of threads, default is 10}
+\item{threads}{The number of threads, default is 10}
 
-\item{verbose}{whether to display messages and plots, default is TRUE}
+\item{verbose}{Whether to display messages and plots, default is TRUE}
 }
 \value{
 Returns a new query ArchRProject with cell types predicted by AtacAnnoR restored in

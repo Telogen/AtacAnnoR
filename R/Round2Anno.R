@@ -5,10 +5,10 @@
 #' 
 #' Get neighbors for each cell
 #'
-#' @param train a matrix whose rows are cells and columns are features, each row represents a cell in train dataset
-#' @param test a matrix whose rows are cells and columns are features, each row represents a cell to find neighbor from `train`
-#' @param k the number of nearest neighbor cells to find for each cell in `test`
-#' @param metric the metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`, default is `cosine`
+#' @param train A matrix whose rows are cells and columns are features, each row represents a cell in train dataset
+#' @param test A matrix whose rows are cells and columns are features, each row represents a cell to find neighbor from `train`
+#' @param k The number of nearest neighbor cells to find for each cell in `test`
+#' @param metric The metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`, default is `cosine`
 #'
 #' @return Returns a list containing the nearest neighbor index and the nearest neighbor distance
 #' @export
@@ -32,9 +32,9 @@ get_neighbors <- function(train,test,k,dist.metric = 'cosine'){
 #' 
 #' Apply the weighted KNN algorithm to make the predictions
 #'
-#' @param neighbors neighbors got from `get_neighbors()`
-#' @param train.labels the labels of cells in the train dataset
-#' @param type return type, default is NULL, which means only return labels, `prob` means return the predicted probability
+#' @param neighbors Neighbors got from `get_neighbors()`
+#' @param train.labels The labels of cells in the train dataset
+#' @param type Return type, default is NULL, which means only return labels, `prob` means return the predicted probability
 #'
 #' @return Returns the predicted labels
 #' @export
@@ -109,9 +109,9 @@ weighted_knn <- function(neighbors,train.labels,type = NULL){
 #' 
 #' Clean seed cell candidates
 #'
-#' @param cell_meta a cell metadata 
-#' @param query_nmf_embedding query meta-program matrix
-#' @param dist.metric the metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`, default is `cosine`
+#' @param cell_meta A cell metadata 
+#' @param query_nmf_embedding Query meta-program matrix
+#' @param dist.metric The metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`, default is `cosine`
 #'
 #' @return Returns a new cell meta data with a column `is_seed`
 #' @export
@@ -151,10 +151,10 @@ seed_cleaning <- function(cell_meta,query_nmf_embedding,dist.metric = 'cosine'){
 #' 
 #' Predict the label for each query cell using WKNN algorithm
 #'
-#' @param cell_meta a cell meta data
-#' @param query_nmf_embedding query meta-program matrix
-#' @param k the number of nearest neighbor cells to find for each query cells
-#' @param dist.metric the metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`, default is `cosine`
+#' @param cell_meta A cell meta data
+#' @param query_nmf_embedding Query meta-program matrix
+#' @param k The number of nearest neighbor cells to find for each query cells
+#' @param dist.metric The metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`, default is `cosine`
 #'
 #' @return Returns a new cell meta data with a column `final_pred`
 #' @export

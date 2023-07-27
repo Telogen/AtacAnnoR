@@ -10,11 +10,11 @@
 #' @param reduction Which dimensionality reduction to use
 #' @param colors Colors of different cell types
 #'
-#' @return Return a ggplot object
+#' @return Returns a ggplot object
 #' @export
 #'
 plot_highlight_cells <- function(Seurat.object, celltype, ident, label = T, pt.size = 1,
-                                 reduction = DefaultDimReduc(Seurat.object),colors = NULL){
+                                 reduction = SeuratObject::DefaultDimReduc(Seurat.object),colors = NULL){
   Idents(Seurat.object) <- ident
   cells.highlight <- list()
   for (i in celltype){
@@ -233,14 +233,14 @@ plot_seed_neighbor_markers_heatmap <- function(query_mtx,cell_meta,
 #'
 #' @param Seurat.object A Seurat Object
 #' @param cell_meta The cell metadata
-#' @param celltype which cell types to show
-#' @param category which predictions to show, either `seed_candidate`, `seed`, or `final`, default is `final`
+#' @param celltype Which cell types to show
+#' @param category Which predictions to show, either `seed_candidate`, `seed`, or `final`, default is `final`
 #' @param label Whether to display the cell type label on the plot, default is TRUE
 #' @param pt.size Point size, default is 1
 #' @param reduction Which dimensionality reduction to use
 #' @param colors Colors of different cell types
 #'
-#' @return Return a ggplot object
+#' @return Returns a ggplot object
 #' @export
 #'
 plot_pred_umap <- function(Seurat.object, cell_meta, celltype = NULL,category = 'final',
@@ -331,11 +331,11 @@ good_heatmap <- function(data,label){
 #' @param query_nmf_embedding The query nmf embedding
 #' @param cell_meta The cell metadata
 #' @param neighbor_celltypes `neighbor_celltypes` generate from the function `get_neighbor_celltypes()`
-#' @param category which predictions to show, either `'seed_candidate'`, `'seed'`, or `final`, default is `'final'`
+#' @param category Which predictions to show, either `'seed_candidate'`, `'seed'`, or `final`, default is `'final'`
 #' @param sample_cells Whether to sample cells, default is FALSE, if is true, randomly sample 30 cells for each cell type
 #' @param celltypes_to_plot Cell type to display, default is all cell types
 #'
-#' @return Return a Heatmap-class object
+#' @return Returns a Heatmap-class object
 #' @export
 #'
 plot_pred_nmf <- function(query_nmf_embedding,cell_meta,neighbor_celltypes,category = 'final',
@@ -383,7 +383,7 @@ plot_pred_nmf <- function(query_nmf_embedding,cell_meta,neighbor_celltypes,categ
 #' @param cell_meta The cell metadata
 #' @param ref_labels The cell type labels of the reference cells
 #'
-#' @return Return a ggplot object
+#' @return Returns a ggplot object
 #' @export
 #'
 plot_celltype_proportions <- function(cell_meta,ref_labels){

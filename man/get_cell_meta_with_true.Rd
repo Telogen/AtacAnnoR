@@ -7,11 +7,11 @@
 get_cell_meta_with_true(cell_meta, true_labels, cor_mtx = NULL)
 }
 \arguments{
-\item{cell_meta}{a cell metadata}
+\item{cell_meta}{A cell metadata}
 
-\item{true_labels}{a vector of true cell labels}
+\item{true_labels}{A vector of true cell labels}
 
-\item{cor_mtx}{the correlation matrix get from \code{get_cor_mtx()}}
+\item{cor_mtx}{The correlation matrix get from \code{get_cor_mtx()}}
 }
 \value{
 Returns a new cell metadata with true labels.

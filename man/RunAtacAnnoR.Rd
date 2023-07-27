@@ -20,34 +20,34 @@ RunAtacAnnoR(
 )
 }
 \arguments{
-\item{ref_mtx}{a reference gene expression counts matrix whose rows are genes and columns are cells/samples}
+\item{ref_mtx}{A reference gene expression counts matrix whose rows are genes and columns are cells/samples}
 
-\item{ref_celltype}{a vector of cell types whose orders are same as the columns of \code{ref_mtx}}
+\item{ref_celltype}{A vector of cell types whose orders are same as the columns of \code{ref_mtx}}
 
-\item{ref_type}{which type of the reference matrix is
+\item{ref_type}{Which type of the reference matrix is
 \itemize{
-\item{'sc': }{the reference matrix is a single cell RNA-seq matrix}
-\item{'bulk': }{the reference matrix is a bulk RNA-seq matrix}
+\item{'sc': }{The reference matrix is a single cell RNA-seq matrix}
+\item{'bulk': }{The reference matrix is a bulk RNA-seq matrix}
 }}
 
-\item{query_gene_activity}{a query gene activity matrix whose rows are genes and columns are cells}
+\item{query_gene_activity}{A query gene activity matrix whose rows are genes and columns are cells}
 
-\item{query_peak_counts}{a query scATAC-seq peak counts matrix whose rows are peaks and columns are cells}
+\item{query_peak_counts}{A query scATAC-seq peak counts matrix whose rows are peaks and columns are cells}
 
-\item{query_cell_embedding}{a query scATAC-seq cell embedding whose rows are cells and columns are factors,
+\item{query_cell_embedding}{A query scATAC-seq cell embedding whose rows are cells and columns are factors,
 default is NULL, which means getting NMF embedding automatically}
 
-\item{min_cor}{the minimum of correlation to define similar cell types, default is 0.6}
+\item{min_cor}{The minimum of correlation to define similar cell types, default is 0.6}
 
-\item{num_global_markers}{the number of global markers}
+\item{num_global_markers}{The number of global markers}
 
-\item{num_neighbor_markers}{the number of neighbor markers}
+\item{num_neighbor_markers}{The number of neighbor markers}
 
-\item{threads}{the number of threads, default is 10}
+\item{threads}{The number of threads, default is 10}
 
-\item{verbose}{whether to display messages and plots, default is TRUE}
+\item{verbose}{Whether to display messages and plots, default is TRUE}
 
-\item{simple_output}{whether to return a simple output, default is TRUE}
+\item{simple_output}{Whether to return a simple output, default is TRUE}
 }
 \value{
 If \code{simple_output} is set to TRUE, returns a vector of predicted labels.

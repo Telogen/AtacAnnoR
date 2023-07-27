@@ -4,8 +4,8 @@
 #'
 #' Combine cell labels predicted by each reference and discard a fraction of cells with uncertain labels
 #' @param merged_labels merged_labels got from `get_merged_labels()`
-#' @param reference the index of reference to be based on
-#' @param fraction default is 0.05
+#' @param reference The index of reference to be based on
+#' @param fraction Default is 0.05
 #'
 #' @return Return the index of cells to be discarded.
 #' @export

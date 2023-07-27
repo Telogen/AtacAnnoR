@@ -7,11 +7,11 @@
 get_pseudo_bulk_mtx(sc_mtx, labels, mode = "mean")
 }
 \arguments{
-\item{sc_mtx}{a single cell gene expression matrix whose rows are features and columns are cells}
+\item{sc_mtx}{A single cell gene expression matrix whose rows are features and columns are cells}
 
-\item{labels}{a vector of cell types whose orders are same as the columns of sc_mtx}
+\item{labels}{A vector of cell types whose orders are same as the columns of sc_mtx}
 
-\item{mode}{the method to aggregate cells, default is \code{'mean'}
+\item{mode}{The method to aggregate cells, default is \code{'mean'}
 \itemize{
 \item{'mean': }{get the mean of each cell type}
 \item{'sum': }{get the sum of each cell type}

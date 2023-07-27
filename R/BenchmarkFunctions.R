@@ -10,9 +10,9 @@
 #' 
 #' Add the true labels to cell metadata
 #'
-#' @param cell_meta a cell metadata
-#' @param true_labels a vector of true cell labels
-#' @param cor_mtx the correlation matrix get from \code{get_cor_mtx()}
+#' @param cell_meta A cell metadata
+#' @param true_labels A vector of true cell labels
+#' @param cor_mtx The correlation matrix get from \code{get_cor_mtx()}
 #'
 #' @return Returns a new cell metadata with true labels.
 #' @export
@@ -44,8 +44,8 @@ get_cell_meta_with_true <- function(cell_meta,true_labels,cor_mtx = NULL) {
 
 #' Get benchmark indicators
 #'
-#' @param true_labels a vector of the true labels
-#' @param pred_labels a vector of the predicted labels
+#' @param true_labels A vector of the true labels
+#' @param pred_labels A vector of the predicted labels
 #'
 #' @return Returns a vector of the accuracy, average recall (balanced accuracy), average precision and mean F1 score.
 #' @export
@@ -93,8 +93,8 @@ get_benchmark <- function(true_labels, pred_labels){
 
 #' Get each cell type's recall
 #'
-#' @param cell_meta the cell metadata
-#' @param ident the column name of the predicted labels
+#' @param cell_meta The cell metadata
+#' @param ident The column name of the predicted labels
 #'
 #' @return Return a data frame containing each cell type's recall
 #' @export
@@ -116,8 +116,8 @@ get_each_recall <- function(cell_meta,ident = 'kendall_pred'){
 
 #' Get each cell type's precision
 #'
-#' @param cell_meta the cell metadata
-#' @param ident the column name of the predicted labels
+#' @param cell_meta The cell metadata
+#' @param ident The column name of the predicted labels
 #'
 #' @return Return a data frame containing each cell type's precision
 #' @export

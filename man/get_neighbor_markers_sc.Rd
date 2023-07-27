@@ -18,13 +18,13 @@ get_neighbor_markers_sc(
 
 \item{labels}{scRNA-seq cell labels}
 
-\item{neighbor_celltypes}{neighbor celltypes got from \code{get_neighbor_celltypes()}}
+\item{neighbor_celltypes}{Neighbor celltypes got from \code{get_neighbor_celltypes()}}
 
-\item{global_markers}{global markers got from \code{get_global_markers_sc()}}
+\item{global_markers}{Global markers got from \code{get_global_markers_sc()}}
 
-\item{max_marker}{maximum number of markers for each cell type}
+\item{max_marker}{Maximum number of markers for each cell type}
 
-\item{threads}{the number of threads, default is 10}
+\item{threads}{The number of threads, default is 10}
 }
 \value{
 Returns a list of neighbor markers for each cell type

@@ -7,13 +7,13 @@
 get_neighbors(train, test, k, dist.metric = "cosine")
 }
 \arguments{
-\item{train}{a matrix whose rows are cells and columns are features, each row represents a cell in train dataset}
+\item{train}{A matrix whose rows are cells and columns are features, each row represents a cell in train dataset}
 
-\item{test}{a matrix whose rows are cells and columns are features, each row represents a cell to find neighbor from \code{train}}
+\item{test}{A matrix whose rows are cells and columns are features, each row represents a cell to find neighbor from \code{train}}
 
-\item{k}{the number of nearest neighbor cells to find for each cell in \code{test}}
+\item{k}{The number of nearest neighbor cells to find for each cell in \code{test}}
 
-\item{metric}{the metric to calculate distance, can be \code{euclidean}, \code{cosine}, \code{manhattan}, and \code{hamming}, default is \code{cosine}}
+\item{metric}{The metric to calculate distance, can be \code{euclidean}, \code{cosine}, \code{manhattan}, and \code{hamming}, default is \code{cosine}}
 }
 \value{
 Returns a list containing the nearest neighbor index and the nearest neighbor distance

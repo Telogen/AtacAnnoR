@@ -12,7 +12,7 @@ plot_celltype_proportions(cell_meta, ref_labels)
 \item{ref_labels}{The cell type labels of the reference cells}
 }
 \value{
-Return a ggplot object
+Returns a ggplot object
 }
 \description{
 Plot cell type proportions for the reference, candidate seed cells, seed cells and the final predictions

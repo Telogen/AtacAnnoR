@@ -10,7 +10,7 @@ plot_highlight_cells(
   ident,
   label = T,
   pt.size = 1,
-  reduction = DefaultDimReduc(Seurat.object),
+  reduction = SeuratObject::DefaultDimReduc(Seurat.object),
   colors = NULL
 )
 }
@@ -30,7 +30,7 @@ plot_highlight_cells(
 \item{colors}{Colors of different cell types}
 }
 \value{
-Return a ggplot object
+Returns a ggplot object
 }
 \description{
 Plot highlight cells

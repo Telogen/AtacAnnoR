@@ -7,11 +7,11 @@
 pre_processing(ref_mtx, query_mtx, verbose = T)
 }
 \arguments{
-\item{ref_mtx}{a reference gene expression matrix whose rows are genes and columns are cells/samples}
+\item{ref_mtx}{A reference gene expression matrix whose rows are genes and columns are cells/samples}
 
-\item{query_mtx}{query gene activity matrix whose rows are genes and columns are cells}
+\item{query_mtx}{Query gene activity matrix whose rows are genes and columns are cells}
 
-\item{verbose}{whether to display messages, default is TRUE}
+\item{verbose}{Whether to display messages, default is TRUE}
 }
 \value{
 Returns a list containing two matrices after pre-processing.

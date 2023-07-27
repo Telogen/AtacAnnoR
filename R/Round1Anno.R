@@ -133,9 +133,9 @@ get_ga_from_peak_mtx <- function(peak_counts, gene_gr,upstream = 2000,threads = 
 #'
 #' @param sc_counts_mtx scRNA-seq counts matrix
 #' @param labels scRNA-seq cell labels
-#' @param max_marker maximum number of markers for each cell type
-#' @param threads the number of threads, default is 10
-#' @param return_raw whether return raw data, default is FALSE
+#' @param max_marker Maximum number of markers for each cell type
+#' @param threads The number of threads, default is 10
+#' @param return_raw Whether return raw data, default is FALSE
 #'
 #' @return Returns a list of global markers for each cell type
 #' @export
@@ -222,10 +222,10 @@ get_global_markers_sc <- function(sc_counts_mtx, labels,max_marker = 200,threads
 #'
 #' @param sc_counts_mtx scRNA-seq counts matrix
 #' @param labels scRNA-seq cell labels
-#' @param neighbor_celltypes neighbor celltypes got from `get_neighbor_celltypes()`
-#' @param global_markers global markers got from `get_global_markers_sc()`
-#' @param max_marker maximum number of markers for each cell type
-#' @param threads the number of threads, default is 10
+#' @param neighbor_celltypes Neighbor celltypes got from `get_neighbor_celltypes()`
+#' @param global_markers Global markers got from `get_global_markers_sc()`
+#' @param max_marker Maximum number of markers for each cell type
+#' @param threads The number of threads, default is 10
 #'
 #' @return Returns a list of neighbor markers for each cell type
 #' @export
@@ -321,11 +321,11 @@ get_neighbor_markers_sc <- function(sc_counts_mtx, labels, neighbor_celltypes, g
 #'
 #' Get global markers for bulk RNA-seq gene counts matrix
 #' 
-#' @param sc_counts_mtx bulk RNA-seq counts matrix
-#' @param labels bulk RNA-seq sample labels
-#' @param max_marker maximum number of markers for each cell type
-#' @param threads the number of threads, default is 10
-#' @param return_raw whether return raw data, default is FALSE
+#' @param sc_counts_mtx Bulk RNA-seq counts matrix
+#' @param labels Bulk RNA-seq sample labels
+#' @param max_marker Maximum number of markers for each cell type
+#' @param threads The number of threads, default is 10
+#' @param return_raw Whether return raw data, default is FALSE
 #'
 #' @return Returns a list of global markers for each cell type
 #' @export
@@ -403,12 +403,12 @@ get_global_markers_bulk <- function(sc_counts_mtx,labels,max_marker = 200,thread
 #'
 #' Get neighbor markers for bulk RNA-seq gene counts matrix
 #'
-#' @param sc_counts_mtx bulk RNA-seq counts matrix
-#' @param labels bulk RNA-seq sample labels
-#' @param neighbor_celltypes neighbor celltypes got from `get_neighbor_celltypes()`
-#' @param global_markers global markers got from `get_global_markers_bulk()`
-#' @param max_marker maximum number of markers for each cell type
-#' @param threads the number of threads, default is 10
+#' @param sc_counts_mtx Bulk RNA-seq counts matrix
+#' @param labels Bulk RNA-seq sample labels
+#' @param neighbor_celltypes Neighbor celltypes got from `get_neighbor_celltypes()`
+#' @param global_markers Global markers got from `get_global_markers_bulk()`
+#' @param max_marker Maximum number of markers for each cell type
+#' @param threads The number of threads, default is 10
 #'
 #' @return Returns a list of neighbor markers for each cell type
 #' @export
@@ -494,13 +494,13 @@ get_neighbor_markers_bulk <- function(sc_counts_mtx,labels,neighbor_celltypes, g
 #'
 #' Get correlation matrix of each query cell to each reference cell type using Kendall correlation coefficient
 #'
-#' @param sc_count_mtx reference gene counts matrix
-#' @param labels reference cell type labels
+#' @param sc_count_mtx Reference gene counts matrix
+#' @param labels Reference cell type labels
 #' @param query_mtx query_mtx query gene activity matrix
-#' @param global_markers global markers got from `get_global_markers_sc()` or `get_global_markers_bulk()`
-#' @param query_nmf_embedding query meta-program matrix
-#' @param threads the number of threads, default is 10
-#' @param verbose whether to display messages, default is TRUE
+#' @param global_markers Global markers got from `get_global_markers_sc()` or `get_global_markers_bulk()`
+#' @param query_nmf_embedding Query meta-program matrix
+#' @param threads The number of threads, default is 10
+#' @param verbose Whether to display messages, default is TRUE
 #'
 #' @return Returns a correlation matrix whose rows are query cells and columns are reference cell types
 #' @export
@@ -564,7 +564,7 @@ get_cor_mtx <- function(sc_count_mtx,labels,query_mtx,global_markers,query_nmf_e
 #'
 #' Get first round annotation labels from the correlation matrix
 #'
-#' @param cor_mtx the correlation matrix get from \code{get_cor_mtx()}
+#' @param cor_mtx The correlation matrix get from \code{get_cor_mtx()}
 #'
 #' @return Returns a cell metadata whose rows are query cells and columns are first round labels.
 #' @export
@@ -592,13 +592,13 @@ get_kendall_pred <- function(cor_mtx) {
 #'
 #' Test whether the markers are of high activity in the predicted cells
 #'
-#' @param query_mtx query gene activity matrix whose rows are genes and columns are cells
-#' @param cell_meta a cell metadata
-#' @param global_markers global markers
-#' @param neighbor_markers neighbor markers
-#' @param which_label which label to test, default is 'kendall_pred'
-#' @param threads the number of threads, default is 10
-#' @param verbose whether to display messages, default is TRUE
+#' @param query_mtx Query gene activity matrix whose rows are genes and columns are cells
+#' @param cell_meta A cell metadata
+#' @param global_markers Global markers
+#' @param neighbor_markers Neighbor markers
+#' @param which_label Which label to test, default is 'kendall_pred'
+#' @param threads The number of threads, default is 10
+#' @param verbose Whether to display messages, default is TRUE
 #'
 #' @return Returns a new cell metadata with new columns 'GMSS','NMSS'
 #' @export
@@ -658,8 +658,8 @@ test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,whi
 #' 
 #' Determine GMSS cutoff and NMSSS cutoff for each cell type
 #'
-#' @param cell_meta a cell metadata
-#' @param threads the number of threads, default is 10
+#' @param cell_meta A cell metadata
+#' @param threads The number of threads, default is 10
 #'
 #' @return Returns a new cell_meta with column `GMSS_cutoff` and `NMSS_cutoff`
 #' @export

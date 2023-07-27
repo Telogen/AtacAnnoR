@@ -8,9 +8,9 @@
 #'
 #' Pre-process two matrices to remove 0 expressed genes and keep common genes
 #'
-#' @param ref_mtx a reference gene expression matrix whose rows are genes and columns are cells/samples
-#' @param query_mtx query gene activity matrix whose rows are genes and columns are cells
-#' @param verbose whether to display messages, default is TRUE
+#' @param ref_mtx A reference gene expression matrix whose rows are genes and columns are cells/samples
+#' @param query_mtx Query gene activity matrix whose rows are genes and columns are cells
+#' @param verbose Whether to display messages, default is TRUE
 #'
 #' @return Returns a list containing two matrices after pre-processing.
 #' @export
@@ -65,13 +65,13 @@ mytfidf <- function (object){
 #'
 #' Get meta-program matrix by NMF from scATAC-seq peak counts matrix
 #'
-#' @param peak_counts a query scATAC-seq peak counts whose rows are peaks and columns are cells
-#' @param binarize whether to binarize the peak counts matrix, default is TRUE (recommended)
-#' @param tfidf whether to do TF-IDF, default is TRUE (recommended)
-#' @param normalize whether to do normalization, default is TRUE (recommended)
-#' @param nmf_seed the seed set for NMF, default is NULL
-#' @param n_factors the number of factors (meta-programs) to get, default is 50
-#' @param verbose whether to display messages, default is TRUE
+#' @param peak_counts A query scATAC-seq peak counts whose rows are peaks and columns are cells
+#' @param binarize Whether to binarize the peak counts matrix, default is TRUE (recommended)
+#' @param tfidf Whether to do TF-IDF, default is TRUE (recommended)
+#' @param normalize Whether to do normalization, default is TRUE (recommended)
+#' @param nmf_seed The seed set for NMF, default is NULL
+#' @param n_factors The number of factors (meta-programs) to get, default is 50
+#' @param verbose Whether to display messages, default is TRUE
 #'
 #' @return Returns a dimension reduced matrix whose rows are cells and columns are factors (meta-programs).
 #' @export
@@ -114,9 +114,9 @@ get_nmf_embedding <- function(peak_counts, binarize = T, tfidf = T, normalize = 
 #'
 #' Get the pseudo bulk gene expression matrix from a single cell gene expression matrix
 #' 
-#' @param sc_mtx a single cell gene expression matrix whose rows are features and columns are cells
-#' @param labels a vector of cell types whose orders are same as the columns of sc_mtx
-#' @param mode the method to aggregate cells, default is \code{'mean'}
+#' @param sc_mtx A single cell gene expression matrix whose rows are features and columns are cells
+#' @param labels A vector of cell types whose orders are same as the columns of sc_mtx
+#' @param mode The method to aggregate cells, default is \code{'mean'}
 #'  \itemize{
 #'   \item{'mean': }{get the mean of each cell type}
 #'   \item{'sum': }{get the sum of each cell type}
@@ -148,9 +148,9 @@ get_pseudo_bulk_mtx <- function(sc_mtx, labels, mode = "mean") {
 #'
 #' @param sc_count_mtx scRNA-seq counts matrix
 #' @param labels scRNA-seq cell labels
-#' @param global_markers global markers got from `get_global_markers_sc()`
-#' @param min.cor the minimum cutoff of cell type correlation to define 'neighbor cells', default is 0.7
-#' @param verbose whether to display messages and plot, default is TRUE
+#' @param global_markers Global markers got from `get_global_markers_sc()`
+#' @param min.cor The minimum cutoff of cell type correlation to define 'neighbor cells', default is 0.7
+#' @param verbose Whether to display messages and plot, default is TRUE
 #'
 #' @return Returns a list of cell subtypes
 #' @export

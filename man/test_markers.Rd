@@ -15,19 +15,19 @@ test_markers(
 )
 }
 \arguments{
-\item{query_mtx}{query gene activity matrix whose rows are genes and columns are cells}
+\item{query_mtx}{Query gene activity matrix whose rows are genes and columns are cells}
 
-\item{cell_meta}{a cell metadata}
+\item{cell_meta}{A cell metadata}
 
-\item{global_markers}{global markers}
+\item{global_markers}{Global markers}
 
-\item{neighbor_markers}{neighbor markers}
+\item{neighbor_markers}{Neighbor markers}
 
-\item{which_label}{which label to test, default is 'kendall_pred'}
+\item{which_label}{Which label to test, default is 'kendall_pred'}
 
-\item{threads}{the number of threads, default is 10}
+\item{threads}{The number of threads, default is 10}
 
-\item{verbose}{whether to display messages, default is TRUE}
+\item{verbose}{Whether to display messages, default is TRUE}
 }
 \value{
 Returns a new cell metadata with new columns 'GMSS','NMSS'
