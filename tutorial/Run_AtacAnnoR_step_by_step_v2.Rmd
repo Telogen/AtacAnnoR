@@ -1,7 +1,7 @@
 ---
 title: "Run AtacAnnoR step by step"
 output: html_document
-date: "2023-06-15"
+date: "2023-07-26"
 author: "Lejin Tian"
 ---
 
@@ -15,6 +15,8 @@ In this tutorial, you can run AtacAnnoR step by step to see how AtacAnnoR works 
 ----
 
 ## Load required packages and datasets
+
+The 10X-Multiome dataset is available from [10x genomics](https://support.10xgenomics.com/single-cell-multiome-atac-gex/datasets/1.0.0/pbmc_granulocyte_sorted_10k). They have been already [processed](https://satijalab.org/seurat/articles/atacseq_integration_vignette.html) as Seurat Objects.
 
 ```{r, echo = T}
 library(AtacAnnoR)
@@ -33,14 +35,22 @@ Preprocessing of scATAC-seq data in AtacAnnoR includes two steps:
 
 #### Gene-level signal extraction: gene activity matrix
 
-Gene activity was previously calculated by `Signac::Geneactivity()` and saved in 'ACTIVITY' assay of the Seurat object `SeuratObj_ATAC`, for details about calculating gene activity, see https://stuartlab.org/signac/reference/geneactivity. You can also calculate gene activity matrix using other models, like [ArchR](https://www.archrproject.com/bookdown/calculating-gene-scores-in-archr.html), [Cicero](https://cole-trapnell-lab.github.io/cicero-release/docs_m3/#cicero-gene-activity-scores), [MAESTRO](https://baigal628.github.io/MAESTRO_documentation/scatac_stepbystep.html), etc.
+For this dataset, gene activity was previously calculated by [`Signac::Geneactivity()`](https://stuartlab.org/signac/reference/geneactivity) with the assistance of [fragments file](https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/output/fragments), and saved in 'ACTIVITY' assay of the Seurat object `SeuratObj_ATAC`. [ArchR](https://www.archrproject.com/bookdown/calculating-gene-scores-in-archr.html) can also be used to calculate the gene activity matrix using the fragments file. 
+
+If the fragment file is not available, we recommend using the function `get_ga_from_peak_mtx()` in AtacAnnoR to calculate the gene activity matrix. This function can run independently of the fragments file and achieve similar performance to the `GeneActivity()` function in Signac.
+
+```{r, echo = T}
+# hg38_gene_gr <- get_gene_gr(genome = 'hg38')
+# gene_activity_mtx <- get_ga_from_peak_mtx(peak_counts = SeuratObj_ATAC[['ATAC']]@counts, gene_gr = hg38_gene_gr)
+```
+
 
 #### Genome-wide-level signal extraction: meta-program matrix
 
-Meta-program matrix can be calculated using `get_nmf_embedding()` function in AtacAnnoR, and the default factor number is set to 50.
+Meta-program matrix can be calculated using function `get_nmf_embedding()` in AtacAnnoR, and the default factor number is set to 50.
 
 ```{r, echo = T}
-query_nmf_embedding <- get_nmf_embedding(peak_counts = SeuratObj_ATAC[['ACTIVITY']]@counts,n_factors = 50)
+query_nmf_embedding <- get_nmf_embedding(peak_counts = SeuratObj_ATAC[['ATAC']]@counts,n_factors = 50)
 ```
 
 We next keep the common features of reference and query.

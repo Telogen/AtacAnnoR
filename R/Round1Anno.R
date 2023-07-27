@@ -1,5 +1,130 @@
 ########### Round1Anno ###########
 
+#' Get GRanges objects of all coding genes for a specific genome
+#'
+#' @param genome Name of the genome, could be 'hg38', 'hg19', 'mm10' or 'mm9', default is 'hg38'.
+#'
+#' @return Return a GRanges objects of all coding genes for the genome
+#' @export 
+#'
+#' @examples
+#' hg38_gene_gr <- get_gene_gr('hg38')
+get_gene_gr <- function(genome){
+  if(genome == 'hg38'){
+    library(TxDb.Hsapiens.UCSC.hg38.knownGene) %>% suppressMessages()
+    library(org.Hs.eg.db) %>% suppressMessages()
+    txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
+    gene_gr <- GenomicFeatures::genes(txdb) %>% suppressMessages()
+    gene_gr$gene_symbol <- mapIds(x = org.Hs.eg.db,
+                                  keys = gene_gr$gene_id, 
+                                  keytype = "ENTREZID",   #需要转换的类型
+                                  column = "SYMBOL")  %>% suppressMessages() #需要转换为的类型
+  } else if(genome == 'hg19'){
+    library(TxDb.Hsapiens.UCSC.hg19.knownGene) %>% suppressMessages()
+    library(org.Hs.eg.db) %>% suppressMessages()
+    txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+    gene_gr <- GenomicFeatures::genes(txdb) %>% suppressMessages()
+    gene_gr$gene_symbol <- mapIds(x = org.Hs.eg.db,
+                                  keys = gene_gr$gene_id, 
+                                  keytype = "ENTREZID",   #需要转换的类型
+                                  column = "SYMBOL")  %>% suppressMessages() #需要转换为的类型
+  } else if(genome == 'mm10'){
+    library(TxDb.Mmusculus.UCSC.mm10.knownGene) %>% suppressMessages()
+    library(org.Mm.eg.db) %>% suppressMessages()
+    txdb <- TxDb.Mmusculus.UCSC.mm10.knownGene
+    gene_gr <- GenomicFeatures::genes(txdb) %>% suppressMessages()
+    gene_gr$gene_symbol <- mapIds(x = org.Mm.eg.db,
+                                  keys = gene_gr$gene_id, 
+                                  keytype = "ENTREZID",   #需要转换的类型
+                                  column = "SYMBOL")  %>% suppressMessages() #需要转换为的类型
+  } else if(genome == 'mm9'){
+    library(TxDb.Mmusculus.UCSC.mm9.knownGene) %>% suppressMessages()
+    library(org.Mm.eg.db) %>% suppressMessages()
+    txdb <- TxDb.Mmusculus.UCSC.mm9.knownGene
+    gene_gr <- GenomicFeatures::genes(txdb) %>% suppressMessages()
+    gene_gr$gene_symbol <- mapIds(x = org.Mm.eg.db,
+                                  keys = gene_gr$gene_id, 
+                                  keytype = "ENTREZID",   #需要转换的类型
+                                  column = "SYMBOL")  %>% suppressMessages() #需要转换为的类型
+  }
+  
+  gene_gr <- gene_gr[-which(is.na(gene_gr$gene_symbol))]
+  return(gene_gr)
+}
+
+
+
+#' Get gene activity matrix from the peak counts matrix
+#'
+#' 
+#' 
+#' @param peak_counts The peak counts matrix whose rows are peaks and columns are cells
+#' @param gene_gr The GRanges objects of all coding genes genome, can be got from `get_gene_gr()`
+#' @param threads Number of threads
+#' @param upstream Number of bases to extend upstream of the TSS, default is 2000
+#'
+#' @return Return a gene activity matrix whose rows are genes and columns are cells.
+#' @export
+#'
+get_ga_from_peak_mtx <- function(peak_counts, gene_gr,upstream = 2000,threads = 10){
+  
+  peak_mtx <- peak_counts
+  promoter_genebody_gr <- promoters(gene_gr,upstream = upstream,downstream = width(gene_gr))
+  
+  peak_mtx <- peak_mtx[which(stringr::str_count(rownames(peak_mtx),'-') == 2),]
+  peak_gr <- Signac::StringToGRanges(rownames(peak_mtx))
+  
+  # SnapATAC:::createGmatFromMat.default 
+  ovs_tmp <- GenomicRanges::findOverlaps(query = peak_gr, subject = gene_gr) %>% suppressWarnings()
+  ovs = as.data.frame(ovs_tmp)
+  ovs.ls = split(ovs, ovs$subjectHits)
+  data.use <- Matrix::t(peak_mtx)
+  
+  count.ls <- pbmcapply::pbmclapply(ovs.ls, function(idx){
+    # idx <- ovs.ls[[2041]]
+    # idx <- ovs.ls[[1]]
+    # idx
+    idx.bins.i = idx$queryHits
+    idx.bins.i
+    # length(idx.bins.i)
+    
+    if(length(idx.bins.i) == 1L){
+      count.i = data.use[,idx.bins.i,dropping=TRUE]
+      if(any(count.i > 0)){
+        data.frame(i = which(count.i > 0), 
+                   j = idx$subjectHits[1], 
+                   val = count.i[count.i > 0])
+      }else{
+        data.frame()
+      }
+    }else{
+      count.i = Matrix::rowSums(data.use[,idx.bins.i,dropping=TRUE])
+      if(any(count.i > 0)){
+        data.frame(i = which(count.i > 0), 
+                   j = idx$subjectHits[1],
+                   val = count.i[count.i > 0])
+      }else{
+        data.frame()
+      }
+    }
+  }, mc.cores = threads)
+  
+  count.df = do.call(rbind, count.ls)
+  # dim(count.df)
+  gmat <- Matrix::sparseMatrix(
+    i = count.df[,1], 
+    j = count.df[,2], 
+    x = count.df[,3], 
+    dims = c(ncol(peak_mtx), length(gene_gr$gene_symbol)),
+    dimnames = list(colnames(peak_mtx), as.character(gene_gr$gene_symbol))
+  )
+  ga_mtx <- Matrix::t(gmat)
+  
+  return(ga_mtx)
+}
+
+
+
 
 
 #' Get global markers for scRNA-seq gene counts matrix
@@ -401,7 +526,7 @@ get_cor_mtx <- function(sc_count_mtx,labels,query_mtx,global_markers,query_nmf_e
   query_pb.use <- query_pb[highly_expressed_genes, ]
   ideal_gene_mtx <- diag(ncol(query_pb.use))
   colnames(ideal_gene_mtx) <- colnames(query_pb.use)
-  cos_mtx <- RcppML::cosine(t(query_pb.use), ideal_gene_mtx)
+  cos_mtx <- RcppML::cosine(Matrix::t(query_pb.use), ideal_gene_mtx)
   dimnames(cos_mtx) <- list(rownames(query_pb.use),colnames(ideal_gene_mtx))
   query_selected_features <- apply(cos_mtx, 2, function(col) {
     sort(col, T)[1:200] %>% names()
