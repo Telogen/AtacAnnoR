@@ -35,9 +35,9 @@ Preprocessing of scATAC-seq data in AtacAnnoR includes two steps:
 
 #### Gene-level signal extraction: gene activity matrix
 
-For this dataset, gene activity was previously calculated by [`Signac::Geneactivity()`](https://stuartlab.org/signac/reference/geneactivity) with the assistance of [fragments file](https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/output/fragments), and saved in 'ACTIVITY' assay of the Seurat object `SeuratObj_ATAC`. [ArchR](https://www.archrproject.com/bookdown/calculating-gene-scores-in-archr.html) can also be used to calculate the gene activity matrix using the fragments file. 
+For this dataset, gene activity was previously calculated by function [`GeneActivity()` in Signac](https://stuartlab.org/signac/reference/geneactivity) with the assistance of [fragments file](https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/output/fragments), and saved in 'ACTIVITY' assay of the Seurat object `SeuratObj_ATAC`. [ArchR](https://www.archrproject.com/bookdown/calculating-gene-scores-in-archr.html) can also be used to calculate the gene activity matrix using the fragments file. 
 
-If the fragment file is not available, we recommend using the function `get_ga_from_peak_mtx()` in AtacAnnoR to calculate the gene activity matrix. This function can run independently of the fragments file and achieve similar performance to the `GeneActivity()` function in Signac.
+**If the fragment file is not available**, we recommend using the function `get_ga_from_peak_mtx()` in AtacAnnoR to calculate the gene activity matrix. This function can run independently of the fragments file and achieve similar performance to the `GeneActivity()` function in Signac.
 
 ```{r, echo = T}
 # hg38_gene_gr <- get_gene_gr(genome = 'hg38')
@@ -50,7 +50,7 @@ If the fragment file is not available, we recommend using the function `get_ga_f
 Meta-program matrix can be calculated using function `get_nmf_embedding()` in AtacAnnoR, and the default factor number is set to 50.
 
 ```{r, echo = T}
-query_nmf_embedding <- get_nmf_embedding(peak_counts = SeuratObj_ATAC[['ATAC']]@counts,n_factors = 50)
+query_nmf_embedding <- get_nmf_embedding(peak_counts = SeuratObj_ATAC[['ATAC']]@counts)
 ```
 
 We next keep the common features of reference and query.
