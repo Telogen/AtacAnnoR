@@ -37,15 +37,15 @@ get_merged_labels <- function(pred_df){
 #'
 #' @param merged_labels merged_labels got from `get_merged_labels()`
 #' @param query_nmf_embedding Query meta-program matrix
-#' @param cutoff The cutoff to drfinr 'similar' cells, smaller value means more strict correction, default is 0.6
+#' @param cutoff The cutoff to drfinr 'similar' cells, smaller value means more strict correction
 #' @param max_edit_distance Max edit distance, by default is the number of references-1 
-#' @param threads The number of threads, default is 10
-#' @param verbose Whether to display messages, default is TRUE
+#' @param threads The number of threads
+#' @param verbose Whether to display messages
 #'
 #' @return Returns a list containing the information of the corrected labels  
 #' @export
 #'
-correct_labels <- function(merged_labels,query_nmf_embedding,cutoff = .6,max_edit_distance = NULL,threads = 10, verbose = T){
+correct_labels <- function(merged_labels,query_nmf_embedding,cutoff = 0.6,max_edit_distance = NULL,threads = 10, verbose = TRUE){
   # merged_labels <- pred_label_df$merge_name_12345
   merge_name_nmf_pb <- get_pseudo_bulk_mtx(t(query_nmf_embedding),merged_labels)
   all_combs_table <- table(merged_labels)

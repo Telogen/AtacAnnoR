@@ -2,14 +2,14 @@
 
 #' Get GRanges objects of all coding genes for a specific genome
 #'
-#' @param genome Name of the genome, could be 'hg38', 'hg19', 'mm10' or 'mm9', default is 'hg38'.
+#' @param genome Name of the genome, could be 'hg38', 'hg19', 'mm10' or 'mm9'
 #'
 #' @return Return a GRanges objects of all coding genes for the genome
 #' @export 
 #'
 #' @examples
 #' hg38_gene_gr <- get_gene_gr('hg38')
-get_gene_gr <- function(genome){
+get_gene_gr <- function(genome = 'hg38'){
   if(genome == 'hg38'){
     library(TxDb.Hsapiens.UCSC.hg38.knownGene) %>% suppressMessages()
     library(org.Hs.eg.db) %>% suppressMessages()
@@ -68,17 +68,16 @@ get_gene_gr <- function(genome){
 #'
 get_ga_from_peak_mtx <- function(peak_counts, gene_gr,upstream = 2000,threads = 10){
   
-  peak_mtx <- peak_counts
   promoter_genebody_gr <- promoters(gene_gr,upstream = upstream,downstream = width(gene_gr))
   
-  peak_mtx <- peak_mtx[which(stringr::str_count(rownames(peak_mtx),'-') == 2),]
-  peak_gr <- Signac::StringToGRanges(rownames(peak_mtx))
+  peak_counts <- peak_counts[which(stringr::str_count(rownames(peak_counts),'-') == 2),]
+  peak_gr <- Signac::StringToGRanges(rownames(peak_counts))
   
   # SnapATAC:::createGmatFromMat.default 
   ovs_tmp <- GenomicRanges::findOverlaps(query = peak_gr, subject = gene_gr) %>% suppressWarnings()
   ovs = as.data.frame(ovs_tmp)
   ovs.ls = split(ovs, ovs$subjectHits)
-  data.use <- Matrix::t(peak_mtx)
+  data.use <- Matrix::t(peak_counts)
   
   count.ls <- pbmcapply::pbmclapply(ovs.ls, function(idx){
     # idx <- ovs.ls[[2041]]
@@ -115,8 +114,8 @@ get_ga_from_peak_mtx <- function(peak_counts, gene_gr,upstream = 2000,threads = 
     i = count.df[,1], 
     j = count.df[,2], 
     x = count.df[,3], 
-    dims = c(ncol(peak_mtx), length(gene_gr$gene_symbol)),
-    dimnames = list(colnames(peak_mtx), as.character(gene_gr$gene_symbol))
+    dims = c(ncol(peak_counts), length(gene_gr$gene_symbol)),
+    dimnames = list(colnames(peak_counts), as.character(gene_gr$gene_symbol))
   )
   ga_mtx <- Matrix::t(gmat)
   
@@ -134,15 +133,12 @@ get_ga_from_peak_mtx <- function(peak_counts, gene_gr,upstream = 2000,threads = 
 #' @param sc_counts_mtx scRNA-seq counts matrix
 #' @param labels scRNA-seq cell labels
 #' @param max_marker Maximum number of markers for each cell type
-#' @param threads The number of threads, default is 10
-#' @param return_raw Whether return raw data, default is FALSE
+#' @param threads The number of threads
+#' @param return_raw Whether return raw data
 #'
 #' @return Returns a list of global markers for each cell type
 #' @export
-get_global_markers_sc <- function(sc_counts_mtx, labels,max_marker = 200,threads = 10,return_raw = F){
-  # sc_counts_mtx <- ref_mtx
-  # labels <- SeuratObj_RNA$true
-  # return.raw = F
+get_global_markers_sc <- function(sc_counts_mtx, labels,max_marker = 200,threads = 10,return_raw = FALSE){
   
   # if one ct more than 2000 cells, sample 2000 cells
   if(max(table(labels)) > 2000){
@@ -194,7 +190,6 @@ get_global_markers_sc <- function(sc_counts_mtx, labels,max_marker = 200,threads
   },mc.cores = threads)
   names(Seurat_marker_list) <- all_cts
   
-  
   if(return_raw){
     return(Seurat_marker_list)
   } else{
@@ -225,13 +220,11 @@ get_global_markers_sc <- function(sc_counts_mtx, labels,max_marker = 200,threads
 #' @param neighbor_celltypes Neighbor celltypes got from `get_neighbor_celltypes()`
 #' @param global_markers Global markers got from `get_global_markers_sc()`
 #' @param max_marker Maximum number of markers for each cell type
-#' @param threads The number of threads, default is 10
+#' @param threads The number of threads
 #'
 #' @return Returns a list of neighbor markers for each cell type
 #' @export
 get_neighbor_markers_sc <- function(sc_counts_mtx, labels, neighbor_celltypes, global_markers,max_marker = 200,threads = 10){
-  # sc_counts_mtx <- ref_mtx
-  # labels <- SeuratObj_RNA$true
   
   # if one ct more than 2000 cells, sample 2000 cells
   if(max(table(labels)) > 2000){
@@ -324,13 +317,13 @@ get_neighbor_markers_sc <- function(sc_counts_mtx, labels, neighbor_celltypes, g
 #' @param sc_counts_mtx Bulk RNA-seq counts matrix
 #' @param labels Bulk RNA-seq sample labels
 #' @param max_marker Maximum number of markers for each cell type
-#' @param threads The number of threads, default is 10
-#' @param return_raw Whether return raw data, default is FALSE
+#' @param threads The number of threads
+#' @param return_raw Whether return raw data
 #'
 #' @return Returns a list of global markers for each cell type
 #' @export
 #'
-get_global_markers_bulk <- function(sc_counts_mtx,labels,max_marker = 200,threads = 10,return_raw = F){
+get_global_markers_bulk <- function(sc_counts_mtx,labels,max_marker = 200,threads = 10,return_raw = FALSE){
   
   pb_ref <- get_pseudo_bulk_mtx(sc_counts_mtx, labels)
   HEG_num <- round(nrow(pb_ref) * 0.5)
@@ -343,12 +336,12 @@ get_global_markers_bulk <- function(sc_counts_mtx,labels,max_marker = 200,thread
     group <- factor(as.numeric(labels == ct))
     design <- model.matrix(~ 0 + group)
     dge <- edgeR::DGEList(sc_counts_mtx, group=group)
-    keep.exprs <- edgeR::filterByExpr(dge) #自动筛选过滤低表达基因
+    keep.exprs <- edgeR::filterByExpr(dge) 
     dge <- dge[keep.exprs,,keep.lib.sizes=FALSE] 
-    dge <- edgeR::calcNormFactors(dge, method = 'TMM') #归一化因子用于 normalizes the library sizes
+    dge <- edgeR::calcNormFactors(dge, method = 'TMM') 
     dge <- edgeR::estimateDisp(dge, design, robust=T) 
     fit <- edgeR::glmFit(dge, design, robust=T)
-    lt <- edgeR::glmLRT(fit, contrast=c(-1,1))  #比对:顺序实验/对照，已设对照为1
+    lt <- edgeR::glmLRT(fit, contrast=c(-1,1)) 
     tempDEG <- edgeR::topTags(lt, n = Inf,sort.by = 'logFC') 
     tempDEG <- as.data.frame(tempDEG)
     DEG_edgeR <- na.omit(tempDEG)
@@ -359,7 +352,6 @@ get_global_markers_bulk <- function(sc_counts_mtx,labels,max_marker = 200,thread
     if(nrow(select_DEG_edgeR) < 50){
       select_DEG_edgeR <- dplyr::filter(DEG_edgeR,logFC > 0.2,PValue < 0.01)
     }
-    
     if(nrow(select_DEG_edgeR) > 200){
       select_DEG_edgeR <- select_DEG_edgeR[1:200,]
     }
@@ -378,7 +370,6 @@ get_global_markers_bulk <- function(sc_counts_mtx,labels,max_marker = 200,thread
   # sapply(edgeR_marker_list,length)
   
   if(return_raw){
-    
     return(edgeR_marker_list)
   } else{
     # get global_bg_genes for each ct
@@ -392,7 +383,6 @@ get_global_markers_bulk <- function(sc_counts_mtx,labels,max_marker = 200,thread
     names(global_markers) <- all_cts
     return(global_markers)
   }
-  
 }
 
 
@@ -408,7 +398,7 @@ get_global_markers_bulk <- function(sc_counts_mtx,labels,max_marker = 200,thread
 #' @param neighbor_celltypes Neighbor celltypes got from `get_neighbor_celltypes()`
 #' @param global_markers Global markers got from `get_global_markers_bulk()`
 #' @param max_marker Maximum number of markers for each cell type
-#' @param threads The number of threads, default is 10
+#' @param threads The number of threads
 #'
 #' @return Returns a list of neighbor markers for each cell type
 #' @export
@@ -477,9 +467,7 @@ get_neighbor_markers_bulk <- function(sc_counts_mtx,labels,neighbor_celltypes, g
       neighbor_markers[[ct]]$neighbor_bg_genes <- setdiff(neighbor_bg_genes_tmp,edgeR_marker_list[[ct]])
     }
   }
-  
   return(neighbor_markers)
-  
 }
 
 
@@ -499,13 +487,13 @@ get_neighbor_markers_bulk <- function(sc_counts_mtx,labels,neighbor_celltypes, g
 #' @param query_mtx query_mtx query gene activity matrix
 #' @param global_markers Global markers got from `get_global_markers_sc()` or `get_global_markers_bulk()`
 #' @param query_nmf_embedding Query meta-program matrix
-#' @param threads The number of threads, default is 10
-#' @param verbose Whether to display messages, default is TRUE
+#' @param threads The number of threads
+#' @param verbose Whether to display messages
 #'
 #' @return Returns a correlation matrix whose rows are query cells and columns are reference cell types
 #' @export
 #'
-get_cor_mtx <- function(sc_count_mtx,labels,query_mtx,global_markers,query_nmf_embedding,threads = 10,verbose = T) {
+get_cor_mtx <- function(sc_count_mtx,labels,query_mtx,global_markers,query_nmf_embedding,threads = 10,verbose = TRUE) {
   # ref
   if (verbose) {
     message("Processing reference...")
@@ -533,7 +521,6 @@ get_cor_mtx <- function(sc_count_mtx,labels,query_mtx,global_markers,query_nmf_e
   }) %>% as.data.frame() %>% unlist(use.names = F) %>% unique()
   # query_global_markers <- get_global_markers_sc(sc_counts_mtx = query_mtx,labels = query_clusters)
   # query_selected_features <- unlist(query_global_markers,use.names = F) %>% unique()
-  
   
   # intersect_genes
   intersect_genes <- intersect(ref_selected_features, query_selected_features)
@@ -569,7 +556,6 @@ get_cor_mtx <- function(sc_count_mtx,labels,query_mtx,global_markers,query_nmf_e
 #' @return Returns a cell metadata whose rows are query cells and columns are first round labels.
 #' @export
 #'
-#'
 get_kendall_pred <- function(cor_mtx) {
   cell_meta <- data.frame(row.names = rownames(cor_mtx))
   cell_meta$kendall_pred <- colnames(cor_mtx)[apply(cor_mtx, 1, function(row) {
@@ -596,15 +582,15 @@ get_kendall_pred <- function(cor_mtx) {
 #' @param cell_meta A cell metadata
 #' @param global_markers Global markers
 #' @param neighbor_markers Neighbor markers
-#' @param which_label Which label to test, default is 'kendall_pred'
-#' @param threads The number of threads, default is 10
-#' @param verbose Whether to display messages, default is TRUE
+#' @param which_label Which label to test
+#' @param threads The number of threads
+#' @param verbose Whether to display messages
 #'
 #' @return Returns a new cell metadata with new columns 'GMSS','NMSS'
 #' @export
 #'
 #'
-test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,which_label = 'kendall_pred',threads = 10,verbose = T) {
+test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,which_label = 'kendall_pred',threads = 10,verbose = TRUE) {
   query_mtx <- Seurat::NormalizeData(query_mtx,verbose = F)
   used_genes <- unique(unlist(c(global_markers,neighbor_markers), use.names = F))
   scale.query_mtx <- Seurat::ScaleData(query_mtx[used_genes, ], do.center = F, verbose = F)
@@ -625,7 +611,7 @@ test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,whi
     barcode.GBG.genes.exp <- scale.query_mtx[barcode.GBG.genes, barcode]
     global.test <- stats::wilcox.test(x = barcode.G.markers.exp, y = barcode.GBG.genes.exp, alternative = "great")
     GM.pvalue <- global.test$p.value
-    -log10(GM.pvalue)
+    # -log10(GM.pvalue)
     
     # neighbor markers test
     barcode.N.markers <- neighbor_markers[[barcode_cellype]]$neighbor_markers
@@ -634,7 +620,7 @@ test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,whi
     barcode.NBG.genes.exp <- scale.query_mtx[barcode.NBG.genes, barcode]
     neighbor.test <- stats::wilcox.test(x = barcode.N.markers.exp, y = barcode.NBG.genes.exp, alternative = "great")
     NM.pvalue <- neighbor.test$p.value
-    -log10(NM.pvalue)
+    # -log10(NM.pvalue)
     
     out <- c(GM.pvalue, NM.pvalue)
     return(out)
@@ -659,7 +645,7 @@ test_markers <- function(query_mtx,cell_meta,global_markers,neighbor_markers,whi
 #' Determine GMSS cutoff and NMSSS cutoff for each cell type
 #'
 #' @param cell_meta A cell metadata
-#' @param threads The number of threads, default is 10
+#' @param threads The number of threads
 #'
 #' @return Returns a new cell_meta with column `GMSS_cutoff` and `NMSS_cutoff`
 #' @export

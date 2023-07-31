@@ -8,14 +8,14 @@
 #' @param train A matrix whose rows are cells and columns are features, each row represents a cell in train dataset
 #' @param test A matrix whose rows are cells and columns are features, each row represents a cell to find neighbor from `train`
 #' @param k The number of nearest neighbor cells to find for each cell in `test`
-#' @param metric The metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`, default is `cosine`
+#' @param metric The metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`
 #'
 #' @return Returns a list containing the nearest neighbor index and the nearest neighbor distance
 #' @export
 #'
 get_neighbors <- function(train,test,k,dist.metric = 'cosine'){
   KNN <- Seurat::FindNeighbors(object = as.matrix(train),query = as.matrix(test),k.param = (k+1),
-                               return.neighbor = T,annoy.metric = dist.metric,verbose = F)
+                               return.neighbor = T,annoy.metric = dist.metric,verbose = FALSE)
   nn.idx <- KNN@nn.idx
   nn.dist = KNN@nn.dist
   rownames(nn.idx) <- rownames(test)
@@ -111,7 +111,7 @@ weighted_knn <- function(neighbors,train.labels,type = NULL){
 #'
 #' @param cell_meta A cell metadata 
 #' @param query_nmf_embedding Query meta-program matrix
-#' @param dist.metric The metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`, default is `cosine`
+#' @param dist.metric The metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`
 #'
 #' @return Returns a new cell meta data with a column `is_seed`
 #' @export
@@ -154,7 +154,7 @@ seed_cleaning <- function(cell_meta,query_nmf_embedding,dist.metric = 'cosine'){
 #' @param cell_meta A cell meta data
 #' @param query_nmf_embedding Query meta-program matrix
 #' @param k The number of nearest neighbor cells to find for each query cells
-#' @param dist.metric The metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`, default is `cosine`
+#' @param dist.metric The metric to calculate distance, can be `euclidean`, `cosine`, `manhattan`, and `hamming`
 #'
 #' @return Returns a new cell meta data with a column `final_pred`
 #' @export

@@ -16,7 +16,7 @@
 #' @export
 #'
 #'
-pre_processing <- function(ref_mtx, query_mtx, verbose = T) {
+pre_processing <- function(ref_mtx, query_mtx, verbose = TRUE) {
   ref_mtx <- ref_mtx[which(Matrix::rowSums(ref_mtx) > 0), ]
   query_mtx <- query_mtx[which(Matrix::rowSums(query_mtx) > 0), ]
 
@@ -66,18 +66,18 @@ mytfidf <- function (object){
 #' Get meta-program matrix by NMF from scATAC-seq peak counts matrix
 #'
 #' @param peak_counts A query scATAC-seq peak counts whose rows are peaks and columns are cells
-#' @param binarize Whether to binarize the peak counts matrix, default is TRUE (recommended)
-#' @param tfidf Whether to do TF-IDF, default is TRUE (recommended)
-#' @param normalize Whether to do normalization, default is TRUE (recommended)
-#' @param nmf_seed The seed set for NMF, default is NULL
-#' @param n_factors The number of factors (meta-programs) to get, default is 50
-#' @param verbose Whether to display messages, default is TRUE
+#' @param binarize Whether to binarize the peak counts matrix
+#' @param tfidf Whether to do TF-IDF
+#' @param normalize Whether to do normalization
+#' @param nmf_seed The seed set for NMF
+#' @param n_factors The number of factors (meta-programs) to get
+#' @param verbose Whether to display messages
 #'
 #' @return Returns a dimension reduced matrix whose rows are cells and columns are factors (meta-programs).
 #' @export
 #'
-get_nmf_embedding <- function(peak_counts, binarize = T, tfidf = T, normalize = T,nmf_seed = NULL,
-                              n_factors = 50L, verbose = T) {
+get_nmf_embedding <- function(peak_counts, binarize = TRUE, tfidf = TRUE, normalize = TRUE,nmf_seed = NULL,
+                              n_factors = 50L, verbose = TRUE) {
   if (binarize == T) {
     peak_counts <- mybinarize(peak_counts)
   }
@@ -149,14 +149,14 @@ get_pseudo_bulk_mtx <- function(sc_mtx, labels, mode = "mean") {
 #' @param sc_count_mtx scRNA-seq counts matrix
 #' @param labels scRNA-seq cell labels
 #' @param global_markers Global markers got from `get_global_markers_sc()`
-#' @param min.cor The minimum cutoff of cell type correlation to define 'neighbor cells', default is 0.7
-#' @param verbose Whether to display messages and plot, default is TRUE
+#' @param min_cor The minimum cutoff of cell type correlation to define 'neighbor cells'
+#' @param verbose Whether to display messages and plot
 #'
 #' @return Returns a list of cell subtypes
 #' @export
 #'
 #' @importFrom pcaPP cor.fk
-get_neighbor_celltypes <- function(sc_count_mtx,labels,global_markers,min.cor = 0.7,verbose = T) {
+get_neighbor_celltypes <- function(sc_count_mtx,labels,global_markers,min_cor = 0.6,verbose = T) {
   pb_counts <- get_pseudo_bulk_mtx(sc_count_mtx,labels,mode = 'sum')
   features <- unlist(global_markers,use.names = F) %>% unique()
   pb_counts_selected <- pb_counts[features,]
@@ -164,12 +164,12 @@ get_neighbor_celltypes <- function(sc_count_mtx,labels,global_markers,min.cor = 
   ord <- stats::hclust(dist(COR, method = "euclidean"), method = "ward.D" )$order
   COR <- COR[ord,ord]
   neighbor_celltypes_list <- apply(COR,1,function(row){
-    names(which(sort(row, decreasing = T) > min.cor))
+    names(which(sort(row, decreasing = T) > min_cor))
   })
   if (verbose) {
     data <- as.data.frame(as.table(COR))
     data$label <- round((data$Freq*100),0)
-    data$label[which(data$label < (min.cor*100))] <- ' '
+    data$label[which(data$label < (min_cor*100))] <- ' '
     p <- ggplot2::ggplot(data, ggplot2::aes(Var1, Var2, fill = Freq)) +
       ggplot2::geom_tile() +
       ggplot2::scale_fill_gradient2(name = "Similarity\n(×100)",low = "blue", mid = 'yellow', high = "red")  +

@@ -8,7 +8,7 @@
 
 #' Run AtacAnnoR in a line
 #'
-#' AtacAnnoR main function
+#' AtacAnnoR main function.
 #'
 #' @param ref_mtx A reference gene expression counts matrix whose rows are genes and columns are cells/samples
 #' @param ref_celltype A vector of cell types whose orders are same as the columns of `ref_mtx`
@@ -21,12 +21,12 @@
 #' @param query_peak_counts A query scATAC-seq peak counts matrix whose rows are peaks and columns are cells
 #' @param query_cell_embedding A query scATAC-seq cell embedding whose rows are cells and columns are factors, 
 #' default is NULL, which means getting NMF embedding automatically
-#' @param min_cor The minimum of correlation to define similar cell types, default is 0.6
+#' @param min_cor The minimum of correlation to define similar cell types
 #' @param num_global_markers The number of global markers
 #' @param num_neighbor_markers The number of neighbor markers
-#' @param threads The number of threads, default is 10
-#' @param verbose Whether to display messages and plots, default is TRUE
-#' @param simple_output Whether to return a simple output, default is TRUE
+#' @param threads The number of threads
+#' @param verbose Whether to display messages and plots
+#' @param simple_output Whether to return a simple output
 #'
 #' @return If \code{simple_output} is set to TRUE, returns a vector of predicted labels.
 #'   If \code{simple_output} is set to FALSE, returns a list object of all outputs.
@@ -77,7 +77,7 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
                                        threads = threads)
   sapply(global_markers,function(x){c(length(x[[1]]),length(x[[2]]))})
   neighbor_celltypes <- get_neighbor_celltypes(sc_count_mtx = ref_mtx,labels = ref_celltype,global_markers = global_markers,
-                                               min.cor = min_cor,verbose = verbose)
+                                               min_cor = min_cor,verbose = verbose)
   neighbor_markers <- get_neighbor_markers(sc_counts_mtx = ref_mtx,labels = ref_celltype,
                                            neighbor_celltypes = neighbor_celltypes,global_markers = global_markers,
                                            max_marker = num_neighbor_markers,threads = threads)
@@ -147,11 +147,11 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
 #'   \item{'sc': }{The reference matrix is a single cell RNS-seq matrix}
 #'   \item{'bulk': }{The reference matrix is a bulk RNA-seq matrix}
 #' }
-#' @param min_cor The minimum of correlation to define similar cell types, default is 0.6
+#' @param min_cor The minimum of correlation to define similar cell types
 #' @param num_global_markers The number of global markers
 #' @param num_neighbor_markers The number of neighbor markers
-#' @param threads The number of threads, default is 10
-#' @param verbose Whether to display messages and plots, default is TRUE
+#' @param threads The number of threads
+#' @param verbose Whether to display messages and plots
 #'
 #' @return Returns a new query Seurat object with cell types predicted by AtacAnnoR restored in
 #' \code{query$final_pred} and NMF embedding restored in \code{query[['nmf']]}.
@@ -190,17 +190,17 @@ RunAtacAnnoR_Signac <- function(query_SeuratObj,query_ga_assay = 'ACTIVITY',quer
 #'
 #' @param query_snapObj The query snap object
 #' @param ref_mtx A reference gene expression matrix whose rows are genes and columns are cells/samples
-#' @param ref_celltype A vector of cell types whose orders are same as the columns of sc.mtx
+#' @param ref_celltype A vector of cell types whose orders are same as the columns of `ref_mtx`
 #' @param ref_type Which type of the reference matrix is
 #'  \itemize{
 #'   \item{'sc': }{The reference matrix is a single cell RNS-seq matrix}
 #'   \item{'bulk': }{The reference matrix is a bulk RNA-seq matrix}
 #' }
-#' @param min_cor The minimum of correlation to define similar cell types, default is 0.6
+#' @param min_cor The minimum of correlation to define similar cell types
 #' @param num_global_markers The number of global markers
 #' @param num_neighbor_markers The number of neighbor markers
-#' @param threads The number of threads, default is 10
-#' @param verbose Whether to display messages and plots, default is TRUE
+#' @param threads The number of threads
+#' @param verbose Whether to display messages and plots
 #'
 #' @return Returns a new query snap object with cell types predicted by AtacAnnoR restored in
 #' \code{query_snapObj@metaData$final_pred}.
@@ -233,17 +233,17 @@ RunAtacAnnoR_SnapATAC <- function(query_snapObj,ref_mtx, ref_celltype,ref_type =
 
 #' @param query_ArchRproj The query ArchRProject
 #' @param ref_mtx A reference gene expression matrix whose rows are genes and columns are cells/samples
-#' @param ref_celltype A vector of cell types whose orders are same as the columns of sc.mtx
+#' @param ref_celltype A vector of cell types whose orders are same as the columns of `ref_mtx`
 #' @param ref_type Which type of the reference matrix is
 #'  \itemize{
 #'   \item{'sc': }{The reference matrix is a single cell RNS-seq matrix}
 #'   \item{'bulk': }{The reference matrix is a bulk RNA-seq matrix}
 #' }
-#' @param min_cor The minimum of correlation to define similar cell types, default is 0.6
+#' @param min_cor The minimum of correlation to define similar cell types
 #' @param num_global_markers The number of global markers
 #' @param num_neighbor_markers The number of neighbor markers
-#' @param threads The number of threads, default is 10
-#' @param verbose Whether to display messages and plots, default is TRUE
+#' @param threads The number of threads
+#' @param verbose Whether to display messages and plots
 #'
 #' @return Returns a new query ArchRProject with cell types predicted by AtacAnnoR restored in
 #' \code{query_ArchRproj$final_pred}.
@@ -287,18 +287,18 @@ RunAtacAnnoR_ArchR <- function(query_ArchRproj,ref_mtx, ref_celltype,ref_type = 
 #'
 #' @param query_cds The query cds object
 #' @param ref_mtx A reference gene expression matrix whose rows are genes and columns are cells/samples
-#' @param ref_celltype A vector of cell types whose orders are same as the columns of sc.mtx
+#' @param ref_celltype A vector of cell types whose orders are same as the columns of `ref_mtx`
 #' @param ref_type Which type of the reference matrix is
 #'  \itemize{
 #'   \item{'sc': }{The reference matrix is a single cell RNS-seq matrix}
 #'   \item{'bulk': }{The reference matrix is a bulk RNA-seq matrix}
 #' }
 #' @param query_gene_activity A query gene activity matrix whose rows are genes and columns are cells
-#' @param min_cor The minimum of correlation to define similar cell types, default is 0.6
+#' @param min_cor The minimum of correlation to define similar cell types
 #' @param num_global_markers The number of global markers
 #' @param num_neighbor_markers The number of neighbor markers
-#' @param threads The number of threads, default is 10
-#' @param verbose Whether to display messages and plots, default is TRUE
+#' @param threads The number of threads
+#' @param verbose Whether to display messages and plots
 #'
 #' @return Returns a new query cds object with cell types predicted by AtacAnnoR restored in
 #' \code{query_cds$final_pred} and NMF embedding restored in \code{query_cds@int_colData$reducedDims$NMF}.

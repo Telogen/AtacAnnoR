@@ -5,15 +5,15 @@
 #' @param Seurat.object A Seurat object
 #' @param celltype Which cell type(s) to highlight
 #' @param ident The identity class to plot
-#' @param label Whether to display the cell type label on the plot, default is TRUE
-#' @param pt.size Point size, default is 1
+#' @param label Whether to display the cell type label on the plot
+#' @param pt.size Point size
 #' @param reduction Which dimensionality reduction to use
 #' @param colors Colors of different cell types
 #'
 #' @return Returns a ggplot object
 #' @export
 #'
-plot_highlight_cells <- function(Seurat.object, celltype, ident, label = T, pt.size = 1,
+plot_highlight_cells <- function(Seurat.object, celltype, ident, label = TRUE, pt.size = 1,
                                  reduction = SeuratObject::DefaultDimReduc(Seurat.object),colors = NULL){
   Idents(Seurat.object) <- ident
   cells.highlight <- list()
@@ -40,8 +40,8 @@ plot_highlight_cells <- function(Seurat.object, celltype, ident, label = T, pt.s
 #' @param global_markers `global_markers` generate from the function `get_global_markers_()`
 #' @param neighbor_celltypes `neighbor_celltypes` generate from the function `get_neighbor_celltypes()`
 #' @param celltypes_to_plot Cell type to display, default is all cell types
-#' @param top_marker_genes_num Number of top marker genes to display for each cell type, default is 20
-#' @param sample_cells_num Number of the sampling cells to display for each cell type, default is 20
+#' @param top_marker_genes_num Number of top marker genes to display for each cell type]
+#' @param sample_cells_num Number of the sampling cells to display for each cell type
 #'
 #' @export
 #'
@@ -85,8 +85,8 @@ plot_ref_global_markers_heatmap <- function(ref_mtx,ref_labels,
 #' @param neighbor_markers `neighbor_markers` generate from the function `get_neighbor_markers_()`
 #' @param neighbor_celltypes `neighbor_celltypes` generate from the function `get_neighbor_celltypes()`
 #' @param celltypes_to_plot Which cell type and its neighbor cell types to display
-#' @param top_marker_genes_num Number of top marker genes to display for each cell type, default is 20
-#' @param sample_cells_num Number of the sampling cells to display for each cell type, default is 20
+#' @param top_marker_genes_num Number of top marker genes to display for each cell type
+#' @param sample_cells_num Number of the sampling cells to display for each cell type
 #'
 #' @export
 #'
@@ -132,8 +132,8 @@ plot_ref_neighbor_markers_heatmap <- function(ref_mtx,ref_labels,
 #' @param global_markers `global_markers` generate from the function `get_global_markers_()`
 #' @param neighbor_celltypes `neighbor_celltypes` generate from the function `get_neighbor_celltypes()`
 #' @param celltypes_to_plot Cell type to display, default is all cell types
-#' @param top_marker_genes_num Number of top marker genes to display for each cell type, default is 20
-#' @param sample_cells_num Number of the sampling cells to display for each cell type, default is 20
+#' @param top_marker_genes_num Number of top marker genes to display for each cell type
+#' @param sample_cells_num Number of the sampling cells to display for each cell type
 #'
 #' @export
 #'
@@ -184,8 +184,8 @@ plot_seed_global_markers_heatmap <- function(query_mtx,cell_meta,
 #' @param neighbor_markers `neighbor_markers` generate from the function `get_neighbor_markers_()`
 #' @param neighbor_celltypes `neighbor_celltypes` generate from the function `get_neighbor_celltypes()`
 #' @param celltypes_to_plot Cell type to display, default is all cell types
-#' @param top_marker_genes_num Number of top marker genes to display for each cell type, default is 20
-#' @param sample_cells_num Number of the sampling cells to display for each cell type, default is 20
+#' @param top_marker_genes_num Number of top marker genes to display for each cell type
+#' @param sample_cells_num Number of the sampling cells to display for each cell typ
 #'
 #' @export
 #'
@@ -234,9 +234,9 @@ plot_seed_neighbor_markers_heatmap <- function(query_mtx,cell_meta,
 #' @param Seurat.object A Seurat Object
 #' @param cell_meta The cell metadata
 #' @param celltype Which cell types to show
-#' @param category Which predictions to show, either `seed_candidate`, `seed`, or `final`, default is `final`
-#' @param label Whether to display the cell type label on the plot, default is TRUE
-#' @param pt.size Point size, default is 1
+#' @param category Which predictions to show, either `seed_candidate`, `seed`, or `final`
+#' @param label Whether to display the cell type label on the plot
+#' @param pt.size Point size
 #' @param reduction Which dimensionality reduction to use
 #' @param colors Colors of different cell types
 #'
