@@ -154,7 +154,7 @@ RunAtacAnnoR <- function(ref_mtx, ref_celltype, ref_type = "sc",
 #' @param verbose Whether to display messages and plots
 #'
 #' @return Returns a new query Seurat object with cell types predicted by AtacAnnoR restored in
-#' \code{query$final_pred} and NMF embedding restored in \code{query[['nmf']]}.
+#' \code{query_SeuratObj$final_pred} and NMF embedding restored in \code{query[['nmf']]}.
 #' @export
 RunAtacAnnoR_Signac <- function(query_SeuratObj,query_ga_assay = 'ACTIVITY',query_peak_assay = 'ATAC',
                                 ref_SeuratObj,ref_assay = 'RNA',ref_ident = 'celltype',ref_type = "sc",

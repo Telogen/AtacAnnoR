@@ -74,7 +74,7 @@ global_markers <- get_global_markers_sc(sc_counts_mtx = ref_mtx,
 neighbor_celltypes <- get_neighbor_celltypes(sc_count_mtx = ref_mtx,
                                              labels = SeuratObj_RNA$true,
                                              global_markers,
-                                             min.cor = 0.6)
+                                             min_cor = 0.6)
 neighbor_markers <- get_neighbor_markers_sc(sc_counts_mtx = ref_mtx,
                                             labels = SeuratObj_RNA$true,
                                             neighbor_celltypes = neighbor_celltypes,
