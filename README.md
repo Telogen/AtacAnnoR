@@ -12,12 +12,13 @@ AtacAnnoR is a novel scATAC-seq cell type annotation method using scRNA-seq data
 
 - In the second round **genome-wide-level annotation**, AtacAnnoR predicts the labels of the remaining query cells using a meta-program matrix derived from genome-wide ATAC-peaks. 
 
+- For more details about AtacAnnoR, please refer to our publication: https://doi.org/10.1093/bib/bbad268
 
 
 ## Installation
 
 ```R
-if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
+if (!requireNamespace("devtools", quietly = T)) install.packages("devtools")
 devtools::install_github("zdebruine/RcppML")        # v0.5.4 or higher
 devtools::install_github("TianLab-Bioinfo/AtacAnnoR",force = T)
 ```
