@@ -96,7 +96,7 @@ get_ga_from_peak_mtx <- function(peak_counts, gene_gr,upstream = 2000,threads = 
         out <- data.frame()
       }
     }else{
-      count.i = Matrix::rowSums(data.use[,idx.bins.i,dropping=TRUE])
+      count.i = Matrix::rowSums(data.use[,idx.bins.i,drop=TRUE])
       if(any(count.i > 0)){
         out <- data.frame(i = which(count.i > 0), 
                           j = idx$subjectHits[1],
