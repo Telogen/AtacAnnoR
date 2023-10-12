@@ -38,19 +38,19 @@ RunAtacAnnoR_Signac(
 \item{'bulk': }{The reference matrix is a bulk RNA-seq matrix}
 }}
 
-\item{min_cor}{The minimum of correlation to define similar cell types, default is 0.6}
+\item{min_cor}{The minimum of correlation to define similar cell types}
 
 \item{num_global_markers}{The number of global markers}
 
 \item{num_neighbor_markers}{The number of neighbor markers}
 
-\item{threads}{The number of threads, default is 10}
+\item{threads}{The number of threads}
 
-\item{verbose}{Whether to display messages and plots, default is TRUE}
+\item{verbose}{Whether to display messages and plots}
 }
 \value{
 Returns a new query Seurat object with cell types predicted by AtacAnnoR restored in
-\code{query$final_pred} and NMF embedding restored in \code{query[['nmf']]}.
+\code{query_SeuratObj$final_pred} and NMF embedding restored in \code{query[['nmf']]}.
 }
 \description{
 Run AtacAnnoR on a Seurat object in Signac pipeline.

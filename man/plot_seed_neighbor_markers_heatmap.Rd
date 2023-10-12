@@ -23,9 +23,9 @@ plot_seed_neighbor_markers_heatmap(
 
 \item{neighbor_celltypes}{\code{neighbor_celltypes} generate from the function \code{get_neighbor_celltypes()}}
 
-\item{top_marker_genes_num}{Number of top marker genes to display for each cell type, default is 20}
+\item{top_marker_genes_num}{Number of top marker genes to display for each cell type}
 
-\item{sample_cells_num}{Number of the sampling cells to display for each cell type, default is 20}
+\item{sample_cells_num}{Number of the sampling cells to display for each cell typ}
 
 \item{celltypes_to_plot}{Cell type to display, default is all cell types}
 }

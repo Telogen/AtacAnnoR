@@ -88,7 +88,7 @@ get_ga_from_peak_mtx <- function(peak_counts, gene_gr,upstream = 2000,threads = 
     # length(idx.bins.i)
     
     if(length(idx.bins.i) == 1L){
-      count.i = data.use[,idx.bins.i,dropping=TRUE]
+      count.i = data.use[,idx.bins.i,drop=TRUE]
       if(any(count.i > 0)){
         data.frame(i = which(count.i > 0), 
                    j = idx$subjectHits[1], 

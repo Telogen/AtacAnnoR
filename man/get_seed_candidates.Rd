@@ -9,7 +9,7 @@ get_seed_candidates(cell_meta, threads = 10)
 \arguments{
 \item{cell_meta}{A cell metadata}
 
-\item{threads}{The number of threads, default is 10}
+\item{threads}{The number of threads}
 }
 \value{
 Returns a new cell_meta with column \code{GMSS_cutoff} and \code{NMSS_cutoff}

@@ -11,7 +11,7 @@ test_markers(
   neighbor_markers,
   which_label = "kendall_pred",
   threads = 10,
-  verbose = T
+  verbose = TRUE
 )
 }
 \arguments{
@@ -23,11 +23,11 @@ test_markers(
 
 \item{neighbor_markers}{Neighbor markers}
 
-\item{which_label}{Which label to test, default is 'kendall_pred'}
+\item{which_label}{Which label to test}
 
-\item{threads}{The number of threads, default is 10}
+\item{threads}{The number of threads}
 
-\item{verbose}{Whether to display messages, default is TRUE}
+\item{verbose}{Whether to display messages}
 }
 \value{
 Returns a new cell metadata with new columns 'GMSS','NMSS'

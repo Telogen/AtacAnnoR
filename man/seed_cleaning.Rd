@@ -11,7 +11,7 @@ seed_cleaning(cell_meta, query_nmf_embedding, dist.metric = "cosine")
 
 \item{query_nmf_embedding}{Query meta-program matrix}
 
-\item{dist.metric}{The metric to calculate distance, can be \code{euclidean}, \code{cosine}, \code{manhattan}, and \code{hamming}, default is \code{cosine}}
+\item{dist.metric}{The metric to calculate distance, can be \code{euclidean}, \code{cosine}, \code{manhattan}, and \code{hamming}}
 }
 \value{
 Returns a new cell meta data with a column \code{is_seed}

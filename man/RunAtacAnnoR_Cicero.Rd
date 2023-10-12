@@ -22,7 +22,7 @@ RunAtacAnnoR_Cicero(
 
 \item{ref_mtx}{A reference gene expression matrix whose rows are genes and columns are cells/samples}
 
-\item{ref_celltype}{A vector of cell types whose orders are same as the columns of sc.mtx}
+\item{ref_celltype}{A vector of cell types whose orders are same as the columns of \code{ref_mtx}}
 
 \item{ref_type}{Which type of the reference matrix is
 \itemize{
@@ -30,7 +30,7 @@ RunAtacAnnoR_Cicero(
 \item{'bulk': }{The reference matrix is a bulk RNA-seq matrix}
 }}
 
-\item{min_cor}{The minimum of correlation to define similar cell types, default is 0.6}
+\item{min_cor}{The minimum of correlation to define similar cell types}
 
 \item{num_global_markers}{The number of global markers}
 
@@ -38,9 +38,9 @@ RunAtacAnnoR_Cicero(
 
 \item{query_gene_activity}{A query gene activity matrix whose rows are genes and columns are cells}
 
-\item{threads}{The number of threads, default is 10}
+\item{threads}{The number of threads}
 
-\item{verbose}{Whether to display messages and plots, default is TRUE}
+\item{verbose}{Whether to display messages and plots}
 }
 \value{
 Returns a new query cds object with cell types predicted by AtacAnnoR restored in

@@ -10,7 +10,7 @@ correct_labels(
   cutoff = 0.6,
   max_edit_distance = NULL,
   threads = 10,
-  verbose = T
+  verbose = TRUE
 )
 }
 \arguments{
@@ -18,13 +18,13 @@ correct_labels(
 
 \item{query_nmf_embedding}{Query meta-program matrix}
 
-\item{cutoff}{The cutoff to drfinr 'similar' cells, smaller value means more strict correction, default is 0.6}
+\item{cutoff}{The cutoff to drfinr 'similar' cells, smaller value means more strict correction}
 
 \item{max_edit_distance}{Max edit distance, by default is the number of references-1}
 
-\item{threads}{The number of threads, default is 10}
+\item{threads}{The number of threads}
 
-\item{verbose}{Whether to display messages, default is TRUE}
+\item{verbose}{Whether to display messages}
 }
 \value{
 Returns a list containing the information of the corrected labels

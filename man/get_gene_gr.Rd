@@ -4,10 +4,10 @@
 \alias{get_gene_gr}
 \title{Get GRanges objects of all coding genes for a specific genome}
 \usage{
-get_gene_gr(genome)
+get_gene_gr(genome = "hg38")
 }
 \arguments{
-\item{genome}{Name of the genome, could be 'hg38', 'hg19', 'mm10' or 'mm9', default is 'hg38'.}
+\item{genome}{Name of the genome, could be 'hg38', 'hg19', 'mm10' or 'mm9'}
 }
 \value{
 Return a GRanges objects of all coding genes for the genome

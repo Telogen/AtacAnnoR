@@ -13,7 +13,7 @@ WKNN_predict(cell_meta, query_nmf_embedding, k = 10, dist.metric = "cosine")
 
 \item{k}{The number of nearest neighbor cells to find for each query cells}
 
-\item{dist.metric}{The metric to calculate distance, can be \code{euclidean}, \code{cosine}, \code{manhattan}, and \code{hamming}, default is \code{cosine}}
+\item{dist.metric}{The metric to calculate distance, can be \code{euclidean}, \code{cosine}, \code{manhattan}, and \code{hamming}}
 }
 \value{
 Returns a new cell meta data with a column \code{final_pred}
