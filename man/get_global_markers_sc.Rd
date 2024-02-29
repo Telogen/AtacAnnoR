@@ -9,7 +9,7 @@ get_global_markers_sc(
   labels,
   max_marker = 200,
   threads = 10,
-  return_raw = F
+  return_raw = FALSE
 )
 }
 \arguments{
@@ -19,9 +19,9 @@ get_global_markers_sc(
 
 \item{max_marker}{Maximum number of markers for each cell type}
 
-\item{threads}{The number of threads, default is 10}
+\item{threads}{The number of threads}
 
-\item{return_raw}{Whether return raw data, default is FALSE}
+\item{return_raw}{Whether return raw data}
 }
 \value{
 Returns a list of global markers for each cell type

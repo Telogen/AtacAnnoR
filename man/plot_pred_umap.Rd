@@ -22,11 +22,11 @@ plot_pred_umap(
 
 \item{celltype}{Which cell types to show}
 
-\item{category}{Which predictions to show, either \code{seed_candidate}, \code{seed}, or \code{final}, default is \code{final}}
+\item{category}{Which predictions to show, either \code{seed_candidate}, \code{seed}, or \code{final}}
 
-\item{label}{Whether to display the cell type label on the plot, default is TRUE}
+\item{label}{Whether to display the cell type label on the plot}
 
-\item{pt.size}{Point size, default is 1}
+\item{pt.size}{Point size}
 
 \item{reduction}{Which dimensionality reduction to use}
 

@@ -8,7 +8,7 @@ plot_highlight_cells(
   Seurat.object,
   celltype,
   ident,
-  label = T,
+  label = TRUE,
   pt.size = 1,
   reduction = SeuratObject::DefaultDimReduc(Seurat.object),
   colors = NULL
@@ -21,9 +21,9 @@ plot_highlight_cells(
 
 \item{ident}{The identity class to plot}
 
-\item{label}{Whether to display the cell type label on the plot, default is TRUE}
+\item{label}{Whether to display the cell type label on the plot}
 
-\item{pt.size}{Point size, default is 1}
+\item{pt.size}{Point size}
 
 \item{reduction}{Which dimensionality reduction to use}
 

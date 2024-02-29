@@ -4,7 +4,7 @@
 \alias{pre_processing}
 \title{Pre-process input matrices}
 \usage{
-pre_processing(ref_mtx, query_mtx, verbose = T)
+pre_processing(ref_mtx, query_mtx, verbose = TRUE)
 }
 \arguments{
 \item{ref_mtx}{A reference gene expression matrix whose rows are genes and columns are cells/samples}

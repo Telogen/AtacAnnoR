@@ -24,7 +24,7 @@ get_neighbor_markers_sc(
 
 \item{max_marker}{Maximum number of markers for each cell type}
 
-\item{threads}{The number of threads, default is 10}
+\item{threads}{The number of threads}
 }
 \value{
 Returns a list of neighbor markers for each cell type

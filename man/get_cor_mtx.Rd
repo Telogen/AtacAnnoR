@@ -11,7 +11,7 @@ get_cor_mtx(
   global_markers,
   query_nmf_embedding,
   threads = 10,
-  verbose = T
+  verbose = TRUE
 )
 }
 \arguments{
@@ -25,9 +25,9 @@ get_cor_mtx(
 
 \item{query_nmf_embedding}{Query meta-program matrix}
 
-\item{threads}{The number of threads, default is 10}
+\item{threads}{The number of threads}
 
-\item{verbose}{Whether to display messages, default is TRUE}
+\item{verbose}{Whether to display messages}
 }
 \value{
 Returns a correlation matrix whose rows are query cells and columns are reference cell types

@@ -13,7 +13,7 @@ get_neighbors(train, test, k, dist.metric = "cosine")
 
 \item{k}{The number of nearest neighbor cells to find for each cell in \code{test}}
 
-\item{metric}{The metric to calculate distance, can be \code{euclidean}, \code{cosine}, \code{manhattan}, and \code{hamming}, default is \code{cosine}}
+\item{metric}{The metric to calculate distance, can be \code{euclidean}, \code{cosine}, \code{manhattan}, and \code{hamming}}
 }
 \value{
 Returns a list containing the nearest neighbor index and the nearest neighbor distance
