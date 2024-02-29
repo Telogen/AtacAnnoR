@@ -80,7 +80,6 @@ get_ga_from_peak_mtx <- function(peak_counts, gene_gr,upstream = 2000,threads = 
   data.use <- Matrix::t(peak_counts)
   
   count.ls <- pbmcapply::pbmclapply(ovs.ls, function(idx){
-    # idx <- ovs.ls[[2041]]
     # idx <- ovs.ls[[1]]
     # idx
     idx.bins.i = idx$queryHits
@@ -88,24 +87,25 @@ get_ga_from_peak_mtx <- function(peak_counts, gene_gr,upstream = 2000,threads = 
     # length(idx.bins.i)
     
     if(length(idx.bins.i) == 1L){
-      count.i = data.use[,idx.bins.i,dropping=TRUE]
+      count.i = data.use[,idx.bins.i,drop=TRUE]
       if(any(count.i > 0)){
-        data.frame(i = which(count.i > 0), 
-                   j = idx$subjectHits[1], 
-                   val = count.i[count.i > 0])
+        out <- data.frame(i = which(count.i > 0), 
+                          j = idx$subjectHits[1], 
+                          val = count.i[count.i > 0])
       }else{
-        data.frame()
+        out <- data.frame()
       }
     }else{
-      count.i = Matrix::rowSums(data.use[,idx.bins.i,dropping=TRUE])
+      count.i = Matrix::rowSums(data.use[,idx.bins.i,drop=TRUE])
       if(any(count.i > 0)){
-        data.frame(i = which(count.i > 0), 
-                   j = idx$subjectHits[1],
-                   val = count.i[count.i > 0])
+        out <- data.frame(i = which(count.i > 0), 
+                          j = idx$subjectHits[1],
+                          val = count.i[count.i > 0])
       }else{
-        data.frame()
+        out <- data.frame()
       }
     }
+    out
   }, mc.cores = threads)
   
   count.df = do.call(rbind, count.ls)
