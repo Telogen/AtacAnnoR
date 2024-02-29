@@ -139,7 +139,7 @@ get_ga_from_peak_mtx <- function(peak_counts, gene_gr,upstream = 2000,threads = 
 #' @return Returns a list of global markers for each cell type
 #' @export
 get_global_markers_sc <- function(sc_counts_mtx, labels,max_marker = 200,threads = 10,return_raw = FALSE){
-  
+  labels <- as.character(labels) # thanks to jianghaixu
   # if one ct more than 2000 cells, sample 2000 cells
   if(max(table(labels)) > 2000){
     label_list <- split(1:ncol(sc_counts_mtx),labels)
@@ -225,7 +225,7 @@ get_global_markers_sc <- function(sc_counts_mtx, labels,max_marker = 200,threads
 #' @return Returns a list of neighbor markers for each cell type
 #' @export
 get_neighbor_markers_sc <- function(sc_counts_mtx, labels, neighbor_celltypes, global_markers,max_marker = 200,threads = 10){
-  
+  labels <- as.character(labels) 
   # if one ct more than 2000 cells, sample 2000 cells
   if(max(table(labels)) > 2000){
     label_list <- split(1:ncol(sc_counts_mtx),labels)
@@ -324,7 +324,7 @@ get_neighbor_markers_sc <- function(sc_counts_mtx, labels, neighbor_celltypes, g
 #' @export
 #'
 get_global_markers_bulk <- function(sc_counts_mtx,labels,max_marker = 200,threads = 10,return_raw = FALSE){
-  
+  labels <- as.character(labels) 
   pb_ref <- get_pseudo_bulk_mtx(sc_counts_mtx, labels)
   HEG_num <- round(nrow(pb_ref) * 0.5)
   HEG_df <- apply(pb_ref,2,function(col){rownames(pb_ref)[order(col,decreasing = T)][1:HEG_num]}) %>% as.data.frame()
@@ -404,7 +404,7 @@ get_global_markers_bulk <- function(sc_counts_mtx,labels,max_marker = 200,thread
 #' @export
 #'
 get_neighbor_markers_bulk <- function(sc_counts_mtx,labels,neighbor_celltypes, global_markers,max_marker = 200,threads = 10){
-  
+  labels <- as.character(labels) 
   pb_ref <- get_pseudo_bulk_mtx(sc_counts_mtx, labels)
   HEG_num <- round(nrow(pb_ref) * 0.5)
   HEG_df <- apply(pb_ref,2,function(col){rownames(pb_ref)[order(col,decreasing = T)][1:HEG_num]}) %>% as.data.frame()
@@ -494,6 +494,7 @@ get_neighbor_markers_bulk <- function(sc_counts_mtx,labels,neighbor_celltypes, g
 #' @export
 #'
 get_cor_mtx <- function(sc_count_mtx,labels,query_mtx,global_markers,query_nmf_embedding,threads = 10,verbose = TRUE) {
+  labels <- as.character(labels) 
   # ref
   if (verbose) {
     message("Processing reference...")

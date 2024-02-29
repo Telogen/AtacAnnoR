@@ -68,6 +68,7 @@ SeuratObj_ATAC <- RunAtacAnnoR_Signac(query_SeuratObj = SeuratObj_ATAC,
                                       ref_assay = 'RNA',
                                       ref_ident = 'true')
 ```
+The predicted labels can be accessed using `SeuratObj_ATAC$final_pred`.
 
 
 - Run AtacAnnoR in [ArchR](https://www.archrproject.com/bookdown)
@@ -77,6 +78,8 @@ query_ArchRproj <- RunAtacAnnoR_ArchR(query_ArchRproj = query_ArchRproj,
                                       ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
                                       ref_celltype = SeuratObj_RNA$true)
 ```
+The predicted labels can be accessed using `query_ArchRproj$final_pred`.
+
 
 - Run AtacAnnoR in [SnapATAC](https://github.com/r3fang/SnapATAC)
 
@@ -85,6 +88,8 @@ query_snapObj <- RunAtacAnnoR_SnapATAC(query_snapObj = query_snapObj,
                                        ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
                                        ref_celltype = SeuratObj_RNA$true)
 ```
+The predicted labels can be accessed using `query_snapObj@metaData$final_pred`.
+
 
 - Run AtacAnnoR in [Monocle3/Cicero](https://cole-trapnell-lab.github.io/cicero-release/)
 
@@ -94,6 +99,7 @@ query_cds <- RunAtacAnnoR_Cicero(query_cds = query_cds,
                                  ref_mtx = SeuratObj_RNA[['RNA']]@counts, 
                                  ref_celltype = SeuratObj_RNA$true)
 ```
+The predicted labels can be accessed using `query_cds@colData$final_pred`.
 
 
 
