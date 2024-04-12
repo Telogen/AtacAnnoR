@@ -8,8 +8,10 @@
 
 plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
   library(ggplot2) %>% suppressPackageStartupMessages() %>% suppressMessages() %>% suppressWarnings()
-
-  bench <- get_benchmark(cell_meta$true,cell_meta[,which(colnames(cell_meta) == which.group)])
+  cell_meta$true <- as.character(cell_meta$true)
+  cell_meta[[which.group]] <- as.character(cell_meta[[which.group]])
+  
+  bench <- get_benchmark(cell_meta$true,cell_meta[[which.group]])
   bench <- round(bench*100,2)
   # if(is.null(title)){
   #   title <- mode

@@ -19,6 +19,7 @@
 #'
 #'
 get_cell_meta_with_true <- function(cell_meta,true_labels,cor_mtx = NULL) {
+  true_labels <- as.character(true_labels)
   if (!is.null(cor_mtx)) {
     get_rank <- function(row, names, ct.num, whose.rank) {
       names(row) <- names
@@ -51,6 +52,8 @@ get_cell_meta_with_true <- function(cell_meta,true_labels,cor_mtx = NULL) {
 #' @export
 #'
 get_benchmark <- function(true_labels, pred_labels){
+  true_labels <- as.character(true_labels)
+  pred_labels <- as.character(pred_labels)
   get_accuracy <- function(true_labels, pred_labels){
     return(length(which(true_labels == pred_labels))/length(true_labels))
   }
@@ -100,6 +103,7 @@ get_benchmark <- function(true_labels, pred_labels){
 #' @export
 #'
 get_each_recall <- function(cell_meta,ident = 'kendall_pred'){
+  cell_meta[[ident]] <- as.character(cell_meta[[ident]])
   cell_meta_li <- split(cell_meta,cell_meta$true)
   out <- sapply(cell_meta_li,function(cell_meta_i){
     c(pred_true_cells = length(which(cell_meta_i[,ident] == cell_meta_i$true)),
@@ -123,6 +127,7 @@ get_each_recall <- function(cell_meta,ident = 'kendall_pred'){
 #' @export
 #'
 get_each_precision <- function(cell_meta,ident = 'kendall_pred'){
+  cell_meta[[ident]] <- as.character(cell_meta[[ident]])
   cell_meta_li <- split(cell_meta,cell_meta[,ident])
   out <- sapply(cell_meta_li,function(cell_meta_i){
     c(true_cells = length(which(cell_meta_i[,ident] == cell_meta_i$true)),
