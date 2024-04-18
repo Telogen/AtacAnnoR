@@ -27,7 +27,7 @@ plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
   
   # calculate recall
   if (mode == 1){
-    predictions <- table(cell_meta$true, cell_meta[,which(colnames(cell_meta) == which.group)])
+    predictions <- table(cell_meta$true, cell_meta[[which.group]])
     predictions <- predictions/rowSums(predictions)
     predictions <- as.data.frame(predictions)
     common_levels <- intersect(levels(predictions$Var1),levels(predictions$Var2))
@@ -55,7 +55,7 @@ plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
   
   # calculate precision
   if (mode == 2){
-    predictions <- table(cell_meta$true, cell_meta[,which(colnames(cell_meta) == which.group)])
+    predictions <- table(cell_meta$true, cell_meta[[which.group]])
     predictions <- t(predictions)/colSums(predictions)
     predictions <- as.data.frame(predictions)
     common_levels <- intersect(levels(predictions$Var1),levels(predictions$Var2))
@@ -83,7 +83,7 @@ plot_confusion_matrix <- function(cell_meta, which.group, mode = 1,title = 3){
   
   # number
   if (mode == 3){
-    predictions <- table(cell_meta$true, cell_meta[,which(colnames(cell_meta) == which.group)])
+    predictions <- table(cell_meta$true, cell_meta[[which.group]])
     predictions <- as.data.frame(predictions)
     common_levels <- intersect(levels(predictions$Var1),levels(predictions$Var2))
     predictions$Var1 <- factor(predictions$Var1,
